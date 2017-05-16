@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import copy
 from technical_model import Technical_Model
 from datacollection import DataCollector
-from agents_creation import Policymakers, Electorate, Externalparties, Truth, Policyentres
+from agent import Policymakers, Electorate, Externalparties, Truth, Policyentres
 
 # Input dictionnary
 inputs_dict = dict()

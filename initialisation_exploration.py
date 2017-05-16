@@ -7,7 +7,7 @@ from technical_model import Technical_Model
 from tree_cell import TreeCell
 from datacollection import DataCollector
 
-from agents_creation import Policymakers, Electorate, Externalparties, Truth, Policyentres
+from agent import Policymakers, Electorate, Externalparties, Truth, Policyentres
 from network_creation import PolicyNetworkLinks
 
 def initial_values_exploration(inputs_dict, experiment_input, run_number, agent_inputs, AS_theory, PF_theory):

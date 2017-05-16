@@ -36,7 +36,7 @@ The default DataCollector here makes several assumptions:
 """
 from collections import defaultdict
 import pandas as pd
-from agents_creation import Policymakers, Policyentres, Externalparties
+from agent import Policymakers, Electorate, Externalparties, Truth, Policyentres
 from copy import deepcopy
 import copy
 
