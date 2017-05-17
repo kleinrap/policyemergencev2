@@ -5048,7 +5048,7 @@ class Externalparties(Agent):
 				for agent_inspected in agent_action_list:
 					for links in link_list:
 						# Check that only the link of interest is selected
-						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware> 0:
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
 							aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
 							aim_grade_list.append(aim_grade)
@@ -5130,7 +5130,7 @@ class Externalparties(Agent):
 						# Going through all of the links
 						for links in link_list:
 							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware> 0:
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
 								# Definition the action weight parameter
 								if type(links.agent2) == Policymakers:
@@ -5182,7 +5182,7 @@ class Externalparties(Agent):
 				for agent_inspected in agent_action_list:
 					for links in link_list:
 						# Check that only the link of interest is selected
-						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware> 0:
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
 							state_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 0, agents, affiliation_weights)
 							state_grade_list.append(state_grade)
@@ -5195,7 +5195,7 @@ class Externalparties(Agent):
 				for agent_inspected in agent_action_list:
 					for links in link_list:
 						# Check that only the link of interest is selected
-						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware> 0:
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
 							aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
 							aim_grade_list.append(aim_grade)
@@ -5503,9 +5503,6 @@ class Externalparties(Agent):
 		# 1. Blanket framing, grading of actions and implementation of the best actions until resources run out 
 		# 100% of the resources (from actions)
 
-		# This will need to be adjusted at a later point
-		actionWeight = 1
-
 		# Selection of the cw of interest
 		cw_of_interest = []
 		# Select one by one the DC
@@ -5648,6 +5645,12 @@ class Externalparties(Agent):
 						for links in link_list:
 							# Check that only the link of interest is selected
 							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+
+								# Definition the action weight parameter
+								if type(links.agent2) == Policymakers:
+									actionWeight = 1
+								else:
+									actionWeight = 0.95
 
 								check_none = 0
 								if agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] == None:

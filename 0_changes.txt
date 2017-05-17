@@ -3,3 +3,6 @@
 - Simplify resources notification for the external parties.
 - Add a function for the grading and the implementing of actions
 - Remove all parts of the code related to grading and implementing of actions
+
+17 May:
+- Continuation on the cleaning and condensing of the code. Now related to the three streams actions and the external parties.
