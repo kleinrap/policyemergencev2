@@ -2,7 +2,7 @@ import random
 import copy
 from team_creation import Team
 from coalition_creation import Coalition
-
+from functions_actions import ActionFunctions
 
 class Agent:
 	
