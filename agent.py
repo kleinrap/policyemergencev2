@@ -2826,6 +2826,136 @@ class Agent:
 
 		return grade
 
+	def action_grade_calculator_3S_AS(self, links, impact, agents, affiliation_weights, conflict_level_coef):
+
+		# Checking which agent in the link is the original agent
+		if links.agent1 == agents:
+
+			# Definition the action weight parameter
+			if type(links.agent2) == Policymakers:
+				actionWeight = 1
+			else:
+				actionWeight = 0.95
+			check_none = 0
+			if agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] == None:
+				agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = 0
+				check_none = 1
+
+			belief_diff = abs(agents.belieftree_policy[0][agents.select_policy_3S_as][impact] - agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact])
+
+			if check_none == 1:
+				agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = None
+
+		# Checking which agent in the link is the original agent
+		if links.agent2 == agents:
+
+			# Definition the action weight parameter
+			if type(links.agent1) == Policymakers:
+				actionWeight = 1
+			else:
+				actionWeight = 0.95
+
+			check_none = 0
+			if agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact] == None:
+				agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact] = 0
+				check_none = 1
+
+			belief_diff = abs(agents.belieftree_policy[0][agents.select_policy_3S_as][impact] - agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact])
+
+			if check_none == 1:
+				agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact] = None
+
+		if belief_diff <= 0.25:
+			conflict_level_impact = conflict_level_coef[0]
+		if belief_diff > 0.25 and belief_diff <= 1.75:
+			conflict_level_impact = conflict_level_coef[2]
+		if belief_diff > 1.75:
+			conflict_level_impact = conflict_level_coef[1]
+
+		# Grade calculation using the likelihood method
+		# Same affiliation
+		if links.agent1.affiliation == links.agent2.affiliation:
+			grade = conflict_level_impact * links.aware * actionWeight
+
+		# Affiliation 1-2
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+			grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
+
+		# Affiliation 1-3
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+			grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
+
+		# Affiliation 2-3
+		if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+			grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
+
+		return grade
+
+	def action_grade_calculator_3S_PF(self, links, impact, agents, affiliation_weights, conflict_level_coef):
+
+		# Checking which agent in the link is the original agent
+		if links.agent1 == agents:
+
+			# Definition the action weight parameter
+			if type(links.agent2) == Policymakers:
+				actionWeight = 1
+			else:
+				actionWeight = 0.95
+			check_none = 0
+			if agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] == None:
+				agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = 0
+				check_none = 1
+
+			belief_diff = abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact])
+
+			if check_none == 1:
+				agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = None
+
+		# Checking which agent in the link is the original agent
+		if links.agent2 == agents:
+
+			# Definition the action weight parameter
+			if type(links.agent1) == Policymakers:
+				actionWeight = 1
+			else:
+				actionWeight = 0.95
+
+			check_none = 0
+			if agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] == None:
+				agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = 0
+				check_none = 1
+
+			belief_diff = abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact])
+
+			if check_none == 1:
+				agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = None
+
+		if belief_diff <= 0.25:
+			conflict_level_impact = conflict_level_coef[0]
+		if belief_diff > 0.25 and belief_diff <= 1.75:
+			conflict_level_impact = conflict_level_coef[2]
+		if belief_diff > 1.75:
+			conflict_level_impact = conflict_level_coef[1]
+
+		# Grade calculation using the likelihood method
+		# Same affiliation
+		if links.agent1.affiliation == links.agent2.affiliation:
+			grade = conflict_level_impact * links.aware * actionWeight
+
+		# Affiliation 1-2
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+			grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
+
+		# Affiliation 1-3
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+			grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
+
+		# Affiliation 2-3
+		if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+			grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
+
+		return grade
+
 	def action_implementor(self, links, issue, parameter, agents, affiliation_weights, resources_weight_action, resources_potency, blanket, action_agent_number):
 
 		if blanket == True:
@@ -3429,108 +3559,8 @@ class Agent:
 						# Checking through all possible framing - This is all based on partial knowledge!
 						for impact in range(impact_number):
 
-							# Checking which agent in the link is the original agent
-							if links.agent1 == agents:
-
-								# Definition the action weight parameter
-								if type(links.agent2) == Policymakers:
-									actionWeight = 1
-								else:
-									actionWeight = 0.95
-
-								# Need to calculate the conflict level per impact (to avoid having to create a whole new conflict level array in the links for the policies)
-								# Note that there is currently a need to check for None partial knowledge
-
-								check_none = 0
-								if agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] == None:
-									agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = 0
-									check_none = 1
- 
-								belief_diff = abs(agents.belieftree_policy[0][agents.select_policy_3S_as][impact] - agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact])
-
-								if check_none == 1:
-									agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = None
-
-								if belief_diff <= 0.25:
-									conflict_level_impact = conflict_level_coef[0]
-								if belief_diff > 0.25 and belief_diff <= 1.75:
-									conflict_level_impact = conflict_level_coef[2]
-								if belief_diff > 1.75:
-									conflict_level_impact = conflict_level_coef[1]
-
-								# Grade calculation using the likelihood method
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									impact_grade = conflict_level_impact * links.aware * actionWeight
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
-									total_grade_list.append(impact_grade)	
-
-							# Checking which agent in the link is the original agent
-							if links.agent2 == agents:
-
-								# Definition the action weight parameter
-								if type(links.agent1) == Policymakers:
-									actionWeight = 1
-								else:
-									actionWeight = 0.95
-
-								# Need to calculate the conflict level per impact (to avoid having to create a whole new conflict level array in the links for the policies)
-								# Note that there is currently a need to check for None partial knowledge
-
-								check_none = 0
-								if agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact] == None:
-									agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact] = 0
-									check_none = 1
-								
-								belief_diff = abs(agents.belieftree_policy[0][agents.select_policy_3S_as][impact] - agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact])
-
-								if check_none == 1:
-									agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact] = None
-
-								if belief_diff <= 0.25:
-									conflict_level_impact = conflict_level_coef[0]
-								if belief_diff > 0.25 and belief_diff <= 1.75:
-									conflict_level_impact = conflict_level_coef[2]
-								if belief_diff > 1.75:
-									conflict_level_impact = conflict_level_coef[1]
-
-								# Grade calculation using the likelihood method
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									impact_grade = conflict_level_impact * links.aware * actionWeight
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
-									total_grade_list.append(impact_grade)	
+							impact_grade = self.action_grade_calculator_3S_AS(links, impact, agents, affiliation_weights, conflict_level_coef)
+							total_grade_list.append(impact_grade)
 
 					# 2. Grading all individual actions - Aim change
 					aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
@@ -3735,128 +3765,9 @@ class Agent:
 						# Checking through all possible framing - This is all based on partial knowledge!
 						for impact in range(impact_number):
 
-							# Checking which agent in the link is the original agent
-							if links.agent1 == agents:
-
-								# Need to calculate the conflict level per impact (to avoid having to create a whole new conflict level array in the links for the policies)
-								# Note that there is currently a need to check for None partial knowledge
-
-								check_none = 0
-								if agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] == None:
-									agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = 0
-									check_none = 1
- 
-								belief_diff = abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact])
-
-								if check_none == 1:
-									agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = None
-
-								if belief_diff <= 0.25:
-									conflict_level_impact = conflict_level_coef[0]
-								if belief_diff > 0.25 and belief_diff <= 1.75:
-									conflict_level_impact = conflict_level_coef[2]
-								if belief_diff > 1.75:
-									conflict_level_impact = conflict_level_coef[1]
-
-								# Grade calculation using the likelihood method
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									impact_grade = conflict_level_impact * links.aware * actionWeight
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
-									total_grade_list.append(impact_grade)	
-
-								# # Check if no partial knowledge (initial value)
-								# check_none = 0
-								# if agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] == None:
-								# 	agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = 0
-								# 	check_none = 1
-								# # Performing the action
-								# impact_grade = (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact]) * \
-								# 	agents.resources[0] * resources_weight_action * links.aware * resources_potency
-								# # Adding the grade to the grade list
-								# total_grade_list.append(impact_grade)
-								# #  Reset to None after finding the grade
-								# if check_none == 1:
-								# 	agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = None
-
-							# Checking which agent in the link is the original agent
-							if links.agent2 == agents:
-
-								# Need to calculate the conflict level per impact (to avoid having to create a whole new conflict level array in the links for the policies)
-								# Note that there is currently a need to check for None partial knowledge
-
-								check_none = 0
-								if agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] == None:
-									agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = 0
-									check_none = 1
- 
-								belief_diff = abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact])
-
-								if check_none == 1:
-									agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = None
-
-								if belief_diff <= 0.25:
-									conflict_level_impact = conflict_level_coef[0]
-								if belief_diff > 0.25 and belief_diff <= 1.75:
-									conflict_level_impact = conflict_level_coef[2]
-								if belief_diff > 1.75:
-									conflict_level_impact = conflict_level_coef[1]
-
-								# Grade calculation using the likelihood method
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									impact_grade = conflict_level_impact * links.aware * actionWeight
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
-									total_grade_list.append(impact_grade)	
-
-
-								# #  Check if no partial knowledge (initial value)
-								# check_none = 0
-								# if agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] == None:
-								# 	agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = 0
-								# 	check_none = 1
-								# impact_grade = (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact]) * \
-								# 	agents.resources[0] * resources_weight_action * links.aware * resources_potency
-								# # Adding the grade to the grade list
-								# total_grade_list.append(impact_grade)
-								# # Reset to None after finding the grade
-								# if check_none == 1:
-								# 	agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = None
-
+							impact_grade = self.action_grade_calculator_3S_PF(links, impact, agents, affiliation_weights, conflict_level_coef)
+							total_grade_list.append(impact_grade)
+							
 					# 2. Grading all individual actions - Aim change
 					aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights)
 					total_grade_list.append(aim_grade)
@@ -5132,47 +5043,8 @@ class Externalparties(Agent):
 							# Check that only the link of interest is selected
 							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								# Definition the action weight parameter
-								if type(links.agent2) == Policymakers:
-									actionWeight = 1
-								else:
-									actionWeight = 0.95
-
-								check_none = 0
-								if agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] == None:
-									agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = 0
-									check_none = 1
-
-								belief_diff = abs(agents.belieftree_policy[0][agents.select_policy_3S_as][impact] - agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact])
-
-								if check_none == 1:
-									agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = None
-
-								if belief_diff <= 0.25:
-									conflict_level_impact = conflict_level_coef[0]
-								if belief_diff > 0.25 and belief_diff <= 1.75:
-									conflict_level_impact = conflict_level_coef[2]
-								if belief_diff > 1.75:
-									conflict_level_impact = conflict_level_coef[1]
-
-								# Grade calculation using the likelihood method
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									impact_grade = conflict_level_impact * links.aware * actionWeight
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
-
-								impact_grade_list.append(impact_grade)
+								impact_grade = self.action_grade_calculator_3S_AS(links, impact, agents, affiliation_weights, conflict_level_coef)
+								total_grade_list.append(impact_grade)
 
 					total_agent_grades.append(sum(impact_grade_list))
 
@@ -5646,46 +5518,7 @@ class Externalparties(Agent):
 							# Check that only the link of interest is selected
 							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								# Definition the action weight parameter
-								if type(links.agent2) == Policymakers:
-									actionWeight = 1
-								else:
-									actionWeight = 0.95
-
-								check_none = 0
-								if agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] == None:
-									agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = 0
-									check_none = 1
-
-								belief_diff = abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact])
-
-								if check_none == 1:
-									agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = None
-
-								if belief_diff <= 0.25:
-									conflict_level_impact = conflict_level_coef[0]
-								if belief_diff > 0.25 and belief_diff <= 1.75:
-									conflict_level_impact = conflict_level_coef[2]
-								if belief_diff > 1.75:
-									conflict_level_impact = conflict_level_coef[1]
-
-								# Grade calculation using the likelihood method
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									impact_grade = conflict_level_impact * links.aware * actionWeight
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
-
+								impact_grade = self.action_grade_calculator_3S_PF(links, impact, agents, affiliation_weights, conflict_level_coef)
 								impact_grade_list.append(impact_grade)
 
 					total_agent_grades.append(sum(impact_grade_list))
