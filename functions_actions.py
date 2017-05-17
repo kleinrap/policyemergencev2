@@ -14,14 +14,9 @@ class ActionFunctions:
 		print('*********')
 		print('*********')
 
-	def action_grade_calculator(self, links, issue, parameter, agents, affiliation_weights):
+	def action_grade_calculator(links, issue, parameter, agents, actionWeight, affiliation_weights):
 
 		if links.agent1 == agents:
-
-			if type(links.agent2) == Policymakers:
-				actionWeight = 1
-			else:
-				actionWeight = 0.95
 
 			if links.agent1.affiliation == links.agent2.affiliation:
 				grade = links.conflict_level[0][issue][parameter] * links.aware * actionWeight
@@ -42,11 +37,6 @@ class ActionFunctions:
 				grade = links.conflict_level[0][issue][parameter] * links.aware * actionWeight * affiliation_weights[2]
 
 		if links.agent2 == agents:
-
-			if type(links.agent1) == Policymakers:
-				actionWeight = 1
-			else:
-				actionWeight = 0.95
 
 			# Same affiliation
 			if links.agent1.affiliation == links.agent2.affiliation:
