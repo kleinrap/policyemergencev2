@@ -2994,6 +2994,91 @@ class Agent:
 		
 		return results
 
+	def action_implementor_3S_PF(self, links, impact, agents, affiliation_weights, resources_weight_action, resources_potency, blanket, action_agent_number):
+
+		if blanket == True:
+			resources_potency = resources_potency / action_agent_number
+
+		if links.agent1 == agents:
+			
+			# print('Before: ', links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact])
+
+			# Same affiliation
+			if links.agent1.affiliation == links.agent2.affiliation:
+				links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact] += (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact]) * \
+					agents.resources[0] * resources_weight_action * resources_potency
+
+			# Affiliation 1-2
+			if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+				links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact] += (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact]) * \
+					agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
+
+			# Affiliation 1-3
+			if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+				links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact] += (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact]) * \
+					agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
+
+			# Affiliation 2-3
+			if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+				links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact] += (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact]) * \
+					agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
+
+			# print('After: ', links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact])
+
+			# Checks and transfer of partial knowledge
+			# 1-1 check - new value
+			links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact] = self.one_minus_one_check(links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact])
+			# Partial knowledge 1 with 1-1 check
+			agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact] + (random.random()/5) - 0.1
+			agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = self.one_minus_one_check(agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact])
+			# Partial knowledge 2 with 1-1 check
+			links.agent2.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][impact] = agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] + (random.random()/5) - 0.1
+			links.agent2.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][impact] = self.one_minus_one_check(links.agent2.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][impact])
+
+			results = [links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][impact], agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact], \
+				links.agent2.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][impact]]
+
+		if links.agent2 == agents:
+
+			# print('Before: ', links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact])
+			
+			# Same affiliation
+			if links.agent1.affiliation == links.agent2.affiliation:
+				links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact] += (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact]) * \
+					agents.resources[0] * resources_weight_action * resources_potency
+
+			# Affiliation 1-2
+			if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+				links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact] += (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact]) * \
+					agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
+
+			# Affiliation 1-3
+			if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+				links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact] += (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact]) * \
+					agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
+
+			# Affiliation 2-3
+			if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+				links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact] += (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact]) * \
+					agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
+
+			# print('After: ', links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact])
+			
+			# Checks and transfer of partial knowledge
+			# 1-1 check - new value
+			links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact] = self.one_minus_one_check(links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact])
+			# Partial knowledge 1 with 1-1 check
+			agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact] + (random.random()/5) - 0.1
+			agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = self.one_minus_one_check(agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact])
+			# Partial knowledge 2 with 1-1 check
+			links.agent1.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][impact] = agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] + (random.random()/5) - 0.1
+			links.agent1.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][impact] = self.one_minus_one_check(links.agent1.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][impact])
+
+			results = [links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][impact], agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact], \
+				links.agent1.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][impact]]
+		
+		return results
+
 	def pm_pe_actions_as(self, agents, link_list, deep_core, policy_core, secondary, resources_weight_action, resources_potency, affiliation_weights):
 
 		"""
@@ -3866,7 +3951,7 @@ class Agent:
 							# print('best_action: ' + str(best_action))
 							# print('impact_number: ' + str(impact_number))
 
-							implemented_action = self.action_implementor_3S_AS(links, best_action, agents, affiliation_weights, resources_weight_action, resources_potency, False, 1)
+							implemented_action = self.action_implementor_3S_PF(links, best_action, agents, affiliation_weights, resources_weight_action, resources_potency, False, 1)
 
 						# If the index is in the second part of the list, then the aim influence action is the best
 						if best_action == impact_number:
@@ -3961,6 +4046,12 @@ class Policymakers(Agent):
 	# 	', Problem selected: ' + str(self.select_problem) + ', Policy selected: ' + str(self.select_policy) + \
 	# 	', Belief tree: ' + str(self.belieftree)
 
+
+
+	# Simple print with ID
+	def __str__(self):
+		return 'Policy maker: ' + str(self.unique_id)
+
 	def policymakers_states_update(self, agent, master_list, affiliation_weights):
 
 		"""
@@ -4029,287 +4120,6 @@ class Policymakers(Agent):
 			agent.belieftree[0][i][0] = agent.belieftree[0][i][0] + belief_sum_ep[i] / actual_length_ep
 			# print('This is issue: ' + str(i+1) + ' and its new value is: ' + str(agent.belieftree[0][i][0]))
 		# print(agent)
-
-	# Simple print with ID
-	def __str__(self):
-		return 'Policy maker: ' + str(self.unique_id)
-
-	def preference_udapte_as_PC(self, agent, who, len_DC, len_PC, len_S):
-
-		"""
-		The preference update for policy cores function (agenda setting)
-		===========================
-
-		This function is used to update the policy core preferences. It is only used for the
-		old way of calculating the grade actions.
-	
-		Note: This function will ultimately be removed once all grading actions have been
-		modified.
-
-		"""
-
-		# Preference calculation for the policy core issues
-		PC_denominator = 0
-		# Select one by one the DC
-		for j in range(len_PC):
-			PC_denominator = 0
-			# Selecting the causal relations starting from DC
-			for k in range(len_DC):
-				# Contingency for partial knowledge issues
-				if agent.belieftree[who][k][1] == None or agent.belieftree[who][k][0] == None or agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] == None:
-					PC_denominator = 0
-				else:
-					# Check if causal relation and gap are both positive of both negative
-					if (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
-					  or (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
-						PC_denominator = PC_denominator + abs(agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0]*\
-						  (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]))
-					else:
-						PC_denominator = PC_denominator	
-		# Then adding the gap of the policy core:
-		for i in range(len_PC):
-			# Contingency for partial knowledge issues
-			if agent.belieftree[who][len_DC + i][1] == None or agent.belieftree[who][len_DC + i][0] == None:
-				PC_denominator = PC_denominator
-			else:
-				PC_denominator = PC_denominator + abs(agent.belieftree[who][len_DC + i][1] - agent.belieftree[who][len_DC + i][0])
-		
-		# Calculating the numerator and the preference of all policy core issues:
-		# Select one by one the DC
-		for j in range(len_PC):
-			PC_numerator = 0
-			# Selecting the causal relations starting from DC
-			for k in range(len_DC):
-				# Contingency for partial knowledge issues
-				if agent.belieftree[who][k][1] == None or agent.belieftree[who][k][0] == None or agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] == None: 
-					PC_numerator = 0
-				else:
-					# Check if causal relation and gap are both positive of both negative
-					if (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
-					  or (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
-						PC_numerator = PC_numerator + abs(agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0]*\
-						  (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]))
-					else:
-						PC_numerator = PC_numerator	
-			# Contingency for partial knowledge issues
-			if agent.belieftree[who][len_DC + j][1] == None or agent.belieftree[who][len_DC + j][0] == None:
-				PC_numerator = 0
-			else:
-				# Then adding the gap of the policy core:
-				PC_numerator = PC_numerator + abs(agent.belieftree[who][len_DC + j][1] - agent.belieftree[who][len_DC + j][0])
-			if PC_denominator != 0:
-				agent.belieftree[who][len_DC+j][2] = PC_numerator/PC_denominator 
-			else:
-				agent.belieftree[who][len_DC+j][2] = 0
-
-	def preference_udapte_pf_PC(self, agent, who, len_DC, len_PC, len_S, agenda_prob_3S_as):
-
-		"""
-		The preference update for policy cores function (policy formulation)
-		===========================
-
-		This function is used to update the policy core preferences. It is only used for the
-		old way of calculating the grade actions.
-	
-		Note: This function will ultimately be removed once all grading actions have been
-		modified.
-
-		"""
-
-		k = agenda_prob_3S_as
-
-		# Calculating the numerator and the preference of all policy core issues:
-		# Select one by one the DC
-		S_denominator = 0
-		for j in range(len_S):
-			# print('Selection S' + str(j+1))
-			# print('State of the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + j][0])) # the state printed
-			# Selecting the causal relations starting from PC
-			# print(' ')
-			# print(len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC))
-			# Contingency for partial knowledge issues
-			if agent.belieftree[0][k][1] != None and agent.belieftree[0][k][0] != None and agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] != None:
-				# print('Causal Relation S' + str(j+1) + ' - PC' + str(k+1) + ': ' + str(agent.belieftree[0][len_DC+len_PC+len_S+(j+(k*len_PC))][0]))
-				# print('Gap of PC' + str(k+1) + ': ' + str(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
-				# Check if causal relation and gap are both positive of both negative
-				if (agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] < 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) < 0) \
-					or (agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] > 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) > 0):
-					# print('Calculating')
-					S_denominator = S_denominator + abs(agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] * \
-						(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
-					# print('This is the PC numerator: ' + str(S_denominator))
-				else:
-					S_denominator = S_denominator
-			else:
-				S_denominator = 0
-			# Contingency for partial knowledge issues
-			if agent.belieftree[0][len_DC + len_PC + j][1] == None or agent.belieftree[0][len_DC + len_PC + j][0] == None:
-				S_denominator = S_denominator
-			else:
-				# Then adding the gap of the policy core:
-				# print('This is the gap for the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + len_PC + j][1] - agent.belieftree[0][len_DC + len_PC + j][0]))
-				S_denominator = S_denominator + abs(agent.belieftree[0][len_DC + len_PC + j][1] - agent.belieftree[0][len_DC + len_PC + j][0])
-
-
-		# Calculating the numerator and the preference of all policy core issues:
-		# Select one by one the DC
-		for j in range(len_S):
-			S_numerator = 0
-			# Contingency for partial knowledge issues
-			if agent.belieftree[0][k][1] != None and agent.belieftree[0][k][0] != None and agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] != None:
-				# Check if causal relation and gap are both positive of both negative
-				if (agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] < 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) < 0) \
-					or (agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] > 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) > 0):
-					# print('Calculating')
-					S_numerator = S_numerator + abs(agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] * \
-						(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
-					# print('This is the PC numerator: ' + str(S_numerator))
-				else:
-					S_numerator = S_numerator
-			else:
-				S_numerator = 0
-			# Contingency for partial knowledge issues
-			if agent.belieftree[0][len_DC + len_PC + j][1] == None or agent.belieftree[0][len_DC + len_PC + j][0] == None:
-				S_numerator = 0
-			else:
-				# Then adding the gap of the policy core:
-				S_numerator = S_numerator + abs(agent.belieftree[0][len_DC + len_PC + j][1] - agent.belieftree[0][len_DC + len_PC + j][0])
-			if S_denominator != 0:
-				agent.belieftree[who][len_DC + len_PC + j][2] = S_numerator/S_denominator 
-			else:
-				agent.belieftree[who][len_DC + len_PC + j][2] = 0
-
-	def instrument_preference_update(self, agent, who, AS_theory, len_DC, len_PC, len_S, instruments):
-
-		"""
-		Instrument preference update function
-		===========================
-
-		This function is used to calculate the ranking of each of the instrument from 
-		which the agents can choose from. This is done in two parts.
-
-		1/ The first part consists of calculating the preference level for the different
-		secondary issues (layer 3 in the belief tree). In this part, the preferences of
-		the agents are updated similarly to the function where the preferences are calculated.
-		The main difference is that this time, it is based on the agenda which means that
-		only the secondary issues affecting the problem on the agenda are considered.
-
-		2/ The second part consists of obtaining the grade for the policy instruments.
-		This is calculated as shown in the formalisation with the equation given by:
-		G = sum(impact * (Aim - State) * Preference_secondary)
-		We make sure that the instruments impact are only taken into account if the
-		impact is of the same sign as the gap between the state and the aim for the
-		specific secondary issues. If this is not the case, the impact is not considered
-		for that specific part of the instrument.
-
-		Notes:
-		1/ The secondary issues for which the agent is not interested (this applies to 
-		the external parties only) are not taken into account in the calculation. They
-		are marked as the 'No' values.
-
-		This function will ultimately be removed when all of the grading actions will be
-		modified.
-
-		"""
-
-		######################################################################################################
-		# 1/ Calculation of the preference level for the secondary issues based on the problem on the agenda #
-		######################################################################################################
-
-		S_denominator = 0
-		if AS_theory != 2:
-			j = agent.select_as_issue
-		if AS_theory == 2:
-			j = agent.select_problem_3S_as
-		for k in range(len_S):
-			if agent.belieftree[who][j][1] != None and agent.belieftree[who][j][0] != None and agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0] != None:
-				if (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0] < 0 and (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]) < 0) \
-					or (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0] > 0 and (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]) > 0):
-					S_denominator = S_denominator + abs(agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0]*\
-					  (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]))
-				else:
-					S_denominator = S_denominator
-			else:
-				S_denominator = S_denominator
-
-		for i in range(len_S):
-			if agent.belieftree[who][len_DC + len_PC + i][0] != 'No':
-				if agent.belieftree[who][len_DC + len_PC + i][1] != None and agent.belieftree[who][len_DC + len_PC + i][0] != None:
-					S_denominator = S_denominator + abs(agent.belieftree[who][len_DC + len_PC + i][1] - agent.belieftree[who][len_DC + len_PC + i][0])
-				else:
-					S_denominator = 0
-
-		S_numerator = 0
-		
-		for j in range(len_S):
-			S_numerator = 0
-			if AS_theory != 2:
-				k = agent.select_as_issue
-			if AS_theory == 2:
-				k = agent.select_problem_3S_as
-			if agent.belieftree[who][k][1] != None and agent.belieftree[who][k][0] != None and agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0] != None:
-				if (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
-					or (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
-					S_numerator = S_numerator + abs(agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0]*\
-						  (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]))
-				else:
-					S_numerator = S_numerator
-			else:
-				S_numerator = S_numerator
-			if agent.belieftree[who][len_DC + len_PC + j][0] != 'No':
-				if agent.belieftree[who][len_DC + len_PC + j][1] != None and agent.belieftree[who][len_DC + len_PC + j][0] != None:
-					S_numerator = S_numerator + abs(agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0])
-				else:
-					S_numerator = 0
-			if S_denominator != 0:
-				agent.belieftree[who][len_DC+len_PC+j][2] = S_numerator/S_denominator 
-			else:
-				agent.belieftree[who][len_DC+len_PC+j][2] = 0
-
-		##################################################################################################
-		# 2/ Calculation of the grade of each of the instruments based on impact on the secondary issues #
-		##################################################################################################
-
-		agent.instrument_preferences[who] = [0 for h in range(len(instruments))]
-		for i in range(len(instruments)):
-			for j in range(len_S):
-				if agent.belieftree[who][len_DC + len_PC + j][0] != 'No':
-					if agent.belieftree[who][len_DC + len_PC + j][1] != None and agent.belieftree[who][len_DC + len_PC + j][0] != None:
-						if (instruments[i][j] > 0 and (agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0]) > 0 ) \
-							or (instruments[i][j] < 0 and (agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0]) < 0 ):
-							# print(' ')
-							# print('agent.instrument_preferences[who][i]: ' + str(agent.instrument_preferences[who][i]))
-							# print('instruments[i][j]: ' + str(instruments[i][j]))
-							# print('agent.belieftree[' + str(who) + '][len_DC + len_PC + ' + str(j) + '][1]: ' + str(agent.belieftree[who][len_DC + len_PC + j][1]))
-							# print('agent.belieftree[' + str(who) + '][len_DC + len_PC + ' + str(j) + '][0]: ' + str(agent.belieftree[who][len_DC + len_PC + j][0]))
-							# print('agent.belieftree[' + str(who) + '][len_DC + len_PC + ' + str(j) + '][2]: ' + str(agent.belieftree[who][len_DC + len_PC + j][2]))
-							agent.instrument_preferences[who][i] = agent.instrument_preferences[who][i] + \
-								(instruments[i][j] * (agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0]) * \
-								(agent.belieftree[who][len_DC + len_PC + j][2]))
-							# print('agent.instrument_preferences[who][i]: ' + str(agent.instrument_preferences[who][i]))
-					else:
-						agent.instrument_preferences[who][i] = 0
-
-	def one_minus_one_check(self, to_be_checked_parameter):
-
-		"""
-		One minus one check function
-		===========================
-
-		This function checks that a certain values does not got over one
-		and does not go below one due to the randomisation.
-		
-		"""
-
-		checked_parameter = 0
-		if to_be_checked_parameter > 1:
-			checked_parameter = 1
-		elif to_be_checked_parameter < -1:
-			checked_parameter = -1
-		else:
-			checked_parameter = to_be_checked_parameter
-
-		return checked_parameter
 
 # Creation of the policy entrepreneur agents
 class Policyentres(Agent):
@@ -4420,1387 +4230,6 @@ class Policyentres(Agent):
 			agent.belieftree[0][i][0] = agent.belieftree[0][i][0] + belief_sum_ep[i] / actual_length_ep
 			# print('This is issue: ' + str(i+1) + ' and its new value is: ' + str(agent.belieftree[0][i][0]))
 		# print(agent)
-
-	def pm_pe_actions_pf_3S(self, agents, link_list, deep_core, policy_core, secondary, resources_weight_action, resources_potency, agenda_prob_3S_as, affiliation_weights, conflict_level_coef):
-
-		"""
-		The PEs and PMs actions function - three streams (policy formulation)
-		===========================
-
-		This function is used to perform the different active actions of the
-		policy entrepreneurs and the policy makers during the policy formulation.
-
-		The actions that can be performed are framing, influence on states and 
-		influence on aims. All of the actions are first graded. Then the action
-		that has the highest grade is selected. Finally, the action selected 
-		is implemented.
-
-		Note: This function is the same as the one presented before for the backbone
-		backbone+ and ACF. The main difference is the addition of actions related
-		to the choice of a policy by the agents.
-
-		"""
-
-		len_DC = len(deep_core)
-		len_PC = len(policy_core)
-		len_S = len(secondary)
-		total_issue_number = len_DC + len_PC + len_S
-
-		# Selection of the cw of interest
-		cw_of_interest = []
-		# Select one by one the DC
-		j = agenda_prob_3S_as
-		# for j in range(len_PC):
-		# Selecting the causal relations starting from DC
-		for k in range(len_S):
-			# Contingency for partial knowledge issues
-			# print(len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC)
-			if (agents.belieftree[0][len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC][0] < 0 and (agents.belieftree[0][j][1] - agents.belieftree[0][j][0]) < 0) \
-			  or (agents.belieftree[0][len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC][0] > 0 and (agents.belieftree[0][j][1] - agents.belieftree[0][j][0]) > 0):
-				cw_of_interest.append(len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC)
-
-		# Selection of the impact of interest
-		impact_number = len(agents.belieftree_instrument[0][agents.select_policy_3S_pf])
-
-		# print(' ')
-		# print('Causal relations of interest: ' + str(cw_of_interest))
-
-		# Making sure there are enough resources
-		while agents.resources_actions > 0.001:
-
-			# Going through all the links in the model
-			# print(agents)
-			total_grade_list = []
-			total_grade_list_links = []
-			for links in link_list:
-
-				# Making sure that the link is attached to the agent and has a aware higher than 0
-				if (links.agent1 == agents or links.agent2 == agents) and links.aware > 0:
-					total_grade_list_links.append(links)
-
-					# Definition the action weight parameter
-					if type(links.agent1) == Policymakers or type(links.agent2) == Policymakers:
-						actionWeight = 1
-					else:
-						actionWeight = 0.95
-					
-					# 1. Framing on causal relation and policy impacts
-
-					# If the agent is advocating or a problem, the following tasks are performed
-					if agents.select_issue_3S_pf == 'problem':
-						# 1.a. Grading all framing actions on causal relations:
-						# Checking through all possible framing - This is all based on partial knowledge!
-						for cw in range(len(cw_of_interest)):
-
-							# Checking which agent in the link is the original agent
-							if links.agent1 == agents:
-
-								# Grade calculation using the likelihood method
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									cw_grade = links.conflict_level[0][cw_of_interest[cw]][0] * links.aware * actionWeight
-									total_grade_list.append(cw_grade)
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									cw_grade = links.conflict_level[0][cw_of_interest[cw]][0] * links.aware * actionWeight * affiliation_weights[0]
-									total_grade_list.append(cw_grade)
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									cw_grade = links.conflict_level[0][cw_of_interest[cw]][0] * links.aware * actionWeight * affiliation_weights[1]
-									total_grade_list.append(cw_grade)
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									cw_grade = links.conflict_level[0][cw_of_interest[cw]][0] * links.aware * actionWeight * affiliation_weights[2]
-									total_grade_list.append(cw_grade)	
-
-
-								# # Check if no partial knowledge (initial value)
-								# check_none = 0
-								# if agents.belieftree[1 + links.agent2.unique_id][cw_of_interest[cw]][0] == None:
-								# 	agents.belieftree[1 + links.agent2.unique_id][cw_of_interest[cw]][0] = 0
-								# 	check_none = 1
-								# # Performing the action
-								# cw_grade = (agents.belieftree[0][cw_of_interest[cw]][0] - agents.belieftree[1 + links.agent2.unique_id][cw_of_interest[cw]][0]) * \
-								# 	agents.resources[0] * resources_weight_action * links.aware * resources_potency
-								# # Adding the grade to the grade list
-								# total_grade_list.append(cw_grade)
-								# #  Reset to None after finding the grade
-								# if check_none == 1:
-								# 	agents.belieftree[1 + links.agent2.unique_id][cw_of_interest[cw]][0] = None
-
-							# Checking which agent in the link is the original agent
-							if links.agent2 == agents:
-
-								# Grade calculation using the likelihood method
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									cw_grade = links.conflict_level[1][cw_of_interest[cw]][0] * links.aware * actionWeight
-									total_grade_list.append(cw_grade)
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									cw_grade = links.conflict_level[1][cw_of_interest[cw]][0] * links.aware * actionWeight * affiliation_weights[0]
-									total_grade_list.append(cw_grade)
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									cw_grade = links.conflict_level[1][cw_of_interest[cw]][0] * links.aware * actionWeight * affiliation_weights[1]
-									total_grade_list.append(cw_grade)
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									cw_grade = links.conflict_level[1][cw_of_interest[cw]][0] * links.aware * actionWeight * affiliation_weights[2]
-									total_grade_list.append(cw_grade)	
-
-
-								# #  Check if no partial knowledge (initial value)
-								# check_none = 0
-								# if agents.belieftree[1 + links.agent1.unique_id][cw_of_interest[cw]][0] == None:
-								# 	agents.belieftree[1 + links.agent1.unique_id][cw_of_interest[cw]][0] = 0
-								# 	check_none = 1
-								# # Performing the action
-								# cw_grade = (agents.belieftree[0][cw_of_interest[cw]][0] - agents.belieftree[1 + links.agent1.unique_id][cw_of_interest[cw]][0]) * \
-								# 	agents.resources[0] * resources_weight_action * links.aware * resources_potency
-								# # Adding the grade to the grade list
-								# total_grade_list.append(cw_grade)
-								# # Reset to None after finding the grade
-								# if check_none == 1:
-								# 	agents.belieftree[1 + links.agent1.unique_id][cw_of_interest[cw]][0] = None
-
-					# If the agent is advocating or a policy, the following tasks are performed
-					if agents.select_issue_3S_pf == 'policy':
-						# 1.b. Grading all framing actions on policy impacts:
-						
-						# Checking through all possible framing - This is all based on partial knowledge!
-						for impact in range(impact_number):
-
-							# Checking which agent in the link is the original agent
-							if links.agent1 == agents:
-
-								# Need to calculate the conflict level per impact (to avoid having to create a whole new conflict level array in the links for the policies)
-								# Note that there is currently a need to check for None partial knowledge
-
-								check_none = 0
-								if agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] == None:
-									agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = 0
-									check_none = 1
- 
-								belief_diff = abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact])
-
-								if check_none == 1:
-									agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = None
-
-								if belief_diff <= 0.25:
-									conflict_level_impact = conflict_level_coef[0]
-								if belief_diff > 0.25 and belief_diff <= 1.75:
-									conflict_level_impact = conflict_level_coef[2]
-								if belief_diff > 1.75:
-									conflict_level_impact = conflict_level_coef[1]
-
-								# Grade calculation using the likelihood method
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									impact_grade = conflict_level_impact * links.aware * actionWeight
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
-									total_grade_list.append(impact_grade)	
-
-								# # Check if no partial knowledge (initial value)
-								# check_none = 0
-								# if agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] == None:
-								# 	agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = 0
-								# 	check_none = 1
-								# # Performing the action
-								# impact_grade = (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact]) * \
-								# 	agents.resources[0] * resources_weight_action * links.aware * resources_potency
-								# # Adding the grade to the grade list
-								# total_grade_list.append(impact_grade)
-								# #  Reset to None after finding the grade
-								# if check_none == 1:
-								# 	agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = None
-
-							# Checking which agent in the link is the original agent
-							if links.agent2 == agents:
-
-								# Need to calculate the conflict level per impact (to avoid having to create a whole new conflict level array in the links for the policies)
-								# Note that there is currently a need to check for None partial knowledge
-
-								check_none = 0
-								if agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] == None:
-									agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = 0
-									check_none = 1
- 
-								belief_diff = abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact])
-
-								if check_none == 1:
-									agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = None
-
-								if belief_diff <= 0.25:
-									conflict_level_impact = conflict_level_coef[0]
-								if belief_diff > 0.25 and belief_diff <= 1.75:
-									conflict_level_impact = conflict_level_coef[2]
-								if belief_diff > 1.75:
-									conflict_level_impact = conflict_level_coef[1]
-
-								# Grade calculation using the likelihood method
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									impact_grade = conflict_level_impact * links.aware * actionWeight
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
-									total_grade_list.append(impact_grade)
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
-									total_grade_list.append(impact_grade)	
-
-
-								# #  Check if no partial knowledge (initial value)
-								# check_none = 0
-								# if agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] == None:
-								# 	agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = 0
-								# 	check_none = 1
-								# impact_grade = (agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact]) * \
-								# 	agents.resources[0] * resources_weight_action * links.aware * resources_potency
-								# # Adding the grade to the grade list
-								# total_grade_list.append(impact_grade)
-								# # Reset to None after finding the grade
-								# if check_none == 1:
-								# 	agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] = None
-
-					# 2. Grading all individual actions - Aim change
-					if links.agent1 == agents:
-
-						# Grade calculation using the likelihood method
-						# Same affiliation
-						if links.agent1.affiliation == links.agent2.affiliation:
-							aim_grade_issue = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight
-							total_grade_list.append(aim_grade_issue)
-
-						# Affiliation 1-2
-						if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-							(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-							aim_grade_issue = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[0]
-							total_grade_list.append(aim_grade_issue)
-
-						# Affiliation 1-3
-						if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-							(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-							aim_grade_issue = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[1]
-							total_grade_list.append(aim_grade_issue)
-
-						# Affiliation 2-3
-						if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-							(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-							aim_grade_issue = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[2]
-							total_grade_list.append(aim_grade_issue)	
-
-
-						# # Check if no partial knowledge (initial value)
-						# check_none = 0
-						# if agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][1] == None:
-						# 	agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][1] = 0
-						# 	check_none = 1
-						# # Performing the action
-						# aim_grade_issue = (agents.belieftree[0][agents.select_problem_3S_pf][1] - agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][1]) * \
-						# 	agents.resources[0] * resources_weight_action * links.aware * links.conflict_level[0][agents.select_problem_3S_pf][1] * actionWeight * resources_potency
-						# #  Reset to None after finding the grade
-						# if check_none == 1:
-						# 	agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][1] = None
-						# # Adding the grade to the grade list
-						# total_grade_list.append(aim_grade_issue)
-
-					if links.agent2 == agents:
-
-						# Grade calculation using the likelihood method
-						# Same affiliation
-						if links.agent1.affiliation == links.agent2.affiliation:
-							aim_grade_issue = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight
-							total_grade_list.append(aim_grade_issue)
-
-						# Affiliation 1-2
-						if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-							(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-							aim_grade_issue = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[0]
-							total_grade_list.append(aim_grade_issue)
-
-						# Affiliation 1-3
-						if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-							(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-							aim_grade_issue = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[1]
-							total_grade_list.append(aim_grade_issue)
-
-						# Affiliation 2-3
-						if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-							(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-							aim_grade_issue = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[2]
-							total_grade_list.append(aim_grade_issue)
-
-
-						# # Check if no partial knowledge (initial value)
-						# check_none = 0
-						# if agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][1] == None:
-						# 	agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][1] = 0
-						# 	check_none = 1
-						# # Performing the action
-						# aim_grade_issue = (agents.belieftree[0][agents.select_problem_3S_pf][1] - agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][1]) * \
-						# 	agents.resources[0] * resources_weight_action * links.aware * links.conflict_level[1][agents.select_problem_3S_pf][1] * actionWeight * resources_potency
-						# #  Reset to None after finding the grade
-						# if check_none == 1:
-						# 	agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][1] = None
-						# # Adding the grade to the grade list
-						# total_grade_list.append(aim_grade_issue)
-
-					# 3. Grading all individual actions - State change
-					if links.agent1 == agents:
-
-						# Grade calculation using the likelihood method
-						# Same affiliation
-						if links.agent1.affiliation == links.agent2.affiliation:
-							state_grade_issue = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight
-							total_grade_list.append(state_grade_issue)
-
-						# Affiliation 1-2
-						if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-							(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-							state_grade_issue = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[0]
-							total_grade_list.append(state_grade_issue)
-
-						# Affiliation 1-3
-						if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-							(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-							state_grade_issue = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[1]
-							total_grade_list.append(state_grade_issue)
-
-						# Affiliation 2-3
-						if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-							(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-							state_grade_issue = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[2]
-							total_grade_list.append(state_grade_issue)
-
-						# # Check if no partial knowledge (initial value)
-						# check_none = 0
-						# if agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][0] == None:
-						# 	agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][0] = 0
-						# 	check_none = 1
-						# # Performing the action
-						# state_grade_issue = (agents.belieftree[0][agents.select_problem_3S_pf][0] - agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][0]) * \
-						# 	agents.resources[0] * resources_weight_action * links.aware * links.conflict_level[0][agents.select_problem_3S_pf][0] * actionWeight * resources_potency
-						# #  Reset to None after finding the grade
-						# if check_none == 1:
-						# 	agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][0] = None
-						# # Adding the grade to the grade list
-						# total_grade_list.append(state_grade_issue)
-
-					if links.agent2 == agents:
-
-						# Grade calculation using the likelihood method
-						# Same affiliation
-						if links.agent1.affiliation == links.agent2.affiliation:
-							state_grade_issue = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight
-							total_grade_list.append(state_grade_issue)
-
-						# Affiliation 1-2
-						if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-							(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-							state_grade_issue = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[0]
-							total_grade_list.append(state_grade_issue)
-
-						# Affiliation 1-3
-						if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-							(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-							state_grade_issue = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[1]
-							total_grade_list.append(state_grade_issue)
-
-						# Affiliation 2-3
-						if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-							(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-							state_grade_issue = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[2]
-							total_grade_list.append(state_grade_issue)
-
-
-						# # Check if no partial knowledge (initial value)
-						# check_none = 0
-						# if agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][0] == None:
-						# 	agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][0] = 0
-						# 	check_none = 1
-						# # Performing the action
-						# state_grade_issue = (agents.belieftree[0][agents.select_problem_3S_pf][0] - agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][0]) * \
-						# 	agents.resources[0] * resources_weight_action * links.aware * links.conflict_level[1][agents.select_problem_3S_pf][0] * actionWeight * resources_potency
-						# #  Reset to None after finding the grade
-						# if check_none == 1:
-						# 	agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][0] = None
-						# # Adding the grade to the grade list
-						# total_grade_list.append(state_grade_issue)
-
-					# print(' ')
-
-
-			# 4. Choosing an action
-
-			# If the agent is advocating or a problem, the following tasks are performed
-			if agents.select_issue_3S_as == 'problem':
-
-				best_action_index = total_grade_list.index(max(total_grade_list))
-				agent_best_action = int(best_action_index/(len(cw_of_interest) + 1 + 1))
-				best_action = best_action_index - (agent_best_action)*(len(cw_of_interest) + 1 + 1)
-
-				# print(' ')
-				# print('----- Considering new action grading (problem) -----')
-				# print('best_action_index: ' + str(best_action_index))
-				# print('Number of actions per agent: ' + str(len(cw_of_interest) + 1 + 1))
-				# print('Total number of agents being influenced: ' + str(len(total_grade_list_links)))
-				# print('Action to be performed: ' + str(best_action))
-				# print('Agent performing the action: ' + str(agent_best_action))
-
-			# If the agent is advocating or a policy, the following tasks are performed
-			if agents.select_issue_3S_as == 'policy':
-				
-				best_action_index = total_grade_list.index(max(total_grade_list))
-				agent_best_action = int(best_action_index/(impact_number + 1 + 1))
-				best_action = best_action_index - (agent_best_action)*(impact_number + 1 + 1)
-
-				# print(' ')
-				# print('----- Considering new action grading (policy) -----')
-				# print('best_action_index: ' + str(best_action_index))
-				# print('Number of actions per agent: ' + str(impact_number + 1 + 1))
-				# print('Total number of agents being influenced: ' + str(len(total_grade_list_links)))
-				# print('Action to be performed: ' + str(best_action))
-				# print('Agent performing the action: ' + str(agent_best_action))
-
-			# 5. Performing the actual action
-			# Selecting the link:
-			for links in link_list:
-
-				# If the agent is advocating or a problem, the following tasks are performed
-				if agents.select_issue_3S_pf == 'problem':
-
-					if (links.agent1 == agents and links.agent2.unique_id == agent_best_action) or (links.agent1.unique_id == agent_best_action and links.agent2 == agents):
-						# print(links)
-
-						# Updating the aware decay parameter
-						links.aware_decay = 5
-
-						# If the index is in the first part of the list, then the framing action is the best
-						if best_action <= len(cw_of_interest) - 1:
-							# print(' ')
-							# print('Performing a causal relation framing action')
-							# print('best_action: ' + str(best_action))
-							# print('cw_of_interest: ' + str(cw_of_interest))
-							# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
-							
-							# To simplify the notations
-							best_action = cw_of_interest[best_action]
-
-							if links.agent1 == agents:
-								
-								# print('Before: ' + str(links.agent2.belieftree[0][best_action][0]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent2.belieftree[0][best_action][0] += (agents.belieftree[0][best_action][0] - links.agent2.belieftree[0][best_action][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent2.belieftree[0][best_action][0] += (agents.belieftree[0][best_action][0] - links.agent2.belieftree[0][best_action][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent2.belieftree[0][best_action][0] += (agents.belieftree[0][best_action][0] - links.agent2.belieftree[0][best_action][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent2.belieftree[0][best_action][0] += (agents.belieftree[0][best_action][0] - links.agent2.belieftree[0][best_action][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-									
-								# print('After: ' + str(links.agent2.belieftree[0][best_action][0]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent2.belieftree[0][best_action][0] = self.one_minus_one_check(links.agent2.belieftree[0][best_action][0])
-								# Providing partial knowledge - Framing - 0.2 range from real value: (Acting agent)
-								agents.belieftree[1 + links.agent2.unique_id][best_action][0] = links.agent2.belieftree[0][best_action][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								agents.belieftree[1 + links.agent2.unique_id][best_action][0] = self.one_minus_one_check(agents.belieftree[1 + links.agent2.unique_id][best_action][0])
-								# Providing partial knowledge - Framing - 0.2 range from real value: (Acted upon agent)
-								links.agent2.belieftree[1 + agents.unique_id][best_action][0] = agents.belieftree[0][best_action][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent2.belieftree[1 + agents.unique_id][best_action][0] = self.one_minus_one_check(links.agent2.belieftree[1 + agents.unique_id][best_action][0])
-
-								# print(' ')
-								# print('Causal change')
-								# print(agents.belieftree[1 + links.agent2.unique_id])
-								# print(agents.belieftree[1 + links.agent2.unique_id][best_action][0])
-
-							# Checking which agent in the link is the original agent
-							if links.agent2 == agents:
-								# print('Before: ' + str(links.agent1.belieftree[0][best_action][0]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent1.belieftree[0][best_action][0] += (agents.belieftree[0][best_action][0] - links.agent1.belieftree[0][best_action][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent1.belieftree[0][best_action][0] += (agents.belieftree[0][best_action][0] - links.agent1.belieftree[0][best_action][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent1.belieftree[0][best_action][0] += (agents.belieftree[0][best_action][0] - links.agent1.belieftree[0][best_action][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent1.belieftree[0][best_action][0] += (agents.belieftree[0][best_action][0] - links.agent1.belieftree[0][best_action][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent1.belieftree[0][best_action][0]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent1.belieftree[0][best_action][0] = self.one_minus_one_check(links.agent1.belieftree[0][best_action][0])
-								# Providing partial knowledge - Framing - 0.2 range from real value: (Acting agent)
-								agents.belieftree[1 + links.agent1.unique_id][best_action][0] = links.agent1.belieftree[0][best_action][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								agents.belieftree[1 + links.agent1.unique_id][best_action][0] = self.one_minus_one_check(agents.belieftree[1 + links.agent1.unique_id][best_action][0])
-								# Providing partial knowledge - Framing - 0.2 range from real value: (Acted upon agent)
-								links.agent1.belieftree[1 + agents.unique_id][best_action][0] = agents.belieftree[0][best_action][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent1.belieftree[1 + agents.unique_id][best_action][0] = self.one_minus_one_check(links.agent1.belieftree[1 + agents.unique_id][best_action][0])
-
-								# print(' ')
-								# print('Causal change')
-								# print(agents.belieftree[1 + links.agent1.unique_id])
-								# print(agents.belieftree[1 + links.agent1.unique_id][best_action][0])
-
-						# If the index is in the second part of the list, then the aim influence action is the best
-						if best_action == len(cw_of_interest):
-							# print(' ')
-							# print('Performing a state change action')
-							# print('best_action: ' + str(best_action))
-
-							if links.agent1 == agents:
-								# print('Before: ' + str(links.agent2.belieftree[0][agents.select_problem_3S_pf][1]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent2.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent2.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent2.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent2.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent2.belieftree[0][agents.select_problem_3S_pf][1]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent2.belieftree[0][agents.select_problem_3S_pf][1] = self.one_minus_one_check(links.agent2.belieftree[0][agents.select_problem_3S_pf][1])
-								# Providing partial knowledge - Aim problem - 0.2 range from real value: (Acting agent)
-								agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][1] = links.agent2.belieftree[0][agents.select_problem_3S_pf][1]
-								# 1-1 check
-								agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][1] = self.one_minus_one_check(agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][1])
-								# Providing partial knowledge - Aim problem - 0.2 range from real value: (Acted upon agent)
-								links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = self.one_minus_one_check(links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1])
-
-								# print(' ')
-								# print('Aim change')
-								# print(agents.belieftree[1 + links.agent2.unique_id])
-
-							if links.agent2 == agents:
-								# print('Before: ' + str(links.agent1.belieftree[0][agents.select_problem_3S_pf][1]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent1.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent1.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent1.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent1.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent1.belieftree[0][agents.select_problem_3S_pf][1]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent1.belieftree[0][agents.select_problem_3S_pf][1] = self.one_minus_one_check(links.agent1.belieftree[0][agents.select_problem_3S_pf][1])
-								# Providing partial knowledge - Aim problem - 0.2 range from real value: (Acting agent)
-								agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][1] = links.agent2.belieftree[0][agents.select_problem_3S_pf][1]
-								# 1-1 check
-								agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][1] = self.one_minus_one_check(agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][1])
-								# Providing partial knowledge - Aim problem - 0.2 range from real value: (Acted upon agent)
-								links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = self.one_minus_one_check(links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1])
-
-
-						# If the index is in the first part of the list, then the state influence action is the best
-						if best_action == len(cw_of_interest) + 1:
-							# print(' ')
-							# print('Performing an aim change action')
-							# print('best_action: ' + str(best_action))
-
-							if links.agent1 == agents:
-								# print('Before: ' + str(links.agent2.belieftree[0][len(self.deep_core) + agents.select_problem][0]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent2.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent2.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent2.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent2.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent2.belieftree[0][len(self.deep_core) + agents.select_problem][0]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent2.belieftree[0][agents.select_problem_3S_pf][0] = self.one_minus_one_check(links.agent2.belieftree[0][agents.select_problem_3S_pf][0])
-								# Providing partial knowledge - State problem - 0.2 range from real value: (Acting agent)
-								agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][0] = links.agent2.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][0] = self.one_minus_one_check(agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][0])
-								# Providing partial knowledge - State problem - 0.2 range from real value: (Acted upon agent)
-								links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = self.one_minus_one_check(links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0])
-
-								# print(' ')
-								# print('State change')
-								# print(agents.belieftree[1 + links.agent2.unique_id])
-
-							if links.agent2 == agents:
-								# print('Before: ' + str(links.agent1.belieftree[0][len(self.deep_core) + agents.select_problem][0]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent1.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent1.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent1.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent1.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent1.belieftree[0][len(self.deep_core) + agents.select_problem][0]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent1.belieftree[0][agents.select_problem_3S_pf][0] = self.one_minus_one_check(links.agent1.belieftree[0][agents.select_problem_3S_pf][0])
-								# Providing partial knowledge - State problem - 0.2 range from real value: (Acting agent)
-								agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][0] = links.agent1.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][0] = self.one_minus_one_check(agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][0])
-								# Providing partial knowledge - State problem - 0.2 range from real value: (Acted upon agent)
-								links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = self.one_minus_one_check(links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0])
-
-								# print(' ')
-								# print('State change')
-								# print(agents.belieftree[1 + links.agent1.unique_id])
-
-				# If the agent is advocating or a policy, the following tasks are performed
-				if agents.select_issue_3S_pf == 'policy':
-					
-					if (links.agent1 == agents and links.agent2.unique_id == agent_best_action) or (links.agent1.unique_id == agent_best_action and links.agent2 == agents):
-						# print(links)
-
-						# Updating the aware decay parameter
-						links.aware_decay = 5
-
-						# If the index is in the first part of the list, then the framing action is the best
-						if best_action <= impact_number - 1:
-							# print(' ')
-							# print('Performing a causal relation framing action')
-							# print('best_action: ' + str(best_action))
-							# print('impact_number: ' + str(impact_number))
-
-							if links.agent1 == agents:
-								
-								# print('Before: ' + str(links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-										(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-										(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-										(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-										(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] = self.one_minus_one_check(links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action])
-								# Providing partial knowledge - Framing - 0.2 range from real value: (Acting agent)
-								agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][best_action] = links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] + (random.random()/5) - 0.1
-								# 1-1 check
-								agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][best_action] = \
-									self.one_minus_one_check(agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][best_action])
-								# Providing partial knowledge - Framing - 0.2 range from real value: (Acted upon agent)
-								links.agent2.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][best_action] = agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent2.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][best_action] = \
-									self.one_minus_one_check(links.agent2.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][best_action])
-
-								# print(' ')
-								# print('Causal change')
-								# print(agents.belieftree_instrument[1 + links.agent2.unique_id])
-								# print(agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][best_action])
-
-							# Checking which agent in the link is the original agent
-							if links.agent2 == agents:
-
-								# print('Before: ' + str(links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-										(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-										(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-										(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-										(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] = self.one_minus_one_check(links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action])
-								# Providing partial knowledge - Framing - 0.2 range from real value: (Acting agent)
-								agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][best_action] = links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] + (random.random()/5) - 0.1
-								# 1-1 check
-								agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][best_action] = \
-									self.one_minus_one_check(agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][best_action])
-								# Providing partial knowledge - Framing - 0.2 range from real value: (Acted upon agent)
-								links.agent1.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][best_action] = agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent1.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][best_action] = \
-									self.one_minus_one_check(links.agent1.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][best_action])
-
-								# print(' ')
-								# print('Causal change')
-								# print(agents.belieftree_instrument[1 + links.agent1.unique_id])
-								# print(agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][best_action])
-
-						# If the index is in the second part of the list, then the aim influence action is the best
-						if best_action == impact_number:
-							# print(' ')
-							# print('Performing a state change action')
-							# print('best_action: ' + str(best_action))
-
-							if links.agent1 == agents:
-								# print('Before: ' + str(links.agent2.belieftree[0][agents.select_problem_3S_pf][1]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent2.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent2.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent2.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent2.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent2.belieftree[0][agents.select_problem_3S_pf][1]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent2.belieftree[0][agents.select_problem_3S_pf][1] = self.one_minus_one_check(links.agent2.belieftree[0][agents.select_problem_3S_pf][1])
-								# Providing partial knowledge - Aim problem - 0.2 range from real value: (Acting agent)
-								agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][1] = links.agent2.belieftree[0][agents.select_problem_3S_pf][1]
-								# 1-1 check
-								agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][1] = \
-									self.one_minus_one_check(agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][1])
-								# Providing partial knowledge - Aim problem - 0.2 range from real value: (Acted upon agent)
-								links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = \
-									self.one_minus_one_check(links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1])
-
-								# print(' ')
-								# print('Aim change')
-								# print(agents.belieftree[1 + links.agent2.unique_id])
-
-							if links.agent2 == agents:
-
-								# print('Before: ' + str(links.agent1.belieftree[0][agents.select_problem_3S_pf][1]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent1.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent1.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent1.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - links.agent1.belieftree[0][agents.select_problem_3S_pf][1]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent1.belieftree[0][agents.select_problem_3S_pf][1]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent1.belieftree[0][agents.select_problem_3S_pf][1] = self.one_minus_one_check(links.agent1.belieftree[0][agents.select_problem_3S_pf][1])
-								# Providing partial knowledge - Aim problem - 0.2 range from real value: (Acting agent)
-								agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][1] = links.agent2.belieftree[0][agents.select_problem_3S_pf][1]
-								# 1-1 check
-								agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][1] = \
-									self.one_minus_one_check(agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][1])
-								# Providing partial knowledge - Aim problem - 0.2 range from real value: (Acted upon agent)
-								links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = \
-									self.one_minus_one_check(links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1])
-
-
-						# If the index is in the first part of the list, then the state influence action is the best
-						if best_action == impact_number + 1:
-							# print(' ')
-							# print('Performing an aim change action')
-							# print('best_action: ' + str(best_action))
-
-							if links.agent1 == agents:
-								# print('Before: ' + str(links.agent2.belieftree[0][len(self.deep_core) + agents.select_problem][0]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent2.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent2.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent2.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent2.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent2.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent2.belieftree[0][len(self.deep_core) + agents.select_problem][0]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent2.belieftree[0][agents.select_problem_3S_pf][0] = self.one_minus_one_check(links.agent2.belieftree[0][agents.select_problem_3S_pf][0])
-								# Providing partial knowledge - State problem - 0.2 range from real value: (Acting agent)
-								agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][0] = links.agent2.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][0] = \
-									self.one_minus_one_check(agents.belieftree[1 + links.agent2.unique_id][agents.select_problem_3S_pf][0])
-								# Providing partial knowledge - State problem - 0.2 range from real value: (Acted upon agent)
-								links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = \
-									self.one_minus_one_check(links.agent2.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0])
-
-								# print(' ')
-								# print('State change')
-								# print(agents.belieftree[1 + links.agent2.unique_id])
-
-							if links.agent2 == agents:
-								# print('Before: ' + str(links.agent1.belieftree[0][len(self.deep_core) + agents.select_problem][0]))
-
-								# Same affiliation
-								if links.agent1.affiliation == links.agent2.affiliation:
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent1.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency
-
-								# Affiliation 1-2
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or \
-									(links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent1.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[0]
-
-								# Affiliation 1-3
-								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent1.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[1]
-
-								# Affiliation 2-3
-								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or \
-									(links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-									links.agent1.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - links.agent1.belieftree[0][agents.select_problem_3S_pf][0]) * \
-										agents.resources[0] * resources_weight_action * resources_potency * affiliation_weights[2]
-
-								# print('After: ' + str(links.agent1.belieftree[0][len(self.deep_core) + agents.select_problem][0]))
-								
-								# Checks and transfer of partial knowledge
-								# 1-1 check
-								links.agent1.belieftree[0][agents.select_problem_3S_pf][0] = self.one_minus_one_check(links.agent1.belieftree[0][agents.select_problem_3S_pf][0])
-								# Providing partial knowledge - State problem - 0.2 range from real value: (Acting agent)
-								agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][0] = links.agent1.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][0] = \
-									self.one_minus_one_check(agents.belieftree[1 + links.agent1.unique_id][agents.select_problem_3S_pf][0])
-								# Providing partial knowledge - State problem - 0.2 range from real value: (Acted upon agent)
-								links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/5) - 0.1
-								# 1-1 check
-								links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = \
-									self.one_minus_one_check(links.agent1.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0])
-
-								# print(' ')
-								# print('State change')
-								# print(agents.belieftree[1 + links.agent1.unique_id])
-
-
-
-			# agents.resources_actions -= agents.resources
-			agents.resources_actions -= agents.resources[0] * resources_weight_action
-
-	def preference_udapte_as_PC(self, agent, who, len_DC, len_PC, len_S):
-
-		"""
-		The preference update for policy cores function (agenda setting)
-		===========================
-
-		This function is used to update the policy core preferences. It is only used for the
-		old way of calculating the grade actions.
-	
-		Note: This function will ultimately be removed once all grading actions have been
-		modified.
-
-		"""
-
-		# Preference calculation for the policy core issues
-		PC_denominator = 0
-		# Select one by one the DC
-		for j in range(len_PC):
-			PC_denominator = 0
-			# Selecting the causal relations starting from DC
-			for k in range(len_DC):
-				# Contingency for partial knowledge issues
-				if agent.belieftree[who][k][1] == None or agent.belieftree[who][k][0] == None or agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] == None:
-					PC_denominator = 0
-				else:
-					# Check if causal relation and gap are both positive of both negative
-					if (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
-					  or (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
-						PC_denominator = PC_denominator + abs(agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0]*\
-						  (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]))
-					else:
-						PC_denominator = PC_denominator	
-		# Then adding the gap of the policy core:
-		for i in range(len_PC):
-			# Contingency for partial knowledge issues
-			if agent.belieftree[who][len_DC + i][1] == None or agent.belieftree[who][len_DC + i][0] == None:
-				PC_denominator = PC_denominator
-			else:
-				PC_denominator = PC_denominator + abs(agent.belieftree[who][len_DC + i][1] - agent.belieftree[who][len_DC + i][0])
-		
-		# Calculating the numerator and the preference of all policy core issues:
-		# Select one by one the DC
-		for j in range(len_PC):
-			PC_numerator = 0
-			# Selecting the causal relations starting from DC
-			for k in range(len_DC):
-				# Contingency for partial knowledge issues
-				if agent.belieftree[who][k][1] == None or agent.belieftree[who][k][0] == None or agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] == None: 
-					PC_numerator = 0
-				else:
-					# Check if causal relation and gap are both positive of both negative
-					if (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
-					  or (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
-						PC_numerator = PC_numerator + abs(agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0]*\
-						  (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]))
-					else:
-						PC_numerator = PC_numerator	
-			# Contingency for partial knowledge issues
-			if agent.belieftree[who][len_DC + j][1] == None or agent.belieftree[who][len_DC + j][0] == None:
-				PC_numerator = 0
-			else:
-				# Then adding the gap of the policy core:
-				PC_numerator = PC_numerator + abs(agent.belieftree[who][len_DC + j][1] - agent.belieftree[who][len_DC + j][0])
-			if PC_denominator != 0:
-				agent.belieftree[who][len_DC+j][2] = PC_numerator/PC_denominator 
-			else:
-				agent.belieftree[who][len_DC+j][2] = 0
-
-	def preference_udapte_pf_PC(self, agent, who, len_DC, len_PC, len_S, agenda_prob_3S_as):
-
-		"""
-		The preference update for policy cores function (policy formulation)
-		===========================
-
-		This function is used to update the policy core preferences. It is only used for the
-		old way of calculating the grade actions.
-	
-		Note: This function will ultimately be removed once all grading actions have been
-		modified.
-
-		"""
-
-		k = agenda_prob_3S_as
-
-		# Calculating the numerator and the preference of all policy core issues:
-		# Select one by one the DC
-		S_denominator = 0
-		for j in range(len_S):
-			# print('Selection S' + str(j+1))
-			# print('State of the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + j][0])) # the state printed
-			# Selecting the causal relations starting from PC
-			# print(' ')
-			# print(len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC))
-			# Contingency for partial knowledge issues
-			if agent.belieftree[0][k][1] != None and agent.belieftree[0][k][0] != None and agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] != None:
-				# print('Causal Relation S' + str(j+1) + ' - PC' + str(k+1) + ': ' + str(agent.belieftree[0][len_DC+len_PC+len_S+(j+(k*len_PC))][0]))
-				# print('Gap of PC' + str(k+1) + ': ' + str(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
-				# Check if causal relation and gap are both positive of both negative
-				if (agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] < 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) < 0) \
-					or (agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] > 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) > 0):
-					# print('Calculating')
-					S_denominator = S_denominator + abs(agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] * \
-						(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
-					# print('This is the PC numerator: ' + str(S_denominator))
-				else:
-					S_denominator = S_denominator
-			else:
-				S_denominator = 0
-			# Contingency for partial knowledge issues
-			if agent.belieftree[0][len_DC + len_PC + j][1] == None or agent.belieftree[0][len_DC + len_PC + j][0] == None:
-				S_denominator = S_denominator
-			else:
-				# Then adding the gap of the policy core:
-				# print('This is the gap for the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + len_PC + j][1] - agent.belieftree[0][len_DC + len_PC + j][0]))
-				S_denominator = S_denominator + abs(agent.belieftree[0][len_DC + len_PC + j][1] - agent.belieftree[0][len_DC + len_PC + j][0])
-
-
-		# Calculating the numerator and the preference of all policy core issues:
-		# Select one by one the DC
-		for j in range(len_S):
-			S_numerator = 0
-			# Contingency for partial knowledge issues
-			if agent.belieftree[0][k][1] != None and agent.belieftree[0][k][0] != None and agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] != None:
-				# Check if causal relation and gap are both positive of both negative
-				if (agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] < 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) < 0) \
-					or (agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] > 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) > 0):
-					# print('Calculating')
-					S_numerator = S_numerator + abs(agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] * \
-						(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
-					# print('This is the PC numerator: ' + str(S_numerator))
-				else:
-					S_numerator = S_numerator
-			else:
-				S_numerator = 0
-			# Contingency for partial knowledge issues
-			if agent.belieftree[0][len_DC + len_PC + j][1] == None or agent.belieftree[0][len_DC + len_PC + j][0] == None:
-				S_numerator = 0
-			else:
-				# Then adding the gap of the policy core:
-				S_numerator = S_numerator + abs(agent.belieftree[0][len_DC + len_PC + j][1] - agent.belieftree[0][len_DC + len_PC + j][0])
-			if S_denominator != 0:
-				agent.belieftree[who][len_DC + len_PC + j][2] = S_numerator/S_denominator 
-			else:
-				agent.belieftree[who][len_DC + len_PC + j][2] = 0
-
-	def instrument_preference_update(self, agent, who, AS_theory, len_DC, len_PC, len_S, instruments):
-
-		"""
-		Instrument preference update function
-		===========================
-
-		This function is used to calculate the ranking of each of the instrument from 
-		which the agents can choose from. This is done in two parts.
-
-		1/ The first part consists of calculating the preference level for the different
-		secondary issues (layer 3 in the belief tree). In this part, the preferences of
-		the agents are updated similarly to the function where the preferences are calculated.
-		The main difference is that this time, it is based on the agenda which means that
-		only the secondary issues affecting the problem on the agenda are considered.
-
-		2/ The second part consists of obtaining the grade for the policy instruments.
-		This is calculated as shown in the formalisation with the equation given by:
-		G = sum(impact * (Aim - State) * Preference_secondary)
-		We make sure that the instruments impact are only taken into account if the
-		impact is of the same sign as the gap between the state and the aim for the
-		specific secondary issues. If this is not the case, the impact is not considered
-		for that specific part of the instrument.
-
-		Notes:
-		1/ The secondary issues for which the agent is not interested (this applies to 
-		the external parties only) are not taken into account in the calculation. They
-		are marked as the 'No' values.
-
-		This function will ultimately be removed when all of the grading actions will be
-		modified.
-
-		"""
-
-		######################################################################################################
-		# 1/ Calculation of the preference level for the secondary issues based on the problem on the agenda #
-		######################################################################################################
-
-		S_denominator = 0
-		if AS_theory != 2:
-			j = agent.select_as_issue
-		if AS_theory == 2:
-			j = agent.select_problem_3S_as
-		for k in range(len_S):
-			if agent.belieftree[who][j][1] != None and agent.belieftree[who][j][0] != None and agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0] != None:
-				if (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0] < 0 and (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]) < 0) \
-					or (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0] > 0 and (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]) > 0):
-					S_denominator = S_denominator + abs(agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0]*\
-					  (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]))
-				else:
-					S_denominator = S_denominator
-			else:
-				S_denominator = S_denominator
-
-		for i in range(len_S):
-			if agent.belieftree[who][len_DC + len_PC + i][0] != 'No':
-				if agent.belieftree[who][len_DC + len_PC + i][1] != None and agent.belieftree[who][len_DC + len_PC + i][0] != None:
-					S_denominator = S_denominator + abs(agent.belieftree[who][len_DC + len_PC + i][1] - agent.belieftree[who][len_DC + len_PC + i][0])
-				else:
-					S_denominator = 0
-
-		S_numerator = 0
-		
-		for j in range(len_S):
-			S_numerator = 0
-			if AS_theory != 2:
-				k = agent.select_as_issue
-			if AS_theory == 2:
-				k = agent.select_problem_3S_as
-			if agent.belieftree[who][k][1] != None and agent.belieftree[who][k][0] != None and agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0] != None:
-				if (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
-					or (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
-					S_numerator = S_numerator + abs(agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0]*\
-						  (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]))
-				else:
-					S_numerator = S_numerator
-			else:
-				S_numerator = S_numerator
-			if agent.belieftree[who][len_DC + len_PC + j][0] != 'No':
-				if agent.belieftree[who][len_DC + len_PC + j][1] != None and agent.belieftree[who][len_DC + len_PC + j][0] != None:
-					S_numerator = S_numerator + abs(agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0])
-				else:
-					S_numerator = 0
-			if S_denominator != 0:
-				agent.belieftree[who][len_DC+len_PC+j][2] = S_numerator/S_denominator 
-			else:
-				agent.belieftree[who][len_DC+len_PC+j][2] = 0
-
-		##################################################################################################
-		# 2/ Calculation of the grade of each of the instruments based on impact on the secondary issues #
-		##################################################################################################
-
-		agent.instrument_preferences[who] = [0 for h in range(len(instruments))]
-		for i in range(len(instruments)):
-			for j in range(len_S):
-				if agent.belieftree[who][len_DC + len_PC + j][0] != 'No':
-					if agent.belieftree[who][len_DC + len_PC + j][1] != None and agent.belieftree[who][len_DC + len_PC + j][0] != None:
-						if (instruments[i][j] > 0 and (agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0]) > 0 ) \
-							or (instruments[i][j] < 0 and (agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0]) < 0 ):
-							# print(' ')
-							# print('agent.instrument_preferences[who][i]: ' + str(agent.instrument_preferences[who][i]))
-							# print('instruments[i][j]: ' + str(instruments[i][j]))
-							# print('agent.belieftree[' + str(who) + '][len_DC + len_PC + ' + str(j) + '][1]: ' + str(agent.belieftree[who][len_DC + len_PC + j][1]))
-							# print('agent.belieftree[' + str(who) + '][len_DC + len_PC + ' + str(j) + '][0]: ' + str(agent.belieftree[who][len_DC + len_PC + j][0]))
-							# print('agent.belieftree[' + str(who) + '][len_DC + len_PC + ' + str(j) + '][2]: ' + str(agent.belieftree[who][len_DC + len_PC + j][2]))
-							agent.instrument_preferences[who][i] = agent.instrument_preferences[who][i] + \
-								(instruments[i][j] * (agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0]) * \
-								(agent.belieftree[who][len_DC + len_PC + j][2]))
-							# print('agent.instrument_preferences[who][i]: ' + str(agent.instrument_preferences[who][i]))
-					else:
-						agent.instrument_preferences[who][i] = 0
-
-	def one_minus_one_check(self, to_be_checked_parameter):
-
-		"""
-		One minus one check function
-		===========================
-
-		This function checks that a certain values does not got over one
-		and does not go below one due to the randomisation.
-		
-		"""
-
-		checked_parameter = 0
-		if to_be_checked_parameter > 1:
-			checked_parameter = 1
-		elif to_be_checked_parameter < -1:
-			checked_parameter = -1
-		else:
-			checked_parameter = to_be_checked_parameter
-		return checked_parameter
 
 class Truth(Agent):
 
@@ -6537,7 +4966,7 @@ class Externalparties(Agent):
 			agents.resources_actions_EInfluence -= agents.resources[0] * 0.1
 
 	def external_parties_actions_as_3S(self, agents, agent_action_list, causalrelation_number, \
-		affiliation_weights, deep_core, policy_core, secondary, electorate_number, action_agent_number, master_list, link_list, conflict_level_coef):
+		affiliation_weights, deep_core, policy_core, secondary, electorate_number, action_agent_number, master_list, link_list, conflict_level_coef, resources_weight_action, resources_potency):
 
 		"""
 		The external parties actions function - three streams (agenda setting)
@@ -6568,9 +4997,6 @@ class Externalparties(Agent):
 		# 1. Blanket framing, grading of actions and implementation of the best actions until resources run out 
 		# 100% of the resources (from actions)
 
-		# This will need to be adjusted at a later point
-		actionWeight = 1
-
 		cw_of_interest = []
 		# We only consider the causal relations related to the problem on the agenda
 		for cw_choice in range(len(deep_core)):
@@ -6594,58 +5020,12 @@ class Externalparties(Agent):
 					for agent_inspected in agent_action_list:
 						# Going through all of the links
 						for links in link_list:
-							# Check that the list has an awareness level
-							if links.aware != -1:
-								# Check that only the link of interest is selected
-								if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-									# Make sure to look at the right direction of the conflict level
-									if links.agent1 == agents:
-										
-										# Grade calculation using the likelihood method
-										# Same affiliation
-										if links.agent1.affiliation == links.agent2.affiliation:
-											cw_grade = links.conflict_level[0][cw][0] * links.aware * actionWeight
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+								# Make sure to look at the right direction of the conflict level
 
-										# Affiliation 1-2
-										if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-											cw_grade = links.conflict_level[0][cw][0] * links.aware * actionWeight * affiliation_weights[0]
-
-										# Affiliation 1-3
-										if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-											cw_grade = links.conflict_level[0][cw][0] * links.aware * actionWeight * affiliation_weights[1]
-
-										# Affiliation 2-3
-										if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-											cw_grade = links.conflict_level[0][cw][0] * links.aware * actionWeight * affiliation_weights[2]
-
-										cw_grade_list.append(cw_grade)
-
-									if links.agent2 == agents:
-										
-										# Grade calculation using the likelihood method
-										# Same affiliation
-										if links.agent1.affiliation == links.agent2.affiliation:
-											cw_grade = links.conflict_level[1][cw][0] * links.aware * actionWeight
-
-										# Affiliation 1-2
-										if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-											cw_grade = links.conflict_level[1][cw][0] * links.aware * actionWeight * affiliation_weights[0]
-
-										# Affiliation 1-3
-										if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-											cw_grade = links.conflict_level[1][cw][0] * links.aware * actionWeight * affiliation_weights[1]
-
-										# Affiliation 2-3
-										if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-											cw_grade = links.conflict_level[1][cw][0] * links.aware * actionWeight * affiliation_weights[2]
-										
-										cw_grade_list.append(cw_grade)
-
-							# If the link has a negative awareness, set the grade of the action to 0
-							else:
-								# Check that only the link of interest is selected
-								if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-									cw_grade_list.append(0)
+								cw_grade = self.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
+								cw_grade_list.append(cw_grade)
 
 					total_agent_grades.append(sum(cw_grade_list))
 
@@ -6654,59 +5034,11 @@ class Externalparties(Agent):
 				# Going through all active agents
 				for agent_inspected in agent_action_list:
 					for links in link_list:
-						# Check that the list has an awareness level
-						if links.aware != -1:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								# Make sure to look at the right direction of the conflict level
-								if links.agent1 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										state_grade = links.conflict_level[0][agents.select_problem_3S_as][0] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[2]
-
-									state_grade_list.append(state_grade)
-
-								if links.agent2 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										state_grade = links.conflict_level[1][agents.select_problem_3S_as][0] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[2]
-								
-									state_grade_list.append(state_grade)
-
-						# If the link has a negative awareness, set the grade of the action to 0
-						else:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-								state_grade_list.append(0)
+							state_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 0, agents, affiliation_weights)
+							state_grade_list.append(state_grade)
 
 				total_agent_grades.append(sum(state_grade_list))
 
@@ -6715,59 +5047,11 @@ class Externalparties(Agent):
 				# Going through all active agents
 				for agent_inspected in agent_action_list:
 					for links in link_list:
-						# Check that the list has an awareness level
-						if links.aware != -1:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware> 0:
 
-								# Make sure to look at the right direction of the conflict level
-								if links.agent1 == agents:
-
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_as][1] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[2]
-
-									aim_grade_list.append(aim_grade)
-
-								if links.agent2 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_as][1] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[2]
-								
-									aim_grade_list.append(aim_grade)
-
-						# If the link has a negative awareness, set the grade of the action to 0
-						else:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-								aim_grade_list.append(0)
+							aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
+							aim_grade_list.append(aim_grade)
 
 				total_agent_grades.append(sum(aim_grade_list))
 
@@ -6783,133 +5067,43 @@ class Externalparties(Agent):
 				if best_action < len(cw_of_interest):
 					# Going through all active agents
 					for agent_inspected in agent_action_list:
-						# Making sure that the agent does not count itself
-						if agents != agent_inspected:
+						# Going through all of the links
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+								# Make sure to look at the right direction of the conflict levels
 
-							# print(' ')
-							# print('Before: ', agent_inspected.belieftree[0][cw_of_interest[best_action]][0])
+								links.aware_decay = 5
 
-							# Same affiliation
-							if agents.affiliation == agent_inspected.affiliation:
-								agent_inspected.belieftree[0][cw_of_interest[best_action]][0] += (agents.belieftree[0][cw_of_interest[best_action]][0] - agent_inspected.belieftree[0][cw_of_interest[best_action]][0]) * \
-									agents.resources[0] * 0.1 / action_agent_number
-							
-							# Affiliation 1 and 2
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 1) or (agents.affiliation == 1 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][cw_of_interest[best_action]][0] += (agents.belieftree[0][cw_of_interest[best_action]][0] - agent_inspected.belieftree[0][cw_of_interest[best_action]][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[0] / action_agent_number
-							
-							# Affiliation 1 and 3
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][cw_of_interest[best_action]][0] += (agents.belieftree[0][cw_of_interest[best_action]][0] - agent_inspected.belieftree[0][cw_of_interest[best_action]][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[1] / action_agent_number
-							
-							# Affiliation 2 and 3
-							if (agents.affiliation == 1 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 1):
-								agent_inspected.belieftree[0][cw_of_interest[best_action]][0] += (agents.belieftree[0][cw_of_interest[best_action]][0] - agent_inspected.belieftree[0][cw_of_interest[best_action]][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[2] / action_agent_number
-
-							# print('After ', agent_inspected.belieftree[0][cw_of_interest[best_action]][0])
-
-							# Checks and transfer of partial knowledge
-							# 1-1 check
-							agent_inspected.belieftree[0][cw_of_interest[best_action]][0] = self.one_minus_one_check(agent_inspected.belieftree[0][cw_of_interest[best_action]][0])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acting agent)
-							agents.belieftree[1 + agent_inspected.unique_id][cw_of_interest[best_action]][0] = agent_inspected.belieftree[0][cw_of_interest[best_action]][0] + (random.random()/2) - 0.25
-							# 1-1 check
-							agents.belieftree[1 + agent_inspected.unique_id][cw_of_interest[best_action]][0] = self.one_minus_one_check(agents.belieftree[1 + agent_inspected.unique_id][cw_of_interest[best_action]][0])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acted upon agent)
-							agent_inspected.belieftree[1 + agents.unique_id][cw_of_interest[best_action]][0] = agents.belieftree[0][cw_of_interest[best_action]][0] + (random.random()/2) - 0.25
-							# 1-1 check
-							agent_inspected.belieftree[1 + agents.unique_id][cw_of_interest[best_action]][0] =self.one_minus_one_check(agent_inspected.belieftree[1 + agents.unique_id][cw_of_interest[best_action]][0])
+								implemented_action = self.action_implementor(links, cw_of_interest[best_action], 0, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
 				# Implementation of a state influence blanket action
 				if best_action == len(cw_of_interest):
 					# Going through all active agents
 					for agent_inspected in agent_action_list:
-						# Making sure that the agent does not count itself
-						if agents != agent_inspected:
+						# Going through all of the links
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+								# Make sure to look at the right direction of the conflict levels
 
-							# print(' ')
-							# print('Before: ', agent_inspected.belieftree[0][agents.select_problem_3S_as][0])
+								links.aware_decay = 5
 
-							# Same affiliation
-							if agents.affiliation == agent_inspected.affiliation:
-								agent_inspected.belieftree[0][agents.select_problem_3S_as][0] += (agents.belieftree[0][agents.select_problem_3S_as][0] - agent_inspected.belieftree[0][agents.select_problem_3S_as][0]) * \
-									agents.resources[0] * 0.1 / action_agent_number
-							
-							# Affiliation 1 and 2
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 1) or (agents.affiliation == 1 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_as][0] += (agents.belieftree[0][agents.select_problem_3S_as][0] - agent_inspected.belieftree[0][agents.select_problem_3S_as][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[0] / action_agent_number
-							
-							# Affiliation 1 and 3
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_as][0] += (agents.belieftree[0][agents.select_problem_3S_as][0] - agent_inspected.belieftree[0][agents.select_problem_3S_as][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[1] / action_agent_number
-							
-							# Affiliation 2 and 3
-							if (agents.affiliation == 1 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 1):
-								agent_inspected.belieftree[0][agents.select_problem_3S_as][0] += (agents.belieftree[0][agents.select_problem_3S_as][0] - agent_inspected.belieftree[0][agents.select_problem_3S_as][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[2] / action_agent_number
-
-							# print('After: ', agent_inspected.belieftree[0][agents.select_problem_3S_as][0])
-
-							# Checks and transfer of partial knowledge
-							# 1-1 check
-							agent_inspected.belieftree[0][agents.select_problem_3S_as][0] = self.one_minus_one_check(agent_inspected.belieftree[0][agents.select_problem_3S_as][0])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acting agent)
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_as][0] = agent_inspected.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
-							# 1-1 check
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_as][0] = self.one_minus_one_check(agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_as][0])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acted upon agent)
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_as][0] = agents.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
-							# 1-1 check
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_as][0] = self.one_minus_one_check(agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_as][0])
+								implemented_action = self.action_implementor(links, agents.select_problem_3S_as, 0, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
 				# Implementation of a state influence blanket action
 				if best_action == len(cw_of_interest) + 1:
 					# Going through all active agents
 					for agent_inspected in agent_action_list:
-						# Making sure that the agent does not count itself
-						if agents != agent_inspected:
+						# Going through all of the links
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+								# Make sure to look at the right direction of the conflict levels
 
-							# print(' ')
-							# print('Before: ', agent_inspected.belieftree[0][agents.select_problem_3S_as][1])
+								links.aware_decay = 5
 
-							# Same affiliation
-							if agents.affiliation == agent_inspected.affiliation:
-								agent_inspected.belieftree[0][agents.select_problem_3S_as][1] += (agents.belieftree[0][agents.select_problem_3S_as][1] - agent_inspected.belieftree[0][agents.select_problem_3S_as][1]) * \
-									agents.resources[0] * 0.1 / action_agent_number
-							
-							# Affiliation 1 and 2
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 1) or (agents.affiliation == 1 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_as][1] += (agents.belieftree[0][agents.select_problem_3S_as][1] - agent_inspected.belieftree[0][agents.select_problem_3S_as][1]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[0] / action_agent_number
-							
-							# Affiliation 1 and 3
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_as][1] += (agents.belieftree[0][agents.select_problem_3S_as][1] - agent_inspected.belieftree[0][agents.select_problem_3S_as][1]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[1] / action_agent_number
-							
-							# Affiliation 2 and 3
-							if (agents.affiliation == 1 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 1):
-								agent_inspected.belieftree[0][agents.select_problem_3S_as][1] += (agents.belieftree[0][agents.select_problem_3S_as][1] - agent_inspected.belieftree[0][agents.select_problem_3S_as][1]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[2] / action_agent_number
-
-							# print('After: ', agent_inspected.belieftree[0][agents.select_problem_3S_as][1])
-
-							# Checks and transfer of partial knowledge
-							# 1-1 check
-							agent_inspected.belieftree[0][agents.select_problem_3S_as][1] = self.one_minus_one_check(agent_inspected.belieftree[0][agents.select_problem_3S_as][1])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acting agent)
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_as][1] = agent_inspected.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-							# 1-1 check
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_as][1] = self.one_minus_one_check(agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_as][1])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acted upon agent)
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_as][1] = agents.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-							# 1-1 check
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_as][1] = self.one_minus_one_check(agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_as][1])
+								implemented_action = self.action_implementor(links, agents.select_problem_3S_as, 1, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
 				# Updating the resources after each action has been implemented
 				agents.resources_actions -= agents.resources[0] * 0.1
@@ -6935,52 +5129,50 @@ class Externalparties(Agent):
 					for agent_inspected in agent_action_list:
 						# Going through all of the links
 						for links in link_list:
-							# Check that the list has an awareness level
-							if links.aware != -1:
-								# Check that only the link of interest is selected
-								if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware> 0:
 
-									check_none = 0
-									if agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] == None:
-										agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = 0
-										check_none = 1
+								# Definition the action weight parameter
+								if type(links.agent2) == Policymakers:
+									actionWeight = 1
+								else:
+									actionWeight = 0.95
 
-									belief_diff = abs(agents.belieftree_policy[0][agents.select_policy_3S_as][impact] - agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact])
+								check_none = 0
+								if agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] == None:
+									agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = 0
+									check_none = 1
 
-									if check_none == 1:
-										agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = None
+								belief_diff = abs(agents.belieftree_policy[0][agents.select_policy_3S_as][impact] - agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact])
 
-									if belief_diff <= 0.25:
-										conflict_level_impact = conflict_level_coef[0]
-									if belief_diff > 0.25 and belief_diff <= 1.75:
-										conflict_level_impact = conflict_level_coef[2]
-									if belief_diff > 1.75:
-										conflict_level_impact = conflict_level_coef[1]
+								if check_none == 1:
+									agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = None
 
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										impact_grade = conflict_level_impact * links.aware * actionWeight
+								if belief_diff <= 0.25:
+									conflict_level_impact = conflict_level_coef[0]
+								if belief_diff > 0.25 and belief_diff <= 1.75:
+									conflict_level_impact = conflict_level_coef[2]
+								if belief_diff > 1.75:
+									conflict_level_impact = conflict_level_coef[1]
 
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
+								# Grade calculation using the likelihood method
+								# Same affiliation
+								if links.agent1.affiliation == links.agent2.affiliation:
+									impact_grade = conflict_level_impact * links.aware * actionWeight
 
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
+								# Affiliation 1-2
+								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
 
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
+								# Affiliation 1-3
+								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
 
-									impact_grade_list.append(impact_grade)
-										
-							# If the link has a negative awareness, set the grade of the action to 0
-							else:
-								# Check that only the link of interest is selected
-								if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-									impact_grade_list.append(0)
+								# Affiliation 2-3
+								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
+
+								impact_grade_list.append(impact_grade)
 
 					total_agent_grades.append(sum(impact_grade_list))
 
@@ -6989,59 +5181,11 @@ class Externalparties(Agent):
 				# Going through all active agents
 				for agent_inspected in agent_action_list:
 					for links in link_list:
-						# Check that the list has an awareness level
-						if links.aware != -1:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware> 0:
 
-								# Make sure to look at the right direction of the conflict level
-								if links.agent1 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										state_grade = links.conflict_level[0][agents.select_problem_3S_as][0] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[2]
-
-									state_grade_list.append(state_grade)
-
-								if links.agent2 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										state_grade = links.conflict_level[1][agents.select_problem_3S_as][0] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_as][0] * links.aware * actionWeight * affiliation_weights[2]
-								
-									state_grade_list.append(state_grade)
-
-						# If the link has a negative awareness, set the grade of the action to 0
-						else:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-								state_grade_list.append(0)
+							state_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 0, agents, affiliation_weights)
+							state_grade_list.append(state_grade)
 
 				total_agent_grades.append(sum(state_grade_list))
 
@@ -7050,59 +5194,11 @@ class Externalparties(Agent):
 				# Going through all active agents
 				for agent_inspected in agent_action_list:
 					for links in link_list:
-						# Check that the list has an awareness level
-						if links.aware != -1:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware> 0:
 
-								# Make sure to look at the right direction of the conflict level
-								if links.agent1 == agents:
-
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_as][1] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[2]
-
-									aim_grade_list.append(aim_grade)
-
-								if links.agent2 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_as][1] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_as][1] * links.aware * actionWeight * affiliation_weights[2]
-								
-									aim_grade_list.append(aim_grade)
-
-						# If the link has a negative awareness, set the grade of the action to 0
-						else:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-								aim_grade_list.append(0)
+							aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
+							aim_grade_list.append(aim_grade)
 
 				total_agent_grades.append(sum(aim_grade_list))
 
@@ -7373,7 +5469,7 @@ class Externalparties(Agent):
 			agents.resources_actions_EInfluence -= agents.resources[0] * 0.1
 
 	def external_parties_actions_pf_3S(self, agents, agent_action_list, causalrelation_number, \
-		affiliation_weights, deep_core, policy_core, secondary, electorate_number, action_agent_number, master_list, agenda_prob_3S_as, link_list, conflict_level_coef):
+		affiliation_weights, deep_core, policy_core, secondary, electorate_number, action_agent_number, master_list, agenda_prob_3S_as, link_list, conflict_level_coef, resources_weight_action, resources_potency):
 
 		"""
 		The external parties actions function - three streams (policy formulation)
@@ -7442,58 +5538,11 @@ class Externalparties(Agent):
 					for agent_inspected in agent_action_list:
 						# Going through all of the links
 						for links in link_list:
-							# Check that the list has an awareness level
-							if links.aware != -1:
-								# Check that only the link of interest is selected
-								if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-									# Make sure to look at the right direction of the conflict level
-									if links.agent1 == agents:
-										
-										# Grade calculation using the likelihood method
-										# Same affiliation
-										if links.agent1.affiliation == links.agent2.affiliation:
-											cw_grade = links.conflict_level[0][cw][0] * links.aware * actionWeight
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-										# Affiliation 1-2
-										if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-											cw_grade = links.conflict_level[0][cw][0] * links.aware * actionWeight * affiliation_weights[0]
-
-										# Affiliation 1-3
-										if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-											cw_grade = links.conflict_level[0][cw][0] * links.aware * actionWeight * affiliation_weights[1]
-
-										# Affiliation 2-3
-										if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-											cw_grade = links.conflict_level[0][cw][0] * links.aware * actionWeight * affiliation_weights[2]
-
-										cw_grade_list.append(cw_grade)
-
-									if links.agent2 == agents:
-										
-										# Grade calculation using the likelihood method
-										# Same affiliation
-										if links.agent1.affiliation == links.agent2.affiliation:
-											cw_grade = links.conflict_level[1][cw][0] * links.aware * actionWeight
-
-										# Affiliation 1-2
-										if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-											cw_grade = links.conflict_level[1][cw][0] * links.aware * actionWeight * affiliation_weights[0]
-
-										# Affiliation 1-3
-										if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-											cw_grade = links.conflict_level[1][cw][0] * links.aware * actionWeight * affiliation_weights[1]
-
-										# Affiliation 2-3
-										if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-											cw_grade = links.conflict_level[1][cw][0] * links.aware * actionWeight * affiliation_weights[2]
-										
-										cw_grade_list.append(cw_grade)
-
-							# If the link has a negative awareness, set the grade of the action to 0
-							else:
-								# Check that only the link of interest is selected
-								if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-									cw_grade_list.append(0)
+								cw_grade = self.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
+								cw_grade_list.append(cw_grade)
 
 					total_agent_grades.append(sum(cw_grade_list))
 
@@ -7502,59 +5551,11 @@ class Externalparties(Agent):
 				# Going through all active agents
 				for agent_inspected in agent_action_list:
 					for links in link_list:
-						# Check that the list has an awareness level
-						if links.aware != -1:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								# Make sure to look at the right direction of the conflict level
-								if links.agent1 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										state_grade = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[2]
-
-									state_grade_list.append(state_grade)
-
-								if links.agent2 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										state_grade = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[2]
-								
-									state_grade_list.append(state_grade)
-
-						# If the link has a negative awareness, set the grade of the action to 0
-						else:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-								state_grade_list.append(0)
+							state_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 0, agents, affiliation_weights)
+							state_grade_list.append(state_grade)
 
 				total_agent_grades.append(sum(state_grade_list))
 
@@ -7563,59 +5564,11 @@ class Externalparties(Agent):
 				# Going through all active agents
 				for agent_inspected in agent_action_list:
 					for links in link_list:
-						# Check that the list has an awareness level
-						if links.aware != -1:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								# Make sure to look at the right direction of the conflict level
-								if links.agent1 == agents:
-
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[2]
-
-									aim_grade_list.append(aim_grade)
-
-								if links.agent2 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[2]
-								
-									aim_grade_list.append(aim_grade)
-
-						# If the link has a negative awareness, set the grade of the action to 0
-						else:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-								aim_grade_list.append(0)
+							aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights)
+							aim_grade_list.append(aim_grade)
 
 				total_agent_grades.append(sum(aim_grade_list))
 
@@ -7631,133 +5584,43 @@ class Externalparties(Agent):
 				if best_action < len(cw_of_interest):
 					# Going through all active agents
 					for agent_inspected in agent_action_list:
-						# Making sure that the agent does not count itself
-						if agents != agent_inspected:
+						# Going through all of the links
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+								# Make sure to look at the right direction of the conflict levels
 
-							# print(' ')
-							# print('Before: ', agent_inspected.belieftree[0][cw_of_interest[best_action]][0])
+								links.aware_decay = 5
 
-							# Same affiliation
-							if agents.affiliation == agent_inspected.affiliation:
-								agent_inspected.belieftree[0][cw_of_interest[best_action]][0] += (agents.belieftree[0][cw_of_interest[best_action]][0] - agent_inspected.belieftree[0][cw_of_interest[best_action]][0]) * \
-									agents.resources[0] * 0.1 / action_agent_number
-							
-							# Affiliation 1 and 2
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 1) or (agents.affiliation == 1 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][cw_of_interest[best_action]][0] += (agents.belieftree[0][cw_of_interest[best_action]][0] - agent_inspected.belieftree[0][cw_of_interest[best_action]][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[0] / action_agent_number
-							
-							# Affiliation 1 and 3
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][cw_of_interest[best_action]][0] += (agents.belieftree[0][cw_of_interest[best_action]][0] - agent_inspected.belieftree[0][cw_of_interest[best_action]][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[1] / action_agent_number
-							
-							# Affiliation 2 and 3
-							if (agents.affiliation == 1 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 1):
-								agent_inspected.belieftree[0][cw_of_interest[best_action]][0] += (agents.belieftree[0][cw_of_interest[best_action]][0] - agent_inspected.belieftree[0][cw_of_interest[best_action]][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[2] / action_agent_number
-
-							# print('After ', agent_inspected.belieftree[0][cw_of_interest[best_action]][0])
-
-							# Checks and transfer of partial knowledge
-							# 1-1 check
-							agent_inspected.belieftree[0][cw_of_interest[best_action]][0] = self.one_minus_one_check(agent_inspected.belieftree[0][cw_of_interest[best_action]][0])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acting agent)
-							agents.belieftree[1 + agent_inspected.unique_id][cw_of_interest[best_action]][0] = agent_inspected.belieftree[0][cw_of_interest[best_action]][0] + (random.random()/2) - 0.25
-							# 1-1 check
-							agents.belieftree[1 + agent_inspected.unique_id][cw_of_interest[best_action]][0] = self.one_minus_one_check(agents.belieftree[1 + agent_inspected.unique_id][cw_of_interest[best_action]][0])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acted upon agent)
-							agent_inspected.belieftree[1 + agents.unique_id][cw_of_interest[best_action]][0] = agents.belieftree[0][cw_of_interest[best_action]][0] + (random.random()/2) - 0.25
-							# 1-1 check
-							agent_inspected.belieftree[1 + agents.unique_id][cw_of_interest[best_action]][0] =self.one_minus_one_check(agent_inspected.belieftree[1 + agents.unique_id][cw_of_interest[best_action]][0])
+								implemented_action = self.action_implementor(links, cw_of_interest[best_action], 0, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
 				# Implementation of a state influence blanket action
 				if best_action == len(cw_of_interest):
 					# Going through all active agents
 					for agent_inspected in agent_action_list:
-						# Making sure that the agent does not count itself
-						if agents != agent_inspected:
+						# Going through all of the links
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+								# Make sure to look at the right direction of the conflict levels
 
-							# print(' ')
-							# print('Before: ', agent_inspected.belieftree[0][agents.select_problem_3S_pf][0])
+								links.aware_decay = 5
 
-							# Same affiliation
-							if agents.affiliation == agent_inspected.affiliation:
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][0]) * \
-									agents.resources[0] * 0.1 / action_agent_number
-							
-							# Affiliation 1 and 2
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 1) or (agents.affiliation == 1 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[0] / action_agent_number
-							
-							# Affiliation 1 and 3
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[1] / action_agent_number
-							
-							# Affiliation 2 and 3
-							if (agents.affiliation == 1 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 1):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[2] / action_agent_number
-
-							# print('After: ', agent_inspected.belieftree[0][agents.select_problem_3S_pf][0])
-
-							# Checks and transfer of partial knowledge
-							# 1-1 check
-							agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] = self.one_minus_one_check(agent_inspected.belieftree[0][agents.select_problem_3S_pf][0])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acting agent)
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][0] = agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
-							# 1-1 check
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][0] = self.one_minus_one_check(agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][0])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acted upon agent)
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
-							# 1-1 check
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = self.one_minus_one_check(agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0])
+								implemented_action = self.action_implementor(links, agents.select_problem_3S_pf, 0, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
 				# Implementation of a state influence blanket action
 				if best_action == len(cw_of_interest) + 1:
 					# Going through all active agents
 					for agent_inspected in agent_action_list:
-						# Making sure that the agent does not count itself
-						if agents != agent_inspected:
+						# Going through all of the links
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+								# Make sure to look at the right direction of the conflict levels
 
-							# print(' ')
-							# print('Before: ', agent_inspected.belieftree[0][agents.select_problem_3S_pf][1])
+								links.aware_decay = 5
 
-							# Same affiliation
-							if agents.affiliation == agent_inspected.affiliation:
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][1]) * \
-									agents.resources[0] * 0.1 / action_agent_number
-							
-							# Affiliation 1 and 2
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 1) or (agents.affiliation == 1 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][1]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[0] / action_agent_number
-							
-							# Affiliation 1 and 3
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][1]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[1] / action_agent_number
-							
-							# Affiliation 2 and 3
-							if (agents.affiliation == 1 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 1):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][1]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[2] / action_agent_number
-
-							# print('After: ', agent_inspected.belieftree[0][agents.select_problem_3S_pf][1])
-
-							# Checks and transfer of partial knowledge
-							# 1-1 check
-							agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] = self.one_minus_one_check(agent_inspected.belieftree[0][agents.select_problem_3S_pf][1])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acting agent)
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][1] = agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-							# 1-1 check
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][1] = self.one_minus_one_check(agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][1])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acted upon agent)
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-							# 1-1 check
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = self.one_minus_one_check(agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1])
+								implemented_action = self.action_implementor(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
 				# Updating the resources after each action has been implemented
 				agents.resources_actions -= agents.resources[0] * 0.1
@@ -7783,52 +5646,44 @@ class Externalparties(Agent):
 					for agent_inspected in agent_action_list:
 						# Going through all of the links
 						for links in link_list:
-							# Check that the list has an awareness level
-							if links.aware != -1:
-								# Check that only the link of interest is selected
-								if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-									check_none = 0
-									if agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] == None:
-										agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = 0
-										check_none = 1
+								check_none = 0
+								if agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] == None:
+									agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = 0
+									check_none = 1
 
-									belief_diff = abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact])
+								belief_diff = abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][impact] - agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact])
 
-									if check_none == 1:
-										agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = None
+								if check_none == 1:
+									agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = None
 
-									if belief_diff <= 0.25:
-										conflict_level_impact = conflict_level_coef[0]
-									if belief_diff > 0.25 and belief_diff <= 1.75:
-										conflict_level_impact = conflict_level_coef[2]
-									if belief_diff > 1.75:
-										conflict_level_impact = conflict_level_coef[1]
+								if belief_diff <= 0.25:
+									conflict_level_impact = conflict_level_coef[0]
+								if belief_diff > 0.25 and belief_diff <= 1.75:
+									conflict_level_impact = conflict_level_coef[2]
+								if belief_diff > 1.75:
+									conflict_level_impact = conflict_level_coef[1]
 
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										impact_grade = conflict_level_impact * links.aware * actionWeight
+								# Grade calculation using the likelihood method
+								# Same affiliation
+								if links.agent1.affiliation == links.agent2.affiliation:
+									impact_grade = conflict_level_impact * links.aware * actionWeight
 
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
+								# Affiliation 1-2
+								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[0]
 
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
+								# Affiliation 1-3
+								if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[1]
 
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
+								# Affiliation 2-3
+								if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+									impact_grade = conflict_level_impact * links.aware * actionWeight * affiliation_weights[2]
 
-									impact_grade_list.append(impact_grade)
-										
-							# If the link has a negative awareness, set the grade of the action to 0
-							else:
-								# Check that only the link of interest is selected
-								if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-									impact_grade_list.append(0)
+								impact_grade_list.append(impact_grade)
 
 					total_agent_grades.append(sum(impact_grade_list))
 
@@ -7837,59 +5692,11 @@ class Externalparties(Agent):
 				# Going through all active agents
 				for agent_inspected in agent_action_list:
 					for links in link_list:
-						# Check that the list has an awareness level
-						if links.aware != -1:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								# Make sure to look at the right direction of the conflict level
-								if links.agent1 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										state_grade = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										state_grade = links.conflict_level[0][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[2]
-
-									state_grade_list.append(state_grade)
-
-								if links.agent2 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										state_grade = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										state_grade = links.conflict_level[1][agents.select_problem_3S_pf][0] * links.aware * actionWeight * affiliation_weights[2]
-								
-									state_grade_list.append(state_grade)
-
-						# If the link has a negative awareness, set the grade of the action to 0
-						else:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-								state_grade_list.append(0)
+							state_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 0, agents, affiliation_weights)
+							state_grade_list.append(state_grade)
 
 				total_agent_grades.append(sum(state_grade_list))
 
@@ -7898,59 +5705,11 @@ class Externalparties(Agent):
 				# Going through all active agents
 				for agent_inspected in agent_action_list:
 					for links in link_list:
-						# Check that the list has an awareness level
-						if links.aware != -1:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								# Make sure to look at the right direction of the conflict level
-								if links.agent1 == agents:
-
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										aim_grade = links.conflict_level[0][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[2]
-
-									aim_grade_list.append(aim_grade)
-
-								if links.agent2 == agents:
-								
-									# Grade calculation using the likelihood method
-									# Same affiliation
-									if links.agent1.affiliation == links.agent2.affiliation:
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight
-
-									# Affiliation 1-2
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[0]
-
-									# Affiliation 1-3
-									if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[1]
-
-									# Affiliation 2-3
-									if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
-										aim_grade = links.conflict_level[1][agents.select_problem_3S_pf][1] * links.aware * actionWeight * affiliation_weights[2]
-								
-									aim_grade_list.append(aim_grade)
-
-						# If the link has a negative awareness, set the grade of the action to 0
-						else:
-							# Check that only the link of interest is selected
-							if links.agent1 == agents and links.agent2 == agent_inspected or links.agent2 == agents and links.agent1 == agent_inspected:
-								aim_grade_list.append(0)
+							aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights)
+							aim_grade_list.append(aim_grade)
 
 				total_agent_grades.append(sum(aim_grade_list))
 
@@ -7966,141 +5725,43 @@ class Externalparties(Agent):
 				if best_action < impact_number:
 					# Going through all active agents
 					for agent_inspected in agent_action_list:
-						# Making sure that the agent does not count itself
-						if agents != agent_inspected:
+						# Going through all of the links
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+								# Make sure to look at the right direction of the conflict levels
 
-							# print(' ')
-							# print('Before: ', agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]])
+								links.aware_decay = 5
 
-							# Same affiliation
-							if agents.affiliation == agent_inspected.affiliation:
-								agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-									(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-									agents.resources[0] * 0.1 / action_agent_number
-							
-							# Affiliation 1 and 2
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 1) or (agents.affiliation == 1 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-									(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[0] / action_agent_number
-
-							
-							# Affiliation 1 and 3
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-									(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[1] / action_agent_number
-							
-							# Affiliation 2 and 3
-							if (agents.affiliation == 1 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 1):
-								agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] += \
-									(agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] - agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[2] / action_agent_number
-
-							# print('After ', agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action])
-
-							# Checks and transfer of partial knowledge
-							# 1-1 check
-							agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] = self.one_minus_one_check(agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acting agent)
-							agents.belieftree_instrument[1 + agent_inspected.unique_id][agents.select_policy_3S_pf][best_action] = agent_inspected.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] + (random.random()/2) - 0.25
-							# 1-1 check
-							agents.belieftree_instrument[1 + agent_inspected.unique_id][agents.select_policy_3S_pf][best_action] = \
-								self.one_minus_one_check(agents.belieftree_instrument[1 + agent_inspected.unique_id][agents.select_policy_3S_pf][best_action])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acted upon agent)
-							agent_inspected.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][best_action] = \
-								agents.belieftree_instrument[0][agents.select_policy_3S_pf][best_action] + (random.random()/2) - 0.25
-							# 1-1 check
-							agent_inspected.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][best_action] = \
-								self.one_minus_one_check(agent_inspected.belieftree_instrument[1 + agents.unique_id][agents.select_policy_3S_pf][best_action])
+								implemented_action = self.action_implementor_3S_PF(links, best_action, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
 				# Implementation of a state influence blanket action
 				if best_action == impact_number:
 					# Going through all active agents
 					for agent_inspected in agent_action_list:
-						# Making sure that the agent does not count itself
-						if agents != agent_inspected:
+						# Going through all of the links
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+								# Make sure to look at the right direction of the conflict levels
 
-							# print(' ')
-							# print('Before: ', agent_inspected.belieftree[0][agents.select_problem_3S_pf][0])
+								links.aware_decay = 5
 
-							# Same affiliation
-							if agents.affiliation == agent_inspected.affiliation:
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][0]) * \
-									agents.resources[0] * 0.1 / action_agent_number
-							
-							# Affiliation 1 and 2
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 1) or (agents.affiliation == 1 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[0] / action_agent_number
-							
-							# Affiliation 1 and 3
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[1] / action_agent_number
-							
-							# Affiliation 2 and 3
-							if (agents.affiliation == 1 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 1):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] += (agents.belieftree[0][agents.select_problem_3S_pf][0] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][0]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[2] / action_agent_number
-
-							# print('After: ', agent_inspected.belieftree[0][agents.select_problem_3S_pf][0])
-
-							# Checks and transfer of partial knowledge
-							# 1-1 check
-							agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] = self.one_minus_one_check(agent_inspected.belieftree[0][agents.select_problem_3S_pf][0])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acting agent)
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][0] = agent_inspected.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
-							# 1-1 check
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][0] = self.one_minus_one_check(agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][0])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acted upon agent)
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
-							# 1-1 check
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0] = self.one_minus_one_check(agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][0])
+								implemented_action = self.action_implementor(links, agents.select_problem_3S_pf, 0, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
 				# Implementation of a state influence blanket action
 				if best_action == impact_number + 1:
 					# Going through all active agents
 					for agent_inspected in agent_action_list:
-						# Making sure that the agent does not count itself
-						if agents != agent_inspected:
+						# Going through all of the links
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+								# Make sure to look at the right direction of the conflict levels
 
-							# print(' ')
-							# print('Before: ', agent_inspected.belieftree[0][agents.select_problem_3S_pf][1])
+								links.aware_decay = 5
 
-							# Same affiliation
-							if agents.affiliation == agent_inspected.affiliation:
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][1]) * \
-									agents.resources[0] * 0.1 / action_agent_number
-							
-							# Affiliation 1 and 2
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 1) or (agents.affiliation == 1 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][1]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[0] / action_agent_number
-							
-							# Affiliation 1 and 3
-							if (agents.affiliation == 0 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 0):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][1]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[1] / action_agent_number
-							
-							# Affiliation 2 and 3
-							if (agents.affiliation == 1 and agent_inspected.affiliation == 2) or (agents.affiliation == 2 and agent_inspected.affiliation == 1):
-								agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] += (agents.belieftree[0][agents.select_problem_3S_pf][1] - agent_inspected.belieftree[0][agents.select_problem_3S_pf][1]) * \
-									agents.resources[0] * 0.1 * affiliation_weights[2] / action_agent_number
-
-							# print('After: ', agent_inspected.belieftree[0][agents.select_problem_3S_pf][1])
-
-							# Checks and transfer of partial knowledge
-							# 1-1 check
-							agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] = self.one_minus_one_check(agent_inspected.belieftree[0][agents.select_problem_3S_pf][1])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acting agent)
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][1] = agent_inspected.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-							# 1-1 check
-							agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][1] = self.one_minus_one_check(agents.belieftree[1 + agent_inspected.unique_id][agents.select_problem_3S_pf][1])
-							# Providing partial knowledge - Blanket framing - 0.5 range from real value: (Acted upon agent)
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-							# 1-1 check
-							agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1] = self.one_minus_one_check(agent_inspected.belieftree[1 + agents.unique_id][agents.select_problem_3S_pf][1])
+								implemented_action = self.action_implementor(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
 				# Updating the resources after each action has been implemented
 				agents.resources_actions -= agents.resources[0] * 0.1
@@ -8273,24 +5934,3 @@ class Externalparties(Agent):
 				agent.belieftree_electorate[len_DC + len_PC + i][2] = abs(agent.belieftree_electorate[len_DC + len_PC + i][1] - agent.belieftree_electorate[len_DC + len_PC + i][0]) / S_denominator
 			else:
 				agent.belieftree_electorate[len_DC + len_PC + i][2] = 0
-
-	def one_minus_one_check(self, to_be_checked_parameter):
-
-		"""
-		One minus one check function
-		===========================
-
-		This function checks that a certain values does not got over one
-		and does not go below one due to the randomisation.
-		
-		"""
-
-		checked_parameter = 0
-		if to_be_checked_parameter > 1:
-			checked_parameter = 1
-		elif to_be_checked_parameter < -1:
-			checked_parameter = -1
-		else:
-			checked_parameter = to_be_checked_parameter
-		return checked_parameter
-
