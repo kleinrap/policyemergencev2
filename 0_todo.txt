@@ -16,6 +16,7 @@ Small tasks that still need to be performed:
 
 
 Adaptation:
-- Change all agents.py function to actionFunction.py (impacts missing - grading done)
 - Change the inter-team to function based actions
 - Change the intra-team impacts to function based actions
+- Change the inter-coalition to function based actions
+- Change the intra-coalition impacts to function based actions

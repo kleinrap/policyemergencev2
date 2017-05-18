@@ -24,7 +24,7 @@ class Coalition():
 	# 	return 'Coalition - ' + str(self.unique_id)
 
 	def coalition_belief_actions_ACF_as(self, coalitions, causalrelation_number, deep_core, policy_core, secondary, agent_action_list, ACF_link_list_as, ACF_link_list_as_total, \
-		ACF_link_id_as, link_list, affiliation_weights, conflict_level_coef):
+		ACF_link_id_as, link_list, affiliation_weights, conflict_level_coef, resources_weight_action, resources_potency):
 
 		"""
 		The coalition belief actions function (agenda setting)
@@ -140,94 +140,53 @@ class Coalition():
 
 					# d. Implementation the best action
 
-					# The causal relation action is performed
-					if best_action <= len(cw_of_interest) - 1:
-						# print(' ')
-						# print('Performing a causal relation framing action')
-						# print('best_action: ' + str(best_action))
-						# print('cw_of_interest: ' + str(cw_of_interest))
-						# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
+					# It is the agent that has the best action that performs the action
+					for agent_impacted in coalitions.members:
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in coalitions.members:
+						# Selecting the link:
+						for links in link_list:
 
-							if agent_impacted.affiliation == coalitions.lead.affiliation:
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-									(coalitions.lead.belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-									coalitions.resources[0] * 0.1 / len(coalitions.members)
+							# Check that only the link of interest is selected
+							if (links.agent1 == coalitions.lead and links.agent2 == agent_inspected) or (links.agent2 == coalitions.lead and links.agent1 == agent_inspected) and links.aware > 0:
 
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 1) or (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-								  (coalitions.lead.belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-								  coalitions.resources[0] * 0.1 * affiliation_weights[0] / len(coalitions.members)
 
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-									(coalitions.lead.belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[1] / len(coalitions.members)
+								# The causal relation action is performed
+								if best_action <= len(cw_of_interest) - 1:
+									# print(' ')
+									# print('Performing a causal relation framing action')
+									# print('best_action: ' + str(best_action))
+									# print('cw_of_interest: ' + str(cw_of_interest))
+									# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
 
-							if (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 1):
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-									(coalitions.lead.belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[2] / len(coalitions.members)
+									# Update of the aware decay parameter
+									links.aware_decay = 5
 
-							# 1-1 check
-							agent_impacted.belieftree[0][cw_of_interest[best_action]][0] = self.one_minus_one_check(agent_impacted.belieftree[0][cw_of_interest[best_action]][0])
-							
-					# The state change is performed
-					if best_action == len(cw_of_interest):
-						# print(' ')
-						# print('Performing a state change action')
-						# print('best_action: ' + str(best_action))
+									implemented_action = ActionFunctions.action_implementor(links, cw_of_interest[best_action], 0, coalitions.lead, coalitions, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in coalitions.members:
+								# The state change is performed
+								if best_action == len(cw_of_interest):
+									# print(' ')
+									# print('Performing a state change action')
+									# print('best_action: ' + str(best_action))
 
-							if agent_impacted.affiliation == coalitions.lead.affiliation:
-								agent_impacted.belieftree[0][coalitions.issue][0] += (coalitions.lead.belieftree[0][coalitions.issue][0] - \
-								  agent_impacted.belieftree[0][coalitions.issue][0]) * coalitions.resources[0] * 0.1 / (len(coalitions.members))
+									# Update of the aware decay parameter
+									links.aware_decay = 5
 
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 1) or (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][coalitions.issue][0] += (coalitions.lead.belieftree[0][coalitions.issue][0] - \
-								  agent_impacted.belieftree[0][coalitions.issue][0]) * coalitions.resources[0] * 0.1 * affiliation_weights[0] / (len(coalitions.members))
+									implemented_action = ActionFunctions.action_implementor(links, coalitions.issue, 0, coalitions.lead, coalitions, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
 
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][coalitions.issue][0] += (coalitions.lead.belieftree[0][coalitions.issue][0] - \
-								  agent_impacted.belieftree[0][coalitions.issue][0]) * coalitions.resources[0] * 0.1 * affiliation_weights[1] / (len(coalitions.members))
+								# The aim change is performed
+								if best_action == len(cw_of_interest) + 1:
+									# print(' ')
+									# print('Performing an aim change action')
+									# print('best_action: ' + str(best_action))
 
-							if (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 1):
-								agent_impacted.belieftree[0][coalitions.issue][0] += (coalitions.lead.belieftree[0][coalitions.issue][0] - \
-								  agent_impacted.belieftree[0][coalitions.issue][0]) * coalitions.resources[0] * 0.1 * affiliation_weights[2] / (len(coalitions.members))
+									# Update of the aware decay parameter
+									links.aware_decay = 5
 
-							# 1-1 check
-							agent_impacted.belieftree[0][coalitions.issue][0] = self.one_minus_one_check(agent_impacted.belieftree[0][coalitions.issue][0])
-
-					# The aim change is performed
-					if best_action == len(cw_of_interest) + 1:
-						# print(' ')
-						# print('Performing an aim change action')
-						# print('best_action: ' + str(best_action))
-
-						for agent_impacted in coalitions.members:
-
-							if agent_impacted.affiliation == coalitions.lead.affiliation:
-								agent_impacted.belieftree[0][coalitions.issue][1] += (coalitions.lead.belieftree[0][coalitions.issue][1] - \
-								  agent_impacted.belieftree[0][coalitions.issue][1]) * coalitions.resources[0] * 0.1 / (len(coalitions.members))
-
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 1) or (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][coalitions.issue][1] += (coalitions.lead.belieftree[0][coalitions.issue][1] - \
-								  agent_impacted.belieftree[0][coalitions.issue][1]) * coalitions.resources[0] * 0.1 * affiliation_weights[0] / (len(coalitions.members))
-
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][coalitions.issue][1] += (coalitions.lead.belieftree[0][coalitions.issue][1] - \
-								  agent_impacted.belieftree[0][coalitions.issue][1]) * coalitions.resources[0] * 0.1 * affiliation_weights[1] / (len(coalitions.members))
-
-							if (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 1):
-								agent_impacted.belieftree[0][coalitions.issue][1] += (coalitions.lead.belieftree[0][coalitions.issue][1] - \
-								  agent_impacted.belieftree[0][coalitions.issue][1]) * coalitions.resources[0] * 0.1 * affiliation_weights[2] / (len(coalitions.members))
-
-							# 1-1 check
-							agent_impacted.belieftree[0][coalitions.issue][1] = self.one_minus_one_check(agent_impacted.belieftree[0][coalitions.issue][1])
+									implemented_action = ActionFunctions.action_implementor(links, coalitions.issue, 1, coalitions.lead, coalitions, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
 					
 					# Updating the resources of the team
 					coalitions.resources[1] -= coalitions.resources[0]*0.1
@@ -585,7 +544,7 @@ class Coalition():
 						break
 			
 	def coalition_belief_actions_ACF_pf(self, coalitions, causalrelation_number, deep_core, policy_core, secondary, agent_action_list, ACF_link_list_pf, ACF_link_list_pf_total, \
-		ACF_link_id_pf, link_list, affiliation_weights, agenda_as_issue, instruments, conflict_level_coef):
+		ACF_link_id_pf, link_list, affiliation_weights, agenda_as_issue, instruments, conflict_level_coef, resources_weight_action, resources_potency):
 
 		"""
 		The coalition belief actions function (policy formulation)
@@ -715,114 +674,165 @@ class Coalition():
 					# print('Action to be performed: ' + str(best_action_index))
 
 					# d. Implementation the best action
+					# It is the agent that has the best action that performs the action
+					for agent_impacted in coalitions.members:
 
-					# The causal relation action is performed
-					if best_action_index <= len(cw_of_interest) - 1:
-						# print(' ')
-						# print('Performing a CR action')
-						# print(of_interest[0])
-						# print('best_action_index: ' + str(best_action_index))
-						# print(of_interest[0][best_action_index])
+						# Selecting the link:
+						for links in link_list:
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in coalitions.members:
+							# Check that only the link of interest is selected
+							if (links.agent1 == coalitions.lead and links.agent2 == agent_inspected) or (links.agent2 == coalitions.lead and links.agent1 == agent_inspected) and links.aware > 0:
 
-							if agent_impacted.affiliation == coalitions.lead.affiliation:
-								agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] += \
-									(coalitions.lead.belieftree[0][of_interest[0][best_action_index]][0]) - agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] * \
-									coalitions.resources[0] * 0.1 / len(coalitions.members)
 
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 1) or (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] += \
-									(coalitions.lead.belieftree[0][of_interest[0][best_action_index]][0]) - agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[0] / len(coalitions.members)
+								# The causal relation action is performed
+								if best_action_index <= len(cw_of_interest) - 1:
+									# print(' ')
+									# print('Performing a causal relation framing action')
+									# print('best_action: ' + str(best_action))
+									# print('cw_of_interest: ' + str(cw_of_interest))
+									# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
 
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] += \
-									(coalitions.lead.belieftree[0][of_interest[0][best_action_index]][0]) - agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[1] / len(coalitions.members)
+									# Update of the aware decay parameter
+									links.aware_decay = 5
 
-							if (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 1):
-								agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] += \
-									(coalitions.lead.belieftree[0][of_interest[0][best_action_index]][0]) - agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[2] / len(coalitions.members)
+									implemented_action = ActionFunctions.action_implementor(links, of_interest[0][best_action_index], 0, coalitions.lead, coalitions, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
 
-							# 1-1 check
-							agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][of_interest[0][best_action_index]][0])
+								# The state change is performed
+								if best_action_index > len(cw_of_interest) - 1 and best_action_index < len(cw_of_interest) + len(issue_of_interest) - 1:
+									# print(' ')
+									# print('Performing a state change action')
+									# print('best_action: ' + str(best_action))
+
+									# Update of the aware decay parameter
+									links.aware_decay = 5
+
+									implemented_action = ActionFunctions.action_implementor(links, of_interest[1][best_action_index - len(cw_of_interest)], 0, coalitions.lead, coalitions, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
+
+								# The aim change is performed
+								if best_action_index >= len(cw_of_interest) + len(issue_of_interest) - 1:
+									# print(' ')
+									# print('Performing an aim change action')
+									# print('best_action: ' + str(best_action))
+
+									# Update of the aware decay parameter
+									links.aware_decay = 5
+
+									implemented_action = ActionFunctions.action_implementor(links, of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)], 1, coalitions.lead, coalitions, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
+					
+
+
+
+
+					# # The causal relation action is performed
+					# if best_action_index <= len(cw_of_interest) - 1:
+					# 	# print(' ')
+					# 	# print('Performing a CR action')
+					# 	# print(of_interest[0])
+					# 	# print('best_action_index: ' + str(best_action_index))
+					# 	# print(of_interest[0][best_action_index])
+
+					# 	# It is the agent that has the best action that performs the action
+					# 	for agent_impacted in coalitions.members:
+
+					# 		if agent_impacted.affiliation == coalitions.lead.affiliation:
+					# 			agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[0][best_action_index]][0]) - agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] * \
+					# 				coalitions.resources[0] * 0.1 / len(coalitions.members)
+
+					# 		if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 1) or (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 0):
+					# 			agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[0][best_action_index]][0]) - agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] * \
+					# 				coalitions.resources[0] * 0.1 * affiliation_weights[0] / len(coalitions.members)
+
+					# 		if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 0):
+					# 			agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[0][best_action_index]][0]) - agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] * \
+					# 				coalitions.resources[0] * 0.1 * affiliation_weights[1] / len(coalitions.members)
+
+					# 		if (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 1):
+					# 			agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[0][best_action_index]][0]) - agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] * \
+					# 				coalitions.resources[0] * 0.1 * affiliation_weights[2] / len(coalitions.members)
+
+					# 		# 1-1 check
+					# 		agent_impacted.belieftree[0][of_interest[0][best_action_index]][0] = \
+					# 			self.one_minus_one_check(agent_impacted.belieftree[0][of_interest[0][best_action_index]][0])
 							
-					# The state change is performed
-					elif best_action_index > len(cw_of_interest) - 1 and best_action_index < len(cw_of_interest) + len(issue_of_interest) - 1:
-						# print(' ')
-						# print('Performing a state action')
-						# print(of_interest[1])
-						# print('best_action_index - len(cw_of_interest): ' + str(best_action_index - len(cw_of_interest)))
-						# print(of_interest[1][best_action_index - len(cw_of_interest)])
+					# # The state change is performed
+					# elif best_action_index > len(cw_of_interest) - 1 and best_action_index < len(cw_of_interest) + len(issue_of_interest) - 1:
+					# 	# print(' ')
+					# 	# print('Performing a state action')
+					# 	# print(of_interest[1])
+					# 	# print('best_action_index - len(cw_of_interest): ' + str(best_action_index - len(cw_of_interest)))
+					# 	# print(of_interest[1][best_action_index - len(cw_of_interest)])
 						
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in coalitions.members:
+					# 	# It is the agent that has the best action that performs the action
+					# 	for agent_impacted in coalitions.members:
 
-							if agent_impacted.affiliation == coalitions.lead.affiliation:
-								agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] += \
-								(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] - agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0]) * \
-									coalitions.resources[0] * 0.1 / (len(coalitions.members))
+					# 		if agent_impacted.affiliation == coalitions.lead.affiliation:
+					# 			agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] += \
+					# 			(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] - agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0]) * \
+					# 				coalitions.resources[0] * 0.1 / (len(coalitions.members))
 
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 1) or (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] += \
-									(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] - agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0]) * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[0] / (len(coalitions.members))
+					# 		if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 1) or (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 0):
+					# 			agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] - agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0]) * \
+					# 				coalitions.resources[0] * 0.1 * affiliation_weights[0] / (len(coalitions.members))
 
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] += \
-									(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] - agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0]) * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[1] / (len(coalitions.members))
+					# 		if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 0):
+					# 			agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] - agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0]) * \
+					# 				coalitions.resources[0] * 0.1 * affiliation_weights[1] / (len(coalitions.members))
 
-							if (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 1):
-								agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] += \
-									(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] - agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0]) * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[2] / (len(coalitions.members))
+					# 		if (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 1):
+					# 			agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0] - agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest)]][0]) * \
+					# 				coalitions.resources[0] * 0.1 * affiliation_weights[2] / (len(coalitions.members))
 
-							# 1-1 check
-							agent_impacted.belieftree[0][best_action_index - len(cw_of_interest)][0] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][best_action_index - len(cw_of_interest)][0])
+					# 		# 1-1 check
+					# 		agent_impacted.belieftree[0][best_action_index - len(cw_of_interest)][0] = \
+					# 			self.one_minus_one_check(agent_impacted.belieftree[0][best_action_index - len(cw_of_interest)][0])
 
-					# The aim change is performed
-					elif best_action_index >= len(cw_of_interest) + len(issue_of_interest) - 1:
-						# print(' ')
-						# print('Performing an aim action')
-						# print(of_interest[1])
-						# print('best_action_index - len(cw_of_interest) - len(cw_of_interest): ' + str(best_action_index - len(cw_of_interest) - len(cw_of_interest)))
-						# print(of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)])
+					# # The aim change is performed
+					# elif best_action_index >= len(cw_of_interest) + len(issue_of_interest) - 1:
+					# 	# print(' ')
+					# 	# print('Performing an aim action')
+					# 	# print(of_interest[1])
+					# 	# print('best_action_index - len(cw_of_interest) - len(cw_of_interest): ' + str(best_action_index - len(cw_of_interest) - len(cw_of_interest)))
+					# 	# print(of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)])
 						
-						for agent_impacted in coalitions.members:
+					# 	for agent_impacted in coalitions.members:
 
-							if agent_impacted.affiliation == coalitions.lead.affiliation:
-								agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] += \
-									(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] - \
-									agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1]) * \
-									coalitions.resources[0] * 0.1 / (len(coalitions.members))
+					# 		if agent_impacted.affiliation == coalitions.lead.affiliation:
+					# 			agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] - \
+					# 				agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1]) * \
+					# 				coalitions.resources[0] * 0.1 / (len(coalitions.members))
 
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 1) or (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] += \
-									(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] - \
-									agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1]) * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[0] / (len(coalitions.members))
+					# 		if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 1) or (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 0):
+					# 			agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] - \
+					# 				agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1]) * \
+					# 				coalitions.resources[0] * 0.1 * affiliation_weights[0] / (len(coalitions.members))
 
-							if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 0):
-								agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] += \
-									(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] - \
-									agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1]) * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[1] / (len(coalitions.members))
+					# 		if (agent_impacted.affiliation == 0 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 0):
+					# 			agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] - \
+					# 				agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1]) * \
+					# 				coalitions.resources[0] * 0.1 * affiliation_weights[1] / (len(coalitions.members))
 
-							if (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 1):
-								agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] += \
-									(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] - \
-									agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1]) * \
-									coalitions.resources[0] * 0.1 * affiliation_weights[2] / (len(coalitions.members))
+					# 		if (agent_impacted.affiliation == 1 and coalitions.lead.affiliation == 2) or (agent_impacted.affiliation == 2 and coalitions.lead.affiliation == 1):
+					# 			agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] += \
+					# 				(coalitions.lead.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] - \
+					# 				agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1]) * \
+					# 				coalitions.resources[0] * 0.1 * affiliation_weights[2] / (len(coalitions.members))
 
-							# 1-1 check
-							agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1])
+					# 		# 1-1 check
+					# 		agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1] = \
+					# 			self.one_minus_one_check(agent_impacted.belieftree[0][of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)]][1])
 					
 					# Updating the resources of the team
 					coalitions.resources[1] -= coalitions.resources[0]*0.1

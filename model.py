@@ -528,7 +528,7 @@ class PolicyEmergence(Model):
 			random.shuffle(shuffled_coalition_list_as)
 			for coalitions in shuffled_coalition_list_as:
 				coalitions.coalition_belief_actions_ACF_as(coalitions, self.causalrelation_number, self.deep_core, self.policy_core, self.secondary, self.agent_action_list, self.ACF_link_list_as, self.ACF_link_list_as_total, \
-					self.ACF_link_id_as, self.link_list, self.affiliation_weights, self.conflict_level_coef)
+					self.ACF_link_id_as, self.link_list, self.affiliation_weights, self.conflict_level_coef, self.resources_weight_action, self.resources_potency)
 		
 			print('... cleared.')
 			print('   ')
@@ -827,7 +827,7 @@ class PolicyEmergence(Model):
 			random.shuffle(shuffled_coalition_list_pf)
 			for coalitions in shuffled_coalition_list_pf:
 				coalitions.coalition_belief_actions_ACF_pf(coalitions, self.causalrelation_number, self.deep_core, self.policy_core, self.secondary, self.agent_action_list, self.ACF_link_list_pf, self.ACF_link_list_pf_total, \
-					self.ACF_link_id_pf, self.link_list, self.affiliation_weights, self.agenda_as_issue, self.instruments, self.conflict_level_coef)
+					self.ACF_link_id_pf, self.link_list, self.affiliation_weights, self.agenda_as_issue, self.instruments, self.conflict_level_coef, self.resources_weight_action, self.resources_potency)
 		
 			print('... cleared.')
 			print('   ')
