@@ -10,3 +10,4 @@
 18 May:
 - Addition of the function file.
 - Adaptation of the grade calculation for the intra-team actions.
+- Completion of the changes to all function grading and implementation of actions (missing inter-team and inter-coalitions still)
