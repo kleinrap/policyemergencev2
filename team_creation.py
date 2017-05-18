@@ -23,7 +23,7 @@ class Team():
 	# 	return 'Team - ' + str(self.unique_id)
 
 	def team_belief_actions_threeS_as(self, teams, causalrelation_number, deep_core, policy_core, secondary, agent_action_list, threeS_link_list_as, \
-		threeS_link_list_as_total, threeS_link_id_as, link_list, affiliation_weights, conflict_level_coef):
+		threeS_link_list_as_total, threeS_link_id_as, link_list, affiliation_weights, conflict_level_coef, resources_weight_action, resources_potency):
 
 		"""
 		Team actions - three streams(agenda setting)
@@ -76,9 +76,6 @@ class Team():
 						self.knowledge_exchange_team(teams, cw, 0)
 					
 					# b. Compiling all actions for each actor
-
-					# This will need to be adjusted at a later point.
-					actionWeight = 1
 
 					# We select one agent at a time
 					total_agent_grades = []
@@ -149,99 +146,45 @@ class Team():
 					# print('Agent performing the action: ' + str(agent_best_action))
 					
 					# d. Implementation the best action
-					# The causal relation action is performed
-					if best_action <= len(cw_of_interest) - 1:
-						# print(' ')
-						# print('Performing a causal relation framing action')
-						# print('best_action: ' + str(best_action))
-						# print('cw_of_interest: ' + str(cw_of_interest))
-						# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in teams.members:
+					for agent_impacted in teams.members:
+						# Selecting the link:
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == teams.members[agent_best_action] and links.agent2 == agent_impacted) or (links.agent2 == teams.members[agent_best_action] and links.agent1 == agent_impacted) and links.aware > 0:
 
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-								 	(teams.members[agent_best_action].belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-									teams.resources[0] * 0.1 / len(teams.members)
+								# Update of the aware decay parameter
+								links.aware_decay = 5
 
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-								  (teams.members[agent_best_action].belieftree[0][cw_of_interest[best_action]][0]) - \
-								  agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-								  teams.resources[0] * 0.1 * affiliation_weights[0] / len(teams.members)
+								# The causal relation action is performed
+								if best_action <= len(cw_of_interest) - 1:
+									# print(' ')
+									# print('Performing a causal relation framing action')
+									# print('best_action: ' + str(best_action))
+									# print('cw_of_interest: ' + str(cw_of_interest))
+									# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
 
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-									(teams.members[agent_best_action].belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-									teams.resources[0] * 0.1 * affiliation_weights[1] / len(teams.members)
+									implemented_action = ActionFunctions.action_implementor(links, cw_of_interest[best_action], 0, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
+										
+								# The state change is performed
+								if best_action == len(cw_of_interest):
+									# print(' ')
+									# print('Performing a state change action')
+									# print('best_action: ' + str(best_action))
 
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-									(teams.members[agent_best_action].belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-									teams.resources[0] * 0.1 * affiliation_weights[2] / len(teams.members)
+									implemented_action = ActionFunctions.action_implementor(links, teams.issue, 0, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
 
-							# 1-1 check
-							agent_impacted.belieftree[0][cw_of_interest[best_action]][0] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][cw_of_interest[best_action]][0])
-							
-					# The state change is performed
-					if best_action == len(cw_of_interest):
-						# print(' ')
-						# print('Performing a state change action')
-						# print('best_action: ' + str(best_action))
+								# The aim change is performed
+								if best_action == len(cw_of_interest) + 1:
+									# print(' ')
+									# print('Performing an aim change action')
+									# print('best_action: ' + str(best_action))
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in teams.members:
-
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[0] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[1] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[2] / (len(teams.members))
-
-							# 1-1 check
-							agent_impacted.belieftree[0][teams.issue][0] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][teams.issue][0])
-
-					# The aim change is performed
-					if best_action == len(cw_of_interest) + 1:
-						# print(' ')
-						# print('Performing an aim change action')
-						# print('best_action: ' + str(best_action))
-
-						for agent_impacted in teams.members:
-
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[0] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[1] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[2] / (len(teams.members))
-
-							# 1-1 check
-							agent_impacted.belieftree[0][teams.issue][1] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][teams.issue][1])
-					
+									implemented_action = ActionFunctions.action_implementor(links, teams.issue, 1, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
+				
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
 
@@ -268,9 +211,6 @@ class Team():
 						self.knowledge_exchange_team_policy(teams, teams.issue, impact)
 					
 					# b. Compiling all actions for each actor
-
-					# This will need to be adjusted at a later point.
-					actionWeight = 1
 
 					# We select one agent at a time
 					total_agent_grades = []
@@ -339,94 +279,45 @@ class Team():
 					# print('Agent performing the action: ' + str(agent_best_action))
 
 					# d. Implementation the best action
-					# The impact framing action is performed
-					if best_action <= impact_number - 1:
-						# print(' ')
-						# print('Performing a causal relation framing action')
-						# print('best_action: ' + str(best_action))
-						# print('impact_number: ' + str(impact_number))
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in teams.members:
+					for agent_impacted in teams.members:
+						# Selecting the link:
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == teams.members[agent_best_action] and links.agent2 == agent_impacted) or (links.agent2 == teams.members[agent_best_action] and links.agent1 == agent_impacted) and links.aware > 0:
 
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree_policy[0][teams.issue][best_action] += \
-								  (teams.members[agent_best_action].belieftree_policy[0][teams.issue][best_action]) - agent_impacted.belieftree_policy[0][teams.issue][best_action] * \
-								  teams.resources[0] * 0.1 / len(teams.members)
+								# Update of the aware decay parameter
+								links.aware_decay = 5
 
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree_policy[0][teams.issue][best_action] += \
-								  (teams.members[agent_best_action].belieftree_policy[0][teams.issue][best_action]) - agent_impacted.belieftree_policy[0][teams.issue][best_action] * \
-								  teams.resources[0] * 0.1 * affiliation_weights[0] / len(teams.members)
+								# The causal relation action is performed
+								if best_action <= impact_number - 1:
+									# print(' ')
+									# print('Performing a causal relation framing action')
+									# print('best_action: ' + str(best_action))
+									# print('cw_of_interest: ' + str(cw_of_interest))
+									# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
 
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree_policy[0][teams.issue][best_action] += \
-									(teams.members[agent_best_action].belieftree_policy[0][teams.issue][best_action]) - agent_impacted.belieftree_policy[0][teams.issue][best_action] * \
-									teams.resources[0] * 0.1 * affiliation_weights[1] / len(teams.members)
+									implemented_action = ActionFunctions.action_implementor_3S_AS(links, teams.issue, best_action, 0, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
+										
+								# The state change is performed
+								if best_action == impact_number:
+									# print(' ')
+									# print('Performing a state change action')
+									# print('best_action: ' + str(best_action))
 
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree_policy[0][teams.issue][best_action] += \
-									(teams.members[agent_best_action].belieftree_policy[0][teams.issue][best_action]) - agent_impacted.belieftree_policy[0][teams.issue][best_action] * \
-									teams.resources[0] * 0.1 * affiliation_weights[2] / len(teams.members)
+									implemented_action = ActionFunctions.action_implementor(links, teams.issue, 0, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
 
-							# 1-1 check
-							agent_impacted.belieftree_policy[0][teams.issue][best_action] = self.one_minus_one_check(agent_impacted.belieftree_policy[0][teams.issue][best_action])
-							
-					# The state change is performed
-					if best_action == impact_number:
-						# print(' ')
-						# print('Performing a state change action')
-						# print('best_action: ' + str(best_action))
+								# The aim change is performed
+								if best_action == impact_number + 1:
+									# print(' ')
+									# print('Performing an aim change action')
+									# print('best_action: ' + str(best_action))
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in teams.members:
+									implemented_action = ActionFunctions.action_implementor(links, teams.issue, 1, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
 
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-									agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-									agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[0] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-									agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[1] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-									agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[2] / (len(teams.members))
-
-							# 1-1 check
-							agent_impacted.belieftree[0][teams.issue][0] = self.one_minus_one_check(agent_impacted.belieftree[0][teams.issue][0])
-
-					# The aim change is performed
-					if best_action == impact_number + 1:
-						# print(' ')
-						# print('Performing an aim change action')
-						# print('best_action: ' + str(best_action))
-
-						for agent_impacted in teams.members:
-
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-									agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[0] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-									agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[1] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-									agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[2] / (len(teams.members))
-
-							# 1-1 check
-							agent_impacted.belieftree[0][teams.issue][1] = self.one_minus_one_check(agent_impacted.belieftree[0][teams.issue][1])
-					
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
 
@@ -604,11 +495,10 @@ class Team():
 								link_count += 1
 								# Setting the action weight
 								# Removed for now for technical issues
-								# if type(links.agent2) == Policymakers:
-								# 		actionWeight = 1
-								# else:
-								# 	actionWeight = 0.95
-								actionWeight = 1
+								if type(links.agent2).__name__ == 'Policymakers':
+										actionWeight = 1
+								else:
+									actionWeight = 0.95
 								# Framing actions:
 								for cw in range(len(cw_of_interest)):
 
@@ -891,11 +781,10 @@ class Team():
 								link_count += 1
 								# Setting the action weight
 								# Removed for now for technical issues
-								# if type(links.agent2) == Policymakers:
-								# 		actionWeight = 1
-								# else:
-								# 	actionWeight = 0.95
-								actionWeight = 1
+								if type(links.agent2).__name__ == 'Policymakers':
+										actionWeight = 1
+								else:
+									actionWeight = 0.95
 								# Framing actions:
 								for impact in range(impact_number):
 
@@ -1160,7 +1049,7 @@ class Team():
 						break
 
 	def team_belief_actions_threeS_pf(self, teams, causalrelation_number, deep_core, policy_core, secondary, agent_action_list, threeS_link_list_pf, \
-		threeS_link_list_pf_total, threeS_link_id_pf, link_list, affiliation_weights, agenda_prob_3S_as, conflict_level_coef):
+		threeS_link_list_pf_total, threeS_link_id_pf, link_list, affiliation_weights, agenda_prob_3S_as, conflict_level_coef, resources_weight_action, resources_potency):
 
 		"""
 		Team actions - three streams(policy formulation)
@@ -1282,93 +1171,43 @@ class Team():
 					# d. Implementation the best action
 
 					# The causal relation action is performed
-					if best_action <= len(cw_of_interest) - 1:
-						# print(' ')
-						# print('Performing a causal relation framing action')
-						# print('best_action: ' + str(best_action))
-						# print('cw_of_interest: ' + str(cw_of_interest))
-						# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
+					for agent_impacted in teams.members:
+						# Selecting the link:
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == teams.members[agent_best_action] and links.agent2 == agent_impacted) or (links.agent2 == teams.members[agent_best_action] and links.agent1 == agent_impacted) and links.aware > 0:
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in teams.members:
+								# Update of the aware decay parameter
+								links.aware_decay = 5
 
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-								  (teams.members[agent_best_action].belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-								  teams.resources[0] * 0.1 / len(teams.members)
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-								  (teams.members[agent_best_action].belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-								  teams.resources[0] * 0.1 * affiliation_weights[0] / len(teams.members)
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-								  (teams.members[agent_best_action].belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-								  teams.resources[0] * 0.1 * affiliation_weights[1] / len(teams.members)
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree[0][cw_of_interest[best_action]][0] += \
-								  (teams.members[agent_best_action].belieftree[0][cw_of_interest[best_action]][0]) - agent_impacted.belieftree[0][cw_of_interest[best_action]][0] * \
-								  teams.resources[0] * 0.1 * affiliation_weights[2] / len(teams.members)
+								# The causal relation action is performed
+								if best_action <= len(cw_of_interest) - 1:
+									# print(' ')
+									# print('Performing a causal relation framing action')
+									# print('best_action: ' + str(best_action))
+									# print('cw_of_interest: ' + str(cw_of_interest))
+									# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
 
-							# 1-1 check
-							agent_impacted.belieftree[0][cw_of_interest[best_action]][0] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][cw_of_interest[best_action]][0])
-							
-					# The state change is performed
-					if best_action == len(cw_of_interest):
-						# print(' ')
-						# print('Performing a state change action')
-						# print('best_action: ' + str(best_action))
+									implemented_action = ActionFunctions.action_implementor(links, cw_of_interest[best_action], 0, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
+										
+								# The state change is performed
+								if best_action == len(cw_of_interest):
+									# print(' ')
+									# print('Performing a state change action')
+									# print('best_action: ' + str(best_action))
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in teams.members:
+									implemented_action = ActionFunctions.action_implementor(links, teams.issue, 0, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
 
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 / (len(teams.members))
+								# The aim change is performed
+								if best_action == len(cw_of_interest) + 1:
+									# print(' ')
+									# print('Performing an aim change action')
+									# print('best_action: ' + str(best_action))
 
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[0] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[1] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[2] / (len(teams.members))
-
-							# 1-1 check
-							agent_impacted.belieftree[0][teams.issue][0] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][teams.issue][0])
-
-					# The aim change is performed
-					if best_action == len(cw_of_interest) + 1:
-						# print(' ')
-						# print('Performing an aim change action')
-						# print('best_action: ' + str(best_action))
-
-						for agent_impacted in teams.members:
-
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[0] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[1] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[2] / (len(teams.members))
-
-							# 1-1 check
-							agent_impacted.belieftree[0][teams.issue][1] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][teams.issue][1])
+									implemented_action = ActionFunctions.action_implementor(links, teams.issue, 1, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
 					
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
@@ -1417,8 +1256,6 @@ class Team():
 								
 							total_agent_grades.append(sum(impact_grade_list))
 
-							# print('CR: ' + str(cw) + ' with grade: ' + str(sum(impact_grade_list)))
-
 						# STATES GRADING
 						state_grade_list = []
 						# We then go through all agents
@@ -1464,101 +1301,44 @@ class Team():
 					# print('Agent performing the action: ' + str(agent_best_action))
 
 					# d. Implementation the best action
-					# The causal relation action is performed
-					if best_action <= impact_number - 1:
-						# print(' ')
-						# print('Performing an impact framing action')
-						# print('best_action: ' + str(best_action))
-						# print('cw_of_interest: ' + str(cw_of_interest))
-						# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in teams.members:
+					for agent_impacted in teams.members:
+						# Selecting the link:
+						for links in link_list:
+							# Check that only the link of interest is selected
+							if (links.agent1 == teams.members[agent_best_action] and links.agent2 == agent_impacted) or (links.agent2 == teams.members[agent_best_action] and links.agent1 == agent_impacted) and links.aware > 0:
 
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree_instrument[0][teams.issue][best_action] += \
-								  (teams.members[agent_best_action].belieftree_instrument[0][teams.issue][best_action]) - \
-								  agent_impacted.belieftree_instrument[0][teams.issue][best_action] * \
-								  teams.resources[0] * 0.1 / len(teams.members)
+								# Update of the aware decay parameter
+								links.aware_decay = 5
 
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree_instrument[0][teams.issue][best_action] += \
-								  (teams.members[agent_best_action].belieftree_instrument[0][teams.issue][best_action]) - \
-								  agent_impacted.belieftree_instrument[0][teams.issue][best_action] * \
-								  teams.resources[0] * 0.1 * affiliation_weights[0] / len(teams.members)
+								# The causal relation action is performed
+								if best_action <= impact_number - 1:
+									# print(' ')
+									# print('Performing a causal relation framing action')
+									# print('best_action: ' + str(best_action))
+									# print('cw_of_interest: ' + str(cw_of_interest))
+									# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
 
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree_instrument[0][teams.issue][best_action] += \
-								  (teams.members[agent_best_action].belieftree_instrument[0][teams.issue][best_action]) - \
-								  agent_impacted.belieftree_instrument[0][teams.issue][best_action] * \
-								  teams.resources[0] * 0.1 * affiliation_weights[1] / len(teams.members)
+									implemented_action = ActionFunctions.action_implementor_3S_PF(links, teams.issue, best_action, 0, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
+										
+								# The state change is performed
+								if best_action == impact_number:
+									# print(' ')
+									# print('Performing a state change action')
+									# print('best_action: ' + str(best_action))
 
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree_instrument[0][teams.issue][best_action] += \
-								  (teams.members[agent_best_action].belieftree_instrument[0][teams.issue][best_action]) - \
-								  agent_impacted.belieftree_instrument[0][teams.issue][best_action] * \
-								  teams.resources[0] * 0.1 * affiliation_weights[2] / len(teams.members)
+									implemented_action = ActionFunctions.action_implementor(links, teams.issue, 0, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
 
-							# 1-1 check
-							agent_impacted.belieftree_instrument[0][teams.issue][best_action] = \
-								self.one_minus_one_check(agent_impacted.belieftree_instrument[0][teams.issue][best_action])
-							
-					# The state change is performed
-					if best_action == impact_number:
-						# print(' ')
-						# print('Performing a state change action')
-						# print('best_action: ' + str(best_action))
+								# The aim change is performed
+								if best_action == impact_number + 1:
+									# print(' ')
+									# print('Performing an aim change action')
+									# print('best_action: ' + str(best_action))
 
-						# It is the agent that has the best action that performs the action
-						for agent_impacted in teams.members:
-
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[0] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[1] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree[0][teams.issue][0] += (teams.members[agent_best_action].belieftree[0][teams.issue][0] - \
-								  agent_impacted.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[2] / (len(teams.members))
-
-							# 1-1 check
-							agent_impacted.belieftree[0][teams.issue][0] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][teams.issue][0])
-
-					# The aim change is performed
-					if best_action == impact_number + 1:
-						# print(' ')
-						# print('Performing an aim change action')
-						# print('best_action: ' + str(best_action))
-
-						for agent_impacted in teams.members:
-
-							if agent_impacted.affiliation == teams.members[agent_best_action].affiliation:
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 1) or (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[0] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 0 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 0):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[1] / (len(teams.members))
-
-							if (agent_impacted.affiliation == 1 and teams.members[agent_best_action].affiliation == 2) or (agent_impacted.affiliation == 2 and teams.members[agent_best_action].affiliation == 1):
-								agent_impacted.belieftree[0][teams.issue][1] += (teams.members[agent_best_action].belieftree[0][teams.issue][1] - \
-								  agent_impacted.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[2] / (len(teams.members))
-
-							# 1-1 check
-							agent_impacted.belieftree[0][teams.issue][1] = \
-								self.one_minus_one_check(agent_impacted.belieftree[0][teams.issue][1])
+									implemented_action = ActionFunctions.action_implementor(links, teams.issue, 1, teams.members[agent_best_action], teams, \
+										affiliation_weights, resources_weight_action, resources_potency, True, len(teams.members))
 					
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
@@ -1740,11 +1520,10 @@ class Team():
 									link_count += 1
 									# Setting the action weight
 									# Removed for now for technical issues
-									# if type(links.agent2) == Policymakers:
-									# 		actionWeight = 1
-									# else:
-									# 	actionWeight = 0.95
-									actionWeight = 1
+									if type(links.agent2).__name__ == 'Policymakers':
+											actionWeight = 1
+									else:
+										actionWeight = 0.95
 									# Framing actions:
 									for cw in range(len(cw_of_interest)):
 
@@ -1796,19 +1575,7 @@ class Team():
 										(agents_in_team.affiliation == 2 and links.agent2.affiliation == 1):
 										state_grade = links.conflict_level[0] * links.aware * actionWeight * affiliation_weights[2]
 										total_agent_grades.append(state_grade)	
-
-
-									# check_none = 0
-									# if agents_in_team.belieftree[1 + links.agent2.unique_id][teams.issue][0] == None:
-									# 	agents_in_team.belieftree[1 + links.agent2.unique_id][teams.issue][0] = 0
-									# 	check_none = 1
-									# state_grade = abs((agents_in_team.belieftree[0][teams.issue][0] - \
-									#   agents_in_team.belieftree[1 + links.agent2.unique_id][teams.issue][0]) * teams.resources[0] * 0.1 * links.aware * links.conflict_level[0] * actionWeight)
-									# total_agent_grades.append(state_grade)
-									# # None reset
-									# if check_none == 1:
-									# 	agents_in_team.belieftree[1 + links.agent2.unique_id][teams.issue][0] = None
-
+										
 									# Aim influence actions
 									# Grade calculation using the likelihood method
 									# Same affiliation
@@ -2040,11 +1807,10 @@ class Team():
 									link_count += 1
 									# Setting the action weight
 									# Removed for now for technical issues
-									# if type(links.agent2) == Policymakers:
-									# 		actionWeight = 1
-									# else:
-									# 	actionWeight = 0.95
-									actionWeight = 1
+									if type(links.agent2).__name__ == 'Policymakers':
+											actionWeight = 1
+									else:
+										actionWeight = 0.95
 									# Framing actions:
 									for impact in range(impact_number):
 

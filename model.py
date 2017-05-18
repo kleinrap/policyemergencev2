@@ -495,7 +495,7 @@ class PolicyEmergence(Model):
 			random.shuffle(shuffled_team_list_as)
 			for teams in shuffled_team_list_as:
 				teams.team_belief_actions_threeS_as(teams, self.causalrelation_number, self.deep_core, self.policy_core, self.secondary, self.agent_action_list, self.threeS_link_list_as, self.threeS_link_list_as_total, \
-					self.threeS_link_id_as, self.link_list, self.affiliation_weights, self.conflict_level_coef)
+					self.threeS_link_id_as, self.link_list, self.affiliation_weights, self.conflict_level_coef, self.resources_weight_action, self.resources_potency)
 		
 			print('... cleared.')
 			print('   ')
@@ -795,7 +795,7 @@ class PolicyEmergence(Model):
 			random.shuffle(shuffled_team_list_as)
 			for teams in shuffled_team_list_as:
 				teams.team_belief_actions_threeS_pf(teams, self.causalrelation_number, self.deep_core, self.policy_core, self.secondary, self.agent_action_list, self.threeS_link_list_pf, self.threeS_link_list_pf_total, \
-					self.threeS_link_id_pf, self.link_list, self.affiliation_weights, self.agenda_prob_3S_as, self.conflict_level_coef)
+					self.threeS_link_id_pf, self.link_list, self.affiliation_weights, self.agenda_prob_3S_as, self.conflict_level_coef, self.resources_weight_action, self.resources_potency)
 
 			print('... cleared.')
 			print('   ')

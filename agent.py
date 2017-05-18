@@ -2875,6 +2875,9 @@ class Agent:
 				if links == total_grade_list_links[int(best_action_index/(len(cw_of_interest) + 2))]:
 					# print(links)
 
+					# Update of the aware decay parameter
+					links.aware_decay = 5
+
 					# If the index is in the first part of the list, then the framing action is the best
 					if best_action <= len(cw_of_interest) -1:					
 						# print(' ')
@@ -2883,22 +2886,17 @@ class Agent:
 						# print('cw_of_interest: ' + str(cw_of_interest))
 						# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
 
-						# Update of the aware decay parameter
-						links.aware_decay = 5
-
 						implemented_action = ActionFunctions.action_implementor(links, cw_of_interest[best_action], 0, agents, agents, affiliation_weights, resources_weight_action, resources_potency, False, 1)
 
 					# If the index is in the second part of the list, then the aim influence action is the best
 					if best_action == len(cw_of_interest):
 						# print('Implementing a aim influence action:')
-						links.aware_decay = 5
 
 						implemented_action = ActionFunctions.action_implementor(links, agents.select_as_issue, 1, agents, agents,affiliation_weights, resources_weight_action, resources_potency, False, 1)
 
 					# If the index is in the first part of the list, then the state influence action is the best
 					if best_action == len(cw_of_interest) + 1:
 						# print('Implementing a state influence action:')
-						links.aware_decay = 5
 						
 						implemented_action = ActionFunctions.action_implementor(links, agents.select_as_issue, 0, agents, agents,affiliation_weights, resources_weight_action, resources_potency, False, 1)
 
@@ -3001,7 +2999,12 @@ class Agent:
 
 				# IS THIS CORRECT - SHOULDNT THE SAME CHECK AS BEFORE BE ALSO IMPLEMENTED!
 				if links == total_grade_list_links[int(best_action_index / (len(cw_of_interest) + 2 * len(issue_of_interest) ) )]:
+
+
 					# print(links)					
+
+					# Update of the aware decay parameter
+					links.aware_decay = 5
 
 					# 5. Performing the actual action
 					# If the index is in the first part of the list, then the framing action is the best
@@ -3013,9 +3016,6 @@ class Agent:
 						# print('of_interest[0]: ' + str(of_interest[0]))
 						# print('of_interest[0][best_action]: ' + str(of_interest[0][best_action]))
 
-						# Update of the aware decay parameter
-						links.aware_decay = 5
-
 						implemented_action = ActionFunctions.action_implementor(links, of_interest[0][best_action], 0, agents, agents,affiliation_weights, resources_weight_action, resources_potency, False, 1)
 
 					# If the index is in the second part of the list, then the aim influence action on the problem is the best
@@ -3026,9 +3026,6 @@ class Agent:
 						# print('best_action: ' + str(best_action))
 						# print('of_interest[1]: ' + str(of_interest[1]))
 						# print('of_interest[1][best_action - len(cw_of_interest)]: ' + str(of_interest[1][best_action - len(cw_of_interest)]))
-						
-						# Update of the aware decay parameter
-						links.aware_decay = 5
 
 						implemented_action = ActionFunctions.action_implementor(links, of_interest[1][best_action - len(cw_of_interest)], 1, agents, agents, affiliation_weights, resources_weight_action, resources_potency, False, 1)
 
@@ -3040,9 +3037,6 @@ class Agent:
 						# print('best_action: ' + str(best_action))
 						# print('of_interest[1]: ' + str(of_interest[1]))
 						# print('of_interest[1][best_action - len(cw_of_interest) - len(issue_of_interest)]: ' + str(of_interest[1][best_action - len(cw_of_interest) - len(issue_of_interest)]))
-
-						# Update of the aware decay parameter
-						links.aware_decay = 5
 
 						implemented_action = ActionFunctions.action_implementor(links, of_interest[1][best_action - len(cw_of_interest) - len(issue_of_interest)], 0, agents, agents, \
 							affiliation_weights, resources_weight_action, resources_potency, False, 1)
@@ -3223,7 +3217,7 @@ class Agent:
 							# print('best_action: ' + str(best_action))
 							# print('impact_number: ' + str(impact_number))
 
-							implemented_action = ActionFunctions.action_implementor_3S_AS(links, best_action, agents, affiliation_weights, agents, resources_weight_action, resources_potency, False, 1)
+							implemented_action = ActionFunctions.action_implementor_3S_AS(links, agents.select_policy_3S_as, best_action, agents, affiliation_weights, agents, resources_weight_action, resources_potency, False, 1)
 
 						# If the index is in the second part of the list, then the aim influence action is the best
 						if best_action == impact_number:
@@ -3416,7 +3410,7 @@ class Agent:
 							# print('best_action: ' + str(best_action))
 							# print('impact_number: ' + str(impact_number))
 
-							implemented_action = ActionFunctions.action_implementor_3S_PF(links, best_action, agents, agents, affiliation_weights, resources_weight_action, resources_potency, False, 1)
+							implemented_action = ActionFunctions.action_implementor_3S_PF(links, agents.select_policy_3S_pf, best_action, agents, agents, affiliation_weights, resources_weight_action, resources_potency, False, 1)
 
 						# If the index is in the second part of the list, then the aim influence action is the best
 						if best_action == impact_number:
@@ -4017,46 +4011,29 @@ class Externalparties(Agent):
 			####################################
 			# Application of the action selected
 
-			# Implementation of a causal relation blanket action
-			if best_action < len(cw_of_interest):
+			# Going through all active agents
+			for agent_inspected in agent_action_list:
+				# Going through all of the links
+				for links in link_list:
+					# Check that only the link of interest is selected
+					if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+						# Make sure to look at the right direction of the conflict levels
 
-				# Going through all active agents
-				for agent_inspected in agent_action_list:
-					# Going through all of the links
-					for links in link_list:
-						# Check that only the link of interest is selected
-						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-							# Make sure to look at the right direction of the conflict levels
+						# Update aware decay
+						links.aware_decay = 5
 
-							links.aware_decay = 5
+						# Implementation of a causal relation blanket action
+						if best_action < len(cw_of_interest):
 
 							implemented_action = ActionFunctions.action_implementor(links, cw_of_interest[best_action], 0, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-			# Implementation of a state influence blanket action
-			if best_action == len(cw_of_interest):
-				# Going through all active agents
-				for agent_inspected in agent_action_list:
-					# Going through all of the links
-					for links in link_list:
-						# Check that only the link of interest is selected
-						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-							# Make sure to look at the right direction of the conflict levels
-
-							links.aware_decay = 5
+						# Implementation of a state influence blanket action
+						if best_action == len(cw_of_interest):
 
 							implemented_action = ActionFunctions.action_implementor(links, agents.select_as_issue, 0, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-			# Implementation of a state influence blanket action
-			if best_action == len(cw_of_interest) + 1:
-				# Going through all active agents
-				for agent_inspected in agent_action_list:
-					# Going through all of the links
-					for links in link_list:
-						# Check that only the link of interest is selected
-						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-							# Make sure to look at the right direction of the conflict levels
-
-							links.aware_decay = 5
+						# Implementation of a state influence blanket action
+						if best_action == len(cw_of_interest) + 1:
 
 							implemented_action = ActionFunctions.action_implementor(links, agents.select_as_issue, 1, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
@@ -4301,49 +4278,32 @@ class Externalparties(Agent):
 			####################################
 			# Application of the action selected
 
-			# Implementation of a causal relation blanket action
-			if best_action < len(cw_of_interest):
-				# print('Blanket framing action selected')
-				# Going through all active agents
-				for agent_inspected in agent_action_list:
-					# Going through all of the links
-					for links in link_list:
-						# Check that only the link of interest is selected
-						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-							# Make sure to look at the right direction of the conflict levels
+			# Going through all active agents
+			for agent_inspected in agent_action_list:
+				# Going through all of the links
+				for links in link_list:
+					# Check that only the link of interest is selected
+					if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+						# Make sure to look at the right direction of the conflict levels
 
-							links.aware_decay = 5
+						links.aware_decay = 5
 
+						# Implementation of a causal relation blanket action
+						if best_action < len(cw_of_interest):
+							# print('Blanket framing action selected')
+				
 							implemented_action = ActionFunctions.action_implementor(links, cw_of_interest[best_action], 0, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-			# Implementation of a state influence blanket action
-			if best_action >= len(cw_of_interest) and best_action < len(cw_of_interest) + len(issue_of_interest):
-				# print('Blanket state action selected')
-				# Going through all active agents
-				for agent_inspected in agent_action_list:
-					# Going through all of the links
-					for links in link_list:
-						# Check that only the link of interest is selected
-						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-							# Make sure to look at the right direction of the conflict levels
-
-							links.aware_decay = 5
+						# Implementation of a state influence blanket action
+						if best_action >= len(cw_of_interest) and best_action < len(cw_of_interest) + len(issue_of_interest):
+							# print('Blanket state action selected')
 
 							implemented_action = ActionFunctions.action_implementor(links, issue_of_interest[best_action - len(cw_of_interest)], 0, agents, agents, \
 								affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-			# Implementation of a state influence blanket action
-			if best_action >= len(cw_of_interest) + len(issue_of_interest):
-				# print('Blanket aim action selected')
-				# Going through all active agents
-				for agent_inspected in agent_action_list:
-					# Going through all of the links
-					for links in link_list:
-						# Check that only the link of interest is selected
-						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-							# Make sure to look at the right direction of the conflict levels
-
-							links.aware_decay = 5
+						# Implementation of a state influence blanket action
+						if best_action >= len(cw_of_interest) + len(issue_of_interest):
+							# print('Blanket aim action selected')
 
 							implemented_action = ActionFunctions.action_implementor(links, issue_of_interest[best_action - len(cw_of_interest) - len(issue_of_interest)], 1, \
 								agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
@@ -4529,45 +4489,28 @@ class Externalparties(Agent):
 				####################################
 				# Application of the action selected
 
-				# Implementation of a causal relation blanket action
-				if best_action < len(cw_of_interest):
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
+				# Going through all active agents
+				for agent_inspected in agent_action_list:
+					# Going through all of the links
+					for links in link_list:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+							# Make sure to look at the right direction of the conflict levels
 
-								links.aware_decay = 5
+							links.aware_decay = 5
 
+							# Implementation of a causal relation blanket action
+							if best_action < len(cw_of_interest):
+					
 								implemented_action = ActionFunctions.action_implementor(links, cw_of_interest[best_action], 0, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-				# Implementation of a state influence blanket action
-				if best_action == len(cw_of_interest):
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
-
-								links.aware_decay = 5
+							# Implementation of a state influence blanket action
+							if best_action == len(cw_of_interest):
 
 								implemented_action = ActionFunctions.action_implementor(links, agents.select_problem_3S_as, 0, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-				# Implementation of a state influence blanket action
-				if best_action == len(cw_of_interest) + 1:
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
-
-								links.aware_decay = 5
+							# Implementation of a state influence blanket action
+							if best_action == len(cw_of_interest) + 1:
 
 								implemented_action = ActionFunctions.action_implementor(links, agents.select_problem_3S_as, 1, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
@@ -4637,45 +4580,28 @@ class Externalparties(Agent):
 				####################################
 				# Application of the action selected
 
-				# Implementation of a causal relation blanket action
-				if best_action < impact_number:
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
+				# Going through all active agents
+				for agent_inspected in agent_action_list:
+					# Going through all of the links
+					for links in link_list:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+							# Make sure to look at the right direction of the conflict levels
 
-								links.aware_decay = 5
+							links.aware_decay = 5
 
-								implemented_action = ActionFunctions.action_implementor_3S_AS(links, best_action, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
+							# Implementation of a causal relation blanket action
+							if best_action < impact_number:
+					
+								implemented_action = ActionFunctions.action_implementor_3S_AS(links, agents.select_policy_3S_as, best_action, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-				# Implementation of a state influence blanket action
-				if best_action == impact_number:
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
-
-								links.aware_decay = 5
+							# Implementation of a state influence blanket action
+							if best_action == impact_number:
 
 								implemented_action = ActionFunctions.action_implementor(links, agents.select_problem_3S_as, 0, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-				# Implementation of a state influence blanket action
-				if best_action == impact_number + 1:
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
-
-								links.aware_decay = 5
+							# Implementation of a state influence blanket action
+							if best_action == impact_number + 1:
 
 								implemented_action = ActionFunctions.action_implementor(links, agents.select_problem_3S_as, 1, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
@@ -4906,46 +4832,28 @@ class Externalparties(Agent):
 				####################################
 				# Application of the action selected
 
-				# Implementation of a causal relation blanket action
-				if best_action < len(cw_of_interest):
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
+				# Going through all active agents
+				for agent_inspected in agent_action_list:
+					# Going through all of the links
+					for links in link_list:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								links.aware_decay = 5
+							links.aware_decay = 5
 
+							# Implementation of a causal relation blanket action
+							if best_action < len(cw_of_interest):
+					
 								implemented_action = ActionFunctions.action_implementor(links, cw_of_interest[best_action], 0, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-				# Implementation of a state influence blanket action
-				if best_action == len(cw_of_interest):
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
-
-								links.aware_decay = 5
+							# Implementation of a state influence blanket action
+							if best_action == len(cw_of_interest):
 
 								implemented_action = ActionFunctions.action_implementor(links, agents.select_problem_3S_pf, 0, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-				# Implementation of a state influence blanket action
-				if best_action == len(cw_of_interest) + 1:
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
-
-								links.aware_decay = 5
-
+							# Implementation of a state influence blanket action
+							if best_action == len(cw_of_interest) + 1:
+		
 								implemented_action = ActionFunctions.action_implementor(links, agents.select_problem_3S_pf, 1, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
 				# Updating the resources after each action has been implemented
@@ -5014,45 +4922,28 @@ class Externalparties(Agent):
 				####################################
 				# Application of the action selected
 
-				# Implementation of a causal relation blanket action
-				if best_action < impact_number:
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
+				# Going through all active agents
+				for agent_inspected in agent_action_list:
+					# Going through all of the links
+					for links in link_list:
+						# Check that only the link of interest is selected
+						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
+							# Make sure to look at the right direction of the conflict levels
 
-								links.aware_decay = 5
+							links.aware_decay = 5
 
-								implemented_action = ActionFunctions.action_implementor_3S_PF(links, best_action, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
+							# Implementation of a causal relation blanket action
+							if best_action < impact_number:
+					
+								implemented_action = ActionFunctions.action_implementor_3S_PF(links, agents.select_policy_3S_pf, best_action, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-				# Implementation of a state influence blanket action
-				if best_action == impact_number:
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
-
-								links.aware_decay = 5
+							# Implementation of a state influence blanket action
+							if best_action == impact_number:
 
 								implemented_action = ActionFunctions.action_implementor(links, agents.select_problem_3S_pf, 0, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 
-				# Implementation of a state influence blanket action
-				if best_action == impact_number + 1:
-					# Going through all active agents
-					for agent_inspected in agent_action_list:
-						# Going through all of the links
-						for links in link_list:
-							# Check that only the link of interest is selected
-							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
-								# Make sure to look at the right direction of the conflict levels
-
-								links.aware_decay = 5
+							# Implementation of a state influence blanket action
+							if best_action == impact_number + 1:
 
 								implemented_action = ActionFunctions.action_implementor(links, agents.select_problem_3S_pf, 1, agents, agents, affiliation_weights, resources_weight_action, resources_potency, True, action_agent_number)
 

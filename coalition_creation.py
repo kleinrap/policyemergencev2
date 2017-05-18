@@ -142,13 +142,10 @@ class Coalition():
 
 					# It is the agent that has the best action that performs the action
 					for agent_impacted in coalitions.members:
-
 						# Selecting the link:
 						for links in link_list:
-
 							# Check that only the link of interest is selected
 							if (links.agent1 == coalitions.lead and links.agent2 == agent_inspected) or (links.agent2 == coalitions.lead and links.agent1 == agent_inspected) and links.aware > 0:
-
 
 								# The causal relation action is performed
 								if best_action <= len(cw_of_interest) - 1:
