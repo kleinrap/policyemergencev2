@@ -21,10 +21,10 @@ inputs_dict = dict()
 # Pseudo random generator seed
 # random.seed(42)
 
-# Team strategies
+# Team strategies - THis might not be used yet.
 team_strategy = 1
 
-# ACF deep core of interest
+# ACF principle belief of interest
 DC_ACF_interest = 0
 
 # Method chosen:

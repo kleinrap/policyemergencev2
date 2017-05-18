@@ -97,7 +97,7 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 
 	# Policies inputs (three streams only)
 	policies_number = 10
-	policies_start = [0 for i in range(len_S)]
+	policies_start = [0 for i in range(len_PC)]
 	policies = []
 	for k in range(policies_number):
 		policies.append(copy.copy(policies_start))
