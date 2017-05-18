@@ -147,6 +147,9 @@ class Coalition():
 							# Check that only the link of interest is selected
 							if (links.agent1 == coalitions.lead and links.agent2 == agent_inspected) or (links.agent2 == coalitions.lead and links.agent1 == agent_inspected) and links.aware > 0:
 
+								# Update of the aware decay parameter
+								links.aware_decay = 5
+
 								# The causal relation action is performed
 								if best_action <= len(cw_of_interest) - 1:
 									# print(' ')
@@ -154,9 +157,6 @@ class Coalition():
 									# print('best_action: ' + str(best_action))
 									# print('cw_of_interest: ' + str(cw_of_interest))
 									# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
-
-									# Update of the aware decay parameter
-									links.aware_decay = 5
 
 									implemented_action = ActionFunctions.action_implementor(links, cw_of_interest[best_action], 0, coalitions.lead, coalitions, \
 										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
@@ -167,9 +167,6 @@ class Coalition():
 									# print('Performing a state change action')
 									# print('best_action: ' + str(best_action))
 
-									# Update of the aware decay parameter
-									links.aware_decay = 5
-
 									implemented_action = ActionFunctions.action_implementor(links, coalitions.issue, 0, coalitions.lead, coalitions, \
 										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
 
@@ -178,9 +175,6 @@ class Coalition():
 									# print(' ')
 									# print('Performing an aim change action')
 									# print('best_action: ' + str(best_action))
-
-									# Update of the aware decay parameter
-									links.aware_decay = 5
 
 									implemented_action = ActionFunctions.action_implementor(links, coalitions.issue, 1, coalitions.lead, coalitions, \
 										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
@@ -680,6 +674,8 @@ class Coalition():
 							# Check that only the link of interest is selected
 							if (links.agent1 == coalitions.lead and links.agent2 == agent_inspected) or (links.agent2 == coalitions.lead and links.agent1 == agent_inspected) and links.aware > 0:
 
+								# Update of the aware decay parameter
+								links.aware_decay = 5
 
 								# The causal relation action is performed
 								if best_action_index <= len(cw_of_interest) - 1:
@@ -688,9 +684,6 @@ class Coalition():
 									# print('best_action: ' + str(best_action))
 									# print('cw_of_interest: ' + str(cw_of_interest))
 									# print('cw_of_interest[best_action]: ' + str(cw_of_interest[best_action]))
-
-									# Update of the aware decay parameter
-									links.aware_decay = 5
 
 									implemented_action = ActionFunctions.action_implementor(links, of_interest[0][best_action_index], 0, coalitions.lead, coalitions, \
 										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
@@ -701,9 +694,6 @@ class Coalition():
 									# print('Performing a state change action')
 									# print('best_action: ' + str(best_action))
 
-									# Update of the aware decay parameter
-									links.aware_decay = 5
-
 									implemented_action = ActionFunctions.action_implementor(links, of_interest[1][best_action_index - len(cw_of_interest)], 0, coalitions.lead, coalitions, \
 										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
 
@@ -712,9 +702,6 @@ class Coalition():
 									# print(' ')
 									# print('Performing an aim change action')
 									# print('best_action: ' + str(best_action))
-
-									# Update of the aware decay parameter
-									links.aware_decay = 5
 
 									implemented_action = ActionFunctions.action_implementor(links, of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)], 1, coalitions.lead, coalitions, \
 										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
