@@ -4,17 +4,14 @@ import copy
 
 class ActionFunctions:
 
-	def test_print():
+	def action_grade_calculator(links, issue, parameter, agents, affiliation_weights):
 
-		print(' ')
-		print('*********')
-		print('*********')
-		print('*********')
-		print('*********')
-		print('*********')
-		print('*********')
+		if (links.agent1 == agents and type(links.agent2).__name__ == 'Policymakers') or (links.agent2 == agents and type(links.agent1).__name__ == 'Policymakers'):
+			actionWeight = 1
+		else:
+			actionWeight = 0.95
 
-	def action_grade_calculator(links, issue, parameter, agents, actionWeight, affiliation_weights):
+		# if typeAction == 'team':
 
 		if links.agent1 == agents:
 
@@ -59,16 +56,16 @@ class ActionFunctions:
 
 		return grade
 
-	def action_grade_calculator_3S_AS(self, links, impact, agents, affiliation_weights, conflict_level_coef):
+	def action_grade_calculator_3S_AS(links, impact, agents, affiliation_weights, conflict_level_coef):
+
+		if (links.agent1 == agents and type(links.agent2).__name__ == 'Policymakers') or (links.agent2 == agents and type(links.agent1).__name__ == 'Policymakers'):
+			actionWeight = 1
+		else:
+			actionWeight = 0.95
 
 		# Checking which agent in the link is the original agent
 		if links.agent1 == agents:
 
-			# Definition the action weight parameter
-			if type(links.agent2) == Policymakers:
-				actionWeight = 1
-			else:
-				actionWeight = 0.95
 			check_none = 0
 			if agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] == None:
 				agents.belieftree_policy[1 + links.agent2.unique_id][agents.select_policy_3S_as][impact] = 0
@@ -82,12 +79,6 @@ class ActionFunctions:
 		# Checking which agent in the link is the original agent
 		if links.agent2 == agents:
 
-			# Definition the action weight parameter
-			if type(links.agent1) == Policymakers:
-				actionWeight = 1
-			else:
-				actionWeight = 0.95
-
 			check_none = 0
 			if agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact] == None:
 				agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact] = 0
@@ -98,6 +89,7 @@ class ActionFunctions:
 			if check_none == 1:
 				agents.belieftree_policy[1 + links.agent1.unique_id][agents.select_policy_3S_as][impact] = None
 
+		# Defining the conflict level
 		if belief_diff <= 0.25:
 			conflict_level_impact = conflict_level_coef[0]
 		if belief_diff > 0.25 and belief_diff <= 1.75:
@@ -105,7 +97,6 @@ class ActionFunctions:
 		if belief_diff > 1.75:
 			conflict_level_impact = conflict_level_coef[1]
 
-		# Grade calculation using the likelihood method
 		# Same affiliation
 		if links.agent1.affiliation == links.agent2.affiliation:
 			grade = conflict_level_impact * links.aware * actionWeight
@@ -124,16 +115,16 @@ class ActionFunctions:
 
 		return grade
 
-	def action_grade_calculator_3S_PF(self, links, impact, agents, affiliation_weights, conflict_level_coef):
+	def action_grade_calculator_3S_PF(links, impact, agents, affiliation_weights, conflict_level_coef):
+
+		if (links.agent1 == agents and type(links.agent2).__name__ == 'Policymakers') or (links.agent2 == agents and type(links.agent1).__name__ == 'Policymakers'):
+			actionWeight = 1
+		else:
+			actionWeight = 0.95
 
 		# Checking which agent in the link is the original agent
 		if links.agent1 == agents:
 
-			# Definition the action weight parameter
-			if type(links.agent2) == Policymakers:
-				actionWeight = 1
-			else:
-				actionWeight = 0.95
 			check_none = 0
 			if agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] == None:
 				agents.belieftree_instrument[1 + links.agent2.unique_id][agents.select_policy_3S_pf][impact] = 0
@@ -146,12 +137,6 @@ class ActionFunctions:
 
 		# Checking which agent in the link is the original agent
 		if links.agent2 == agents:
-
-			# Definition the action weight parameter
-			if type(links.agent1) == Policymakers:
-				actionWeight = 1
-			else:
-				actionWeight = 0.95
 
 			check_none = 0
 			if agents.belieftree_instrument[1 + links.agent1.unique_id][agents.select_policy_3S_pf][impact] == None:

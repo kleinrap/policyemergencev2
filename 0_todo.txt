@@ -13,3 +13,9 @@ Small tasks that still need to be performed:
 - Check if teams.issue is split between AS and PF - they seem to overlap creating potential problems.
 - For each actor’s actions list, make sure that if all actions are the same grading, the action selected is random and not simply the first one in the list (as the maximum algorithms would do it)
 - Check the actions of the external parties towards the electorate (they were mis-implemented)
+
+
+Adaptation:
+- Change all agents.py function to actionFunction.py (impacts missing - grading done)
+- Change the inter-team to function based actions
+- Change the intra-team impacts to function based actions

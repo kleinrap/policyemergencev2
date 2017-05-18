@@ -3255,15 +3255,15 @@ class Agent:
 					# 1. Grading all framing actions:
 					# Checking through all possible framing - This is all based on partial knowledge!
 					for cw in cw_of_interest:
-						cw_grade = self.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
+						cw_grade = ActionFunctions.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
 						total_grade_list.append(cw_grade)	
 
 					# 2. Grading all individual actions - Aim change
-					aim_grade = self.action_grade_calculator(links, agents.select_as_issue, 1, agents, affiliation_weights)
+					aim_grade = ActionFunctions.action_grade_calculator(links, agents.select_as_issue, 1, agents, affiliation_weights)
 					total_grade_list.append(aim_grade)
 
 					# 3. Grading all individual actions - State change
-					state_grade = self.action_grade_calculator(links, agents.select_as_issue, 0, agents, affiliation_weights)
+					state_grade = ActionFunctions.action_grade_calculator(links, agents.select_as_issue, 0, agents, affiliation_weights)
 					total_grade_list.append(state_grade)
 
 			# print(' ')
@@ -3402,21 +3402,21 @@ class Agent:
 					for cw in cw_of_interest:
 
 						# Checking which agent in the link is the original agent
-						cw_grade = self.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
+						cw_grade = ActionFunctions.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
 						total_grade_list.append(cw_grade)
 
 					# 2. Grading all individual actions - Aim change
 					# Going though all possible choices of issue
 					for issue_num in issue_of_interest:
 
-						aim_grade = self.action_grade_calculator(links, issue_num, 1, agents, affiliation_weights)
+						aim_grade = ActionFunctions.action_grade_calculator(links, issue_num, 1, agents, affiliation_weights)
 						total_grade_list.append(aim_grade)
 
 					# 3. Grading all individual actions - State change
 					# Going though all possible choices of issue
 					for issue_num in issue_of_interest:
 
-						state_grade = self.action_grade_calculator(links, issue_num, 0, agents, affiliation_weights)
+						state_grade = ActionFunctions.action_grade_calculator(links, issue_num, 0, agents, affiliation_weights)
 						total_grade_list.append(state_grade)
 
 			# print(' ')
@@ -3549,7 +3549,7 @@ class Agent:
 						# Checking through all possible framing - This is all based on partial knowledge!
 						for cw in cw_of_interest:
 
-							cw_grade = self.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
+							cw_grade = ActionFunctions.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
 							total_grade_list.append(cw_grade)	
 
 					# If the agent is advocating or a policy, the following tasks are performed
@@ -3559,15 +3559,15 @@ class Agent:
 						# Checking through all possible framing - This is all based on partial knowledge!
 						for impact in range(impact_number):
 
-							impact_grade = self.action_grade_calculator_3S_AS(links, impact, agents, affiliation_weights, conflict_level_coef)
+							impact_grade = ActionFunctions.action_grade_calculator_3S_AS(links, impact, agents, affiliation_weights, conflict_level_coef)
 							total_grade_list.append(impact_grade)
 
 					# 2. Grading all individual actions - Aim change
-					aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
+					aim_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
 					total_grade_list.append(aim_grade)
 
 					# 3. Grading all individual actions - State change
-					state_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 0, agents, affiliation_weights)
+					state_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_as, 0, agents, affiliation_weights)
 					total_grade_list.append(state_grade)
 
 			# print(' ')
@@ -3754,7 +3754,7 @@ class Agent:
 						# Checking through all possible framing - This is all based on partial knowledge!
 						for cw in cw_of_interest:
 
-							cw_grade = self.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
+							cw_grade = ActionFunctions.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
 							total_grade_list.append(cw_grade)
 
 
@@ -3765,15 +3765,15 @@ class Agent:
 						# Checking through all possible framing - This is all based on partial knowledge!
 						for impact in range(impact_number):
 
-							impact_grade = self.action_grade_calculator_3S_PF(links, impact, agents, affiliation_weights, conflict_level_coef)
+							impact_grade = ActionFunctions.action_grade_calculator_3S_PF(links, impact, agents, affiliation_weights, conflict_level_coef)
 							total_grade_list.append(impact_grade)
 							
 					# 2. Grading all individual actions - Aim change
-					aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights)
+					aim_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights)
 					total_grade_list.append(aim_grade)
 
 					# 3. Grading all individual actions - State change
-					state_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 0, agents, affiliation_weights)
+					state_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_pf, 0, agents, affiliation_weights)
 					total_grade_list.append(state_grade)
 
 			# 4. Choosing an action
@@ -4423,7 +4423,7 @@ class Externalparties(Agent):
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 							# Make sure to look at the right direction of the conflict level
 
-							cw_grade = self.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
+							cw_grade = ActionFunctions.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
 							cw_grade_list.append(cw_grade)
 
 
@@ -4437,7 +4437,7 @@ class Externalparties(Agent):
 					# Check that only the link of interest is selected
 					if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-						state_grade = self.action_grade_calculator(links, agents.select_as_issue, 0, agents, affiliation_weights)
+						state_grade = ActionFunctions.action_grade_calculator(links, agents.select_as_issue, 0, agents, affiliation_weights)
 						state_grade_list.append(state_grade)
 
 			total_agent_grades.append(sum(state_grade_list))
@@ -4450,7 +4450,7 @@ class Externalparties(Agent):
 					# Check that only the link of interest is selected
 					if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-						aim_grade = self.action_grade_calculator(links, agents.select_as_issue, 1, agents, affiliation_weights)
+						aim_grade = ActionFunctions.action_grade_calculator(links, agents.select_as_issue, 1, agents, affiliation_weights)
 						aim_grade_list.append(aim_grade)
 
 			total_agent_grades.append(sum(aim_grade_list))
@@ -4697,7 +4697,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							cw_grade = self.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
+							cw_grade = ActionFunctions.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
 							cw_grade_list.append(cw_grade)
 
 				total_agent_grades.append(sum(cw_grade_list))
@@ -4713,7 +4713,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							state_grade = self.action_grade_calculator(links, issue_num, 0, agents, affiliation_weights)
+							state_grade = ActionFunctions.action_grade_calculator(links, issue_num, 0, agents, affiliation_weights)
 							state_grade_list.append(state_grade)
 
 				total_agent_grades.append(sum(state_grade_list))
@@ -4727,7 +4727,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							aim_grade = self.action_grade_calculator(links, issue_num, 1, agents, affiliation_weights)
+							aim_grade = ActionFunctions.action_grade_calculator(links, issue_num, 1, agents, affiliation_weights)
 							aim_grade_list.append(aim_grade)
 
 				total_agent_grades.append(sum(aim_grade_list))
@@ -4935,7 +4935,7 @@ class Externalparties(Agent):
 							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 								# Make sure to look at the right direction of the conflict level
 
-								cw_grade = self.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
+								cw_grade = ActionFunctions.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
 								cw_grade_list.append(cw_grade)
 
 					total_agent_grades.append(sum(cw_grade_list))
@@ -4948,7 +4948,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							state_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 0, agents, affiliation_weights)
+							state_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_as, 0, agents, affiliation_weights)
 							state_grade_list.append(state_grade)
 
 				total_agent_grades.append(sum(state_grade_list))
@@ -4961,7 +4961,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
+							aim_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
 							aim_grade_list.append(aim_grade)
 
 				total_agent_grades.append(sum(aim_grade_list))
@@ -5043,7 +5043,7 @@ class Externalparties(Agent):
 							# Check that only the link of interest is selected
 							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								impact_grade = self.action_grade_calculator_3S_AS(links, impact, agents, affiliation_weights, conflict_level_coef)
+								impact_grade = ActionFunctions.action_grade_calculator_3S_AS(links, impact, agents, affiliation_weights, conflict_level_coef)
 								total_grade_list.append(impact_grade)
 
 					total_agent_grades.append(sum(impact_grade_list))
@@ -5056,7 +5056,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							state_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 0, agents, affiliation_weights)
+							state_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_as, 0, agents, affiliation_weights)
 							state_grade_list.append(state_grade)
 
 				total_agent_grades.append(sum(state_grade_list))
@@ -5069,7 +5069,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
+							aim_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_as, 1, agents, affiliation_weights)
 							aim_grade_list.append(aim_grade)
 
 				total_agent_grades.append(sum(aim_grade_list))
@@ -5410,7 +5410,7 @@ class Externalparties(Agent):
 							# Check that only the link of interest is selected
 							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								cw_grade = self.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
+								cw_grade = ActionFunctions.action_grade_calculator(links, cw, 0, agents, affiliation_weights)
 								cw_grade_list.append(cw_grade)
 
 					total_agent_grades.append(sum(cw_grade_list))
@@ -5423,7 +5423,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							state_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 0, agents, affiliation_weights)
+							state_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_pf, 0, agents, affiliation_weights)
 							state_grade_list.append(state_grade)
 
 				total_agent_grades.append(sum(state_grade_list))
@@ -5436,7 +5436,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights)
+							aim_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights)
 							aim_grade_list.append(aim_grade)
 
 				total_agent_grades.append(sum(aim_grade_list))
@@ -5518,7 +5518,7 @@ class Externalparties(Agent):
 							# Check that only the link of interest is selected
 							if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-								impact_grade = self.action_grade_calculator_3S_PF(links, impact, agents, affiliation_weights, conflict_level_coef)
+								impact_grade = ActionFunctions.action_grade_calculator_3S_PF(links, impact, agents, affiliation_weights, conflict_level_coef)
 								impact_grade_list.append(impact_grade)
 
 					total_agent_grades.append(sum(impact_grade_list))
@@ -5531,7 +5531,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							state_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 0, agents, affiliation_weights)
+							state_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_pf, 0, agents, affiliation_weights)
 							state_grade_list.append(state_grade)
 
 				total_agent_grades.append(sum(state_grade_list))
@@ -5544,7 +5544,7 @@ class Externalparties(Agent):
 						# Check that only the link of interest is selected
 						if (links.agent1 == agents and links.agent2 == agent_inspected) or (links.agent2 == agents and links.agent1 == agent_inspected) and links.aware > 0:
 
-							aim_grade = self.action_grade_calculator(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights)
+							aim_grade = ActionFunctions.action_grade_calculator(links, agents.select_problem_3S_pf, 1, agents, affiliation_weights)
 							aim_grade_list.append(aim_grade)
 
 				total_agent_grades.append(sum(aim_grade_list))

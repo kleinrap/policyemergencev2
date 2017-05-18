@@ -6,3 +6,7 @@
 
 17 May:
 - Continuation on the cleaning and condensing of the code. Now related to the three streams actions and the external parties.
+
+18 May:
+- Addition of the function file.
+- Adaptation of the grade calculation for the intra-team actions.
