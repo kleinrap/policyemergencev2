@@ -40,7 +40,7 @@ class Team():
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
 
@@ -68,7 +68,7 @@ class Team():
 					cw_of_interest = []
 					# We only consider the causal relations related to the problem on the agenda
 					for cw_choice in range(len(deep_core)):
-							cw_of_interest.append(len_DC + len_PC + len_S + len_DC + (teams.issue - len_DC) + cw_choice * len(policy_core))
+							cw_of_interest.append(len_Pr + len_PC + len_S + len_Pr + (teams.issue - len_Pr) + cw_choice * len(policy_core))
 					# print(' ')
 					# print('cw_of_interest: ' + str(cw_of_interest))
 
@@ -354,7 +354,7 @@ class Team():
 					if agent_network.belieftree[0][teams.issue][0] != 'No':
 						# print(' ')
 						# print('Added 1 - ' + str(agent_network))
-						self.new_link_threeS_as(link_list, agent_network, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_DC, len_PC, len_S, conflict_level_coef)
+						self.new_link_threeS_as(link_list, agent_network, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_Pr, len_PC, len_S, conflict_level_coef)
 
 			# If the shadow network exists then update the aware, conflict level, aware_decay
 			if network_existence_check == True:
@@ -400,7 +400,7 @@ class Team():
 						if new_team_agent.belieftree[0][teams.issue][0] != 'No':
 							# print(' ')
 							# print('Added 2: ' + str(new_team_agent))
-							self.new_link_threeS_as(link_list, new_team_agent, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_DC, len_PC, len_S, conflict_level_coef)
+							self.new_link_threeS_as(link_list, new_team_agent, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_Pr, len_PC, len_S, conflict_level_coef)
 
 
 				# For updates:
@@ -422,7 +422,7 @@ class Team():
 
 							# Update of the conflict level
 							conflict_level = [conflict_level_coef[1], conflict_level_coef[1]]
-							for p in range(len_DC*len_PC + len_PC*len_S):
+							for p in range(len_Pr*len_PC + len_PC*len_S):
 								conflict_level.append(conflict_level_coef[1])
 
 							state_cf_team_list = []
@@ -433,10 +433,10 @@ class Team():
 							state_cf_team = sum(state_cf_team_list)/len(state_cf_team_list)
 							aim_cf_team = sum(aim_cf_team_list)/len(aim_cf_team_list)
 							cw_average = []
-							for p in range(len_DC*len_PC + len_PC*len_S):
+							for p in range(len_Pr*len_PC + len_PC*len_S):
 								cw_list = []
 								for agent_cf in teams.members:
-									cw_list.append(agent_cf.belieftree[0][len_DC+len_PC+len_S+p][0])
+									cw_list.append(agent_cf.belieftree[0][len_Pr+len_PC+len_S+p][0])
 								cw_average.append(sum(cw_list)/len(cw_list))
 							# Looking at the state
 							state_cf_difference = abs(links.agent2.belieftree[0][teams.issue][0] - state_cf_team)
@@ -456,8 +456,8 @@ class Team():
 							if aim_cf_difference > 1.75:
 								conflict_level[1] = conflict_level_coef[1]
 							# Causal relations conflict level
-							for p in range(len_DC*len_PC + len_PC*len_S):
-								cw_difference = abs(links.agent2.belieftree[0][len_DC + len_PC + len_S + p][0] - cw_average[p])
+							for p in range(len_Pr*len_PC + len_PC*len_S):
+								cw_difference = abs(links.agent2.belieftree[0][len_Pr + len_PC + len_S + p][0] - cw_average[p])
 								if cw_difference <= 0.25:
 									conflict_level[2+p] = conflict_level_coef[0]
 								if cw_difference > 0.25 and cw_difference <=1.75:
@@ -480,7 +480,7 @@ class Team():
 					cw_of_interest = []
 					# We only consider the causal relations related to the problem on the agenda
 					for cw_choice in range(len(deep_core)):
-							cw_of_interest.append(len_DC + len_PC + len_S + len_DC + (teams.issue - len_DC) + cw_choice * len(policy_core))
+							cw_of_interest.append(len_Pr + len_PC + len_S + len_Pr + (teams.issue - len_Pr) + cw_choice * len(policy_core))
 					# print(' ')
 					# print('cw_of_interest: ' + str(cw_of_interest))
 
@@ -505,25 +505,25 @@ class Team():
 									# Grade calculation using the likelihood method
 									# Same affiliation
 									if agents_in_team.affiliation == links.agent2.affiliation:
-										cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_DC + len_PC + len_S)] * links.aware * actionWeight
+										cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_Pr + len_PC + len_S)] * links.aware * actionWeight
 										total_agent_grades.append(cw_grade)
 
 									# Affiliation 1-2
 									if (agents_in_team.affiliation == 0 and links.agent2.affiliation == 1) or \
 										(agents_in_team.affiliation == 1 and links.agent2.affiliation == 0):
-										cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_DC + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[0]
+										cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_Pr + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[0]
 										total_agent_grades.append(cw_grade)
 
 									# Affiliation 1-3
 									if (agents_in_team.affiliation == 0 and links.agent2.affiliation == 2) or \
 										(agents_in_team.affiliation == 2 and links.agent2.affiliation == 0):
-										cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_DC + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[1]
+										cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_Pr + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[1]
 										total_agent_grades.append(cw_grade)
 
 									# Affiliation 2-3
 									if (agents_in_team.affiliation == 1 and links.agent2.affiliation == 2) or \
 										(agents_in_team.affiliation == 2 and links.agent2.affiliation == 1):
-										cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_DC + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[2]
+										cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_Pr + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[2]
 										total_agent_grades.append(cw_grade)	
 
 									
@@ -1066,7 +1066,7 @@ class Team():
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
 
@@ -1094,12 +1094,12 @@ class Team():
 					cw_of_interest = []
 					# We only consider the causal relations related to the problem on the agenda
 					for cw_choice in range(len(secondary)):
-						cw_of_interest.append(len_DC + len_PC + len_S + (len_DC * len_PC) + (agenda_prob_3S_as - len_DC)*len_S + cw_choice)
+						cw_of_interest.append(len_Pr + len_PC + len_S + (len_Pr * len_PC) + (agenda_prob_3S_as - len_Pr)*len_S + cw_choice)
 					# print(' ')
 					# print('cw_of_interest: ' + str(cw_of_interest))
 
 					for cw in range(causalrelation_number):
-						self.knowledge_exchange_team(teams, len_DC + len_PC + len_S + cw, 0)
+						self.knowledge_exchange_team(teams, len_Pr + len_PC + len_S + cw, 0)
 					
 					# b. Compiling all actions for each actor
 
@@ -1377,7 +1377,7 @@ class Team():
 					if agent_network.belieftree[0][teams.issue][0] != 'No':
 						# print(' ')
 						# print('Added 1 - ' + str(agent_network))
-						self.new_link_threeS_pf(link_list, agent_network, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_DC, len_PC, len_S, conflict_level_coef)
+						self.new_link_threeS_pf(link_list, agent_network, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_Pr, len_PC, len_S, conflict_level_coef)
 
 			# If the shadow network exists then update the aware, conflict level, aware_decay
 			if network_existence_check == True:
@@ -1423,7 +1423,7 @@ class Team():
 						if new_team_agent.belieftree[0][teams.issue][0] != 'No':
 							# print(' ')
 							# print('Added 2: ' + str(new_team_agent))
-							self.new_link_threeS_pf(link_list, new_team_agent, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_DC, len_PC, len_S, conflict_level_coef)
+							self.new_link_threeS_pf(link_list, new_team_agent, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_Pr, len_PC, len_S, conflict_level_coef)
 
 
 				# For updates:
@@ -1445,7 +1445,7 @@ class Team():
 
 							# Update of the conflict level
 							conflict_level = [conflict_level_coef[1], conflict_level_coef[1]]
-							for p in range(len_DC*len_PC + len_PC*len_S):
+							for p in range(len_Pr*len_PC + len_PC*len_S):
 								conflict_level.append(conflict_level_coef[1])
 							state_cf_team_list = []
 							aim_cf_team_list = []
@@ -1455,10 +1455,10 @@ class Team():
 							state_cf_team = sum(state_cf_team_list)/len(state_cf_team_list)
 							aim_cf_team = sum(aim_cf_team_list)/len(aim_cf_team_list)
 							cw_average = []
-							for p in range(len_DC*len_PC + len_PC*len_S):
+							for p in range(len_Pr*len_PC + len_PC*len_S):
 								cw_list = []
 								for agent_cf in teams.members:
-									cw_list.append(agent_cf.belieftree[0][len_DC+len_PC+len_S+p][0])
+									cw_list.append(agent_cf.belieftree[0][len_Pr+len_PC+len_S+p][0])
 								cw_average.append(sum(cw_list)/len(cw_list))
 							# Looking at the state
 							state_cf_difference = abs(links.agent2.belieftree[0][teams.issue][0] - state_cf_team)
@@ -1478,8 +1478,8 @@ class Team():
 							if aim_cf_difference > 1.75:
 								conflict_level[1] = conflict_level_coef[1]
 							# Causal relations conflict level
-							for p in range(len_DC*len_PC + len_PC*len_S):
-								cw_difference = abs(links.agent2.belieftree[0][len_DC + len_PC + len_S + p][0] - cw_average[p])
+							for p in range(len_Pr*len_PC + len_PC*len_S):
+								cw_difference = abs(links.agent2.belieftree[0][len_Pr + len_PC + len_S + p][0] - cw_average[p])
 								if cw_difference <= 0.25:
 									conflict_level[2+p] = conflict_level_coef[0]
 								if cw_difference > 0.25 and cw_difference <=1.75:
@@ -1503,7 +1503,7 @@ class Team():
 					cw_of_interest = []
 					# We only consider the causal relations related to the problem on the agenda
 					for cw_choice in range(len(secondary)):
-						cw_of_interest.append(len_DC + len_PC + len_S + (len_DC * len_PC) + (agenda_prob_3S_as - len_DC)*len_S + cw_choice)
+						cw_of_interest.append(len_Pr + len_PC + len_S + (len_Pr * len_PC) + (agenda_prob_3S_as - len_Pr)*len_S + cw_choice)
 					# print(' ')
 					# print('cw_of_interest: ' + str(cw_of_interest))
 
@@ -1530,25 +1530,25 @@ class Team():
 										# Grade calculation using the likelihood method
 										# Same affiliation
 										if agents_in_team.affiliation == links.agent2.affiliation:
-											cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_DC + len_PC + len_S)] * links.aware * actionWeight
+											cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_Pr + len_PC + len_S)] * links.aware * actionWeight
 											total_agent_grades.append(cw_grade)
 
 										# Affiliation 1-2
 										if (agents_in_team.affiliation == 0 and links.agent2.affiliation == 1) or \
 											(agents_in_team.affiliation == 1 and links.agent2.affiliation == 0):
-											cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_DC + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[0]
+											cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_Pr + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[0]
 											total_agent_grades.append(cw_grade)
 
 										# Affiliation 1-3
 										if (agents_in_team.affiliation == 0 and links.agent2.affiliation == 2) or \
 											(agents_in_team.affiliation == 2 and links.agent2.affiliation == 0):
-											cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_DC + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[1]
+											cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_Pr + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[1]
 											total_agent_grades.append(cw_grade)
 
 										# Affiliation 2-3
 										if (agents_in_team.affiliation == 1 and links.agent2.affiliation == 2) or \
 											(agents_in_team.affiliation == 2 and links.agent2.affiliation == 1):
-											cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_DC + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[2]
+											cw_grade = links.conflict_level[2 + cw_of_interest[cw] - (len_Pr + len_PC + len_S)] * links.aware * actionWeight * affiliation_weights[2]
 											total_agent_grades.append(cw_grade)	
 										
 									# State influence actions
@@ -2068,7 +2068,7 @@ class Team():
 					if teams.resources[1] <= 0 * teams.resources[0]:
 						break
 
-	def new_link_threeS_as(self, link_list, outsider_agent, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_DC, len_PC, len_S, conflict_level_coef):
+	def new_link_threeS_as(self, link_list, outsider_agent, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_Pr, len_PC, len_S, conflict_level_coef):
 
 		"""
 		The new link function - three streams shadow network (agenda setting)
@@ -2100,7 +2100,7 @@ class Team():
 		# The conflict level is calculated based on the average of the beliefs of the whole team on the issue for state and aim
 		conflict_level = [conflict_level_coef[1], conflict_level_coef[1]]
 
-		for p in range(len_DC*len_PC + len_PC*len_S):
+		for p in range(len_Pr*len_PC + len_PC*len_S):
 			conflict_level.append(conflict_level_coef[1])
 
 		state_cf_team_list = []
@@ -2112,10 +2112,10 @@ class Team():
 		aim_cf_team = sum(aim_cf_team_list)/len(aim_cf_team_list)
 
 		cw_average = []
-		for p in range(len_DC*len_PC + len_PC*len_S):
+		for p in range(len_Pr*len_PC + len_PC*len_S):
 			cw_list = []
 			for agent_cf in teams.members:
-				cw_list.append(agent_cf.belieftree[0][len_DC+len_PC+len_S+p][0])
+				cw_list.append(agent_cf.belieftree[0][len_Pr+len_PC+len_S+p][0])
 			cw_average.append(sum(cw_list)/len(cw_list))
 
 		# For lack of a better choice, this is based on full knowledge - the team as a whole does not have partial knowledge of the other agent's beliefs
@@ -2140,8 +2140,8 @@ class Team():
 			conflict_level[1] = conflict_level_coef[1]
 
 		# Causal relations conflict level
-		for p in range(len_DC*len_PC + len_PC*len_S):
-			cw_difference = abs(outsider_agent.belieftree[0][len_DC + len_PC + len_S + p][0] - cw_average[p])
+		for p in range(len_Pr*len_PC + len_PC*len_S):
+			cw_difference = abs(outsider_agent.belieftree[0][len_Pr + len_PC + len_S + p][0] - cw_average[p])
 			if cw_difference <= 0.25:
 				conflict_level[2+p] = conflict_level_coef[0]
 			if cw_difference > 0.25 and cw_difference <=1.75:
@@ -2158,7 +2158,7 @@ class Team():
 		threeS_link_list_as_total.append(team_link)
 		threeS_link_id_as[0] += 1
 
-	def new_link_threeS_pf(self, link_list, outsider_agent, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_DC, len_PC, len_S, conflict_level_coef):
+	def new_link_threeS_pf(self, link_list, outsider_agent, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_Pr, len_PC, len_S, conflict_level_coef):
 
 		"""
 		The new link function - three streams shadow network (policy formulation)
@@ -2190,7 +2190,7 @@ class Team():
 		# The conflict level is calculated based on the average of the beliefs of the whole team on the issue for state and aim
 		conflict_level = [conflict_level_coef[1], conflict_level_coef[1]]
 
-		for p in range(len_DC*len_PC + len_PC*len_S):
+		for p in range(len_Pr*len_PC + len_PC*len_S):
 			conflict_level.append(conflict_level_coef[1])
 
 		state_cf_team_list = []
@@ -2202,10 +2202,10 @@ class Team():
 		aim_cf_team = sum(aim_cf_team_list)/len(aim_cf_team_list)
 
 		cw_average = []
-		for p in range(len_DC*len_PC + len_PC*len_S):
+		for p in range(len_Pr*len_PC + len_PC*len_S):
 			cw_list = []
 			for agent_cf in teams.members:
-				cw_list.append(agent_cf.belieftree[0][len_DC+len_PC+len_S+p][0])
+				cw_list.append(agent_cf.belieftree[0][len_Pr+len_PC+len_S+p][0])
 			cw_average.append(sum(cw_list)/len(cw_list))
 
 		# For lack of a better choice, this is based on full knowledge - the team as a whole does not have partial knowledge of the other agent's beliefs
@@ -2230,8 +2230,8 @@ class Team():
 			conflict_level[1] = conflict_level_coef[1]
 
 		# Causal relations conflict level
-		for p in range(len_DC*len_PC + len_PC*len_S):
-			cw_difference = abs(outsider_agent.belieftree[0][len_DC + len_PC + len_S + p][0] - cw_average[p])
+		for p in range(len_Pr*len_PC + len_PC*len_S):
+			cw_difference = abs(outsider_agent.belieftree[0][len_Pr + len_PC + len_S + p][0] - cw_average[p])
 			if cw_difference <= 0.25:
 				conflict_level[2+p] = conflict_level_coef[0]
 			if cw_difference > 0.25 and cw_difference <=1.75:

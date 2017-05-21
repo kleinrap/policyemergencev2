@@ -3,11 +3,11 @@ import random
 class Technical_Model():
 
 	
-	def __init__(self, len_DC, len_PC, len_S):
-		self.len_DC = len_DC
+	def __init__(self, len_Pr, len_PC, len_S):
+		self.len_Pr = len_Pr
 		self.len_PC = len_PC
 		self.len_S = len_S
-		self.belieftree_truth = [None for i in range(len_DC + len_PC + len_S)]
+		self.belieftree_truth = [None for i in range(len_Pr + len_PC + len_S)]
 
 		self.cells_repository = []
 		# belieftree_truth = []
@@ -51,8 +51,8 @@ class Technical_Model():
 		self.belieftree_truth = belieftree_truth
 		self.firefighter_force = firefighter_force
 
-		# Current modek has 2 DC, 3 PC and 5 S
-		# DC1 - Economy -- DC2 - Environment
+		# Current modek has 2 Pr, 3 PC and 5 S
+		# Pr1 - Economy -- Pr2 - Environment
 		# PC1 - Forest size -- PC2 - Tourism -- PC3 - Safety
 		# S1 - Camp sites -- S2 - Planting -- S3 - Monitoring -- S4 - Firefighters -- S5 - Prevention
 
@@ -145,10 +145,10 @@ class Technical_Model():
 			PC3_P5 = 1 - self.thickForest_percentage/maxThickForest
 		self.belieftree_truth[4] = round((( (PC3_P1 + PC3_P2 + PC3_P3 + PC3_P4 + PC3_P5) / 5) * 2) - 1, 5)
 
-		# DC1 - Economy
+		# Pr1 - Economy
 		self.belieftree_truth[0] = round((((self.belieftree_truth[3] + 1) / 2 + (self.belieftree_truth[4] + 1) / 2) * 2/2) - 1 , 5)
 
-		# DC2 - Environment
+		# Pr2 - Environment
 		self.belieftree_truth[1] = round((((self.belieftree_truth[2] + 1) / 2 + (self.belieftree_truth[4] + 1) / 2) * 2/2) - 1 , 5)	
 
 		# print('This is the truth belief tree: ' + str(belieftree_truth))

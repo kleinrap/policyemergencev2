@@ -23,7 +23,7 @@ from coalition_creation import Coalition
 # This is the model part
 class PolicyEmergence(Model):
 
-	def __init__(self, team_strategy=0, DC_ACF_interest=0, datacollector=0, run_number=0, inputs_dict=dict(), events=0):
+	def __init__(self, Pr_ACF_interest=0, datacollector=0, run_number=0, inputs_dict=dict(), events=0):
 
 		# From inputs:
 		self.height = inputs_dict["height"]
@@ -48,7 +48,7 @@ class PolicyEmergence(Model):
 		self.agenda_poli_3S_as = inputs_dict["Agenda_inputs"][3]
 		# Belief structure related inputs
 		self.deep_core = inputs_dict["deep_core"]
-		self.len_DC = len(self.deep_core)
+		self.len_Pr = len(self.deep_core)
 		self.policy_core = inputs_dict["policy_core"]
 		self.len_PC = len(self.policy_core)
 		self.secondary = inputs_dict["secondary"]
@@ -70,19 +70,19 @@ class PolicyEmergence(Model):
 		self.electorate_influence_coefficient = inputs_dict["electorate_influence_coefficient"]
 		self.electorate_number = self.affiliation_number
 
-		self.DC_ACF_interest = DC_ACF_interest
+		self.Pr_ACF_interest = Pr_ACF_interest
 		self.datacollector = datacollector
 		self.run_number = inputs_dict["Run_number"]
 		self.representation = inputs_dict["representation"]
 
 		# Parameters inputs:
 		self.grid = MultiGrid(self.height, self.width, torus=True)
-		self.technical_model = Technical_Model(self.len_DC, self.len_PC, self.len_S)
+		self.technical_model = Technical_Model(self.len_Pr, self.len_PC, self.len_S)
 
 		# Derived inputs:
 		self.total_agent_number = self.externalparties_number + self.policymaker_number + self.policyentre_number
-		self.issues_number = self.len_DC + self.len_PC + self.len_S
-		self.causalrelation_number = self.len_DC*self.len_PC + self.len_PC*self.len_S
+		self.issues_number = self.len_Pr + self.len_PC + self.len_S
+		self.causalrelation_number = self.len_Pr*self.len_PC + self.len_PC*self.len_S
 
 		# Creation of the master and agent action lists
 		self.master_list = []
@@ -106,7 +106,7 @@ class PolicyEmergence(Model):
 		self.resources_weight_action = inputs_dict["resources_weight_action"]
 		self.resources_potency = inputs_dict["resources_potency"]
 
-		self.belieftree_truth = [None for i in range(self.len_DC + self.len_PC + self.len_S)]
+		self.belieftree_truth = [None for i in range(self.len_Pr + self.len_PC + self.len_S)]
 
 		print("This is the list of active agents: " + str(self.agent_action_list))
 		print(' ')
@@ -255,29 +255,29 @@ class PolicyEmergence(Model):
 		self.tick_number +=1
 
 		# Potential external events [Backbone/Backbone+/3S/ACF (can varry)]
-		# Event 1 - reversal of all DC-PC relations for all agents at tick 200
+		# Event 1 - reversal of all Pr-PC relations for all agents at tick 200
 		if self.events[1] == True and self.tick_number == 200:
 			for agents in self.agent_action_list:
-				for cw in range(self.len_DC*self.len_PC):
-					agents.belieftree[0][self.len_DC + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_DC + self.len_PC + self.len_S + cw][0]
-		# Event 2 - reversal of all DC-PC relations for policy makers at tick 200
+				for cw in range(self.len_Pr*self.len_PC):
+					agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
+		# Event 2 - reversal of all Pr-PC relations for policy makers at tick 200
 		if self.events[2] == True and self.tick_number == 200:
 			for agents in self.agent_action_list:
 				if type(agents) == Policymakers:
 					for cw in range(self.causalrelation_number):
-						agents.belieftree[0][self.len_DC + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_DC + self.len_PC + self.len_S + cw][0]
-		# Event 3 - reversal of all DC-PC relations for externalp parties at tick 200
+						agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
+		# Event 3 - reversal of all Pr-PC relations for externalp parties at tick 200
 		if self.events[3] == True and self.tick_number == 200:
 			for agents in self.agent_action_list:
 				if type(agents) == Externalparties:
 					for cw in range(self.causalrelation_number):
-						agents.belieftree[0][self.len_DC + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_DC + self.len_PC + self.len_S + cw][0]
-		# Event 3 - reversal of all DC-PC relations for policy entrepreneurs at tick 200
+						agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
+		# Event 3 - reversal of all Pr-PC relations for policy entrepreneurs at tick 200
 		if self.events[4] == True and self.tick_number == 200:
 			for agents in self.agent_action_list:
 				if type(agents) == Policyentres:
 					for cw in range(self.causalrelation_number):
-						agents.belieftree[0][self.len_DC + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_DC + self.len_PC + self.len_S + cw][0]
+						agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
 
 
 		print('Running the technical model ...')
@@ -352,7 +352,7 @@ class PolicyEmergence(Model):
 		# Share of the aim state and beliefs for the deep core issues
 		for agents1 in self.agent_action_list:
 			for agents2 in self.agent_action_list:
-				for exchange in range(self.len_DC):
+				for exchange in range(self.len_Pr):
 					agents1.belieftree[1 + agents2.unique_id][exchange][0] = agents2.belieftree[0][exchange][0] + (random.random()/10) - 0.05
 					agents1.belieftree[1 + agents2.unique_id][exchange][0] = \
 						self.one_minus_one_check2(agents1.belieftree[1 + agents2.unique_id][exchange][0])
@@ -367,16 +367,16 @@ class PolicyEmergence(Model):
 			for agents in self.agent_action_list:
 				# For the partial knowledge too
 				for who in range(len(self.agent_action_list)):
-					for issue in range(self.len_DC + self.len_PC + self.len_S):
+					for issue in range(self.len_Pr + self.len_PC + self.len_S):
 						agents.belieftree[1+who][issue][0] = copy.copy(agents.belieftree[0][issue][0] + random.random() - 0.5)
 						agents.belieftree[1+who][issue][1] = copy.copy(agents.belieftree[0][issue][1] + random.random() - 0.5)
 						agents.belieftree[1+who][issue][0] = self.one_minus_one_check2(agents.belieftree[1+who][issue][0])
 						agents.belieftree[1+who][issue][1] = self.one_minus_one_check2(agents.belieftree[1+who][issue][1])
 					for causalrelations in range(self.causalrelation_number):
-						agents.belieftree[1+who][self.len_DC + self.len_PC + self.len_S + causalrelations][0] = \
-							copy.copy(agents.belieftree[0][self.len_DC + self.len_PC + self.len_S + causalrelations][0] + random.random() - 0.5)
-						agents.belieftree[1+who][self.len_DC + self.len_PC + self.len_S + causalrelations][0] = \
-							self.one_minus_one_check2(agents.belieftree[1+who][self.len_DC + self.len_PC + self.len_S + causalrelations][0])
+						agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0] = \
+							copy.copy(agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + causalrelations][0] + random.random() - 0.5)
+						agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0] = \
+							self.one_minus_one_check2(agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0])
 		
 		print('... cleared.')
 		print('   ')
@@ -521,7 +521,7 @@ class PolicyEmergence(Model):
 			self.ACF_link_list_as = []
 
 			# B. Creation of the coalitions
-			self.coalition_creation_as(self.agent_action_list, self.link_list, self.DC_ACF_interest, self.coalitions_number_as, self.tick_number, self.coalitions_list_as, self.coalitions_list_as_total, self.coalition_threshold, target)
+			self.coalition_creation_as(self.agent_action_list, self.link_list, self.Pr_ACF_interest, self.coalitions_number_as, self.tick_number, self.coalitions_list_as, self.coalitions_list_as_total, self.coalition_threshold, target)
 
 			# 3. Belief actions in a team
 			shuffled_coalition_list_as = self.coalitions_list_as
@@ -1072,47 +1072,47 @@ class PolicyEmergence(Model):
 
 		"""	
 
-		len_DC = self.len_DC
+		len_Pr = self.len_Pr
 		len_PC = self.len_PC
 		len_S = self.len_S
 
 		#####
 		# Preference calculation for the deep core issues
-		DC_denominator = 0
-		for h in range(len_DC):
+		Pr_denominator = 0
+		for h in range(len_Pr):
 			if agent.belieftree[who][h][1] == None or agent.belieftree[who][h][0] == None:
-				DC_denominator = 0
+				Pr_denominator = 0
 			else:
-				DC_denominator = DC_denominator + abs(agent.belieftree[who][h][1] - agent.belieftree[who][h][0])
-		# print('The denominator is given by: ' + str(DC_denominator))
-		for i in range(len_DC):
+				Pr_denominator = Pr_denominator + abs(agent.belieftree[who][h][1] - agent.belieftree[who][h][0])
+		# print('The denominator is given by: ' + str(Pr_denominator))
+		for i in range(len_Pr):
 			# There are rare occasions where the denominator could be 0
-			if DC_denominator != 0:
-				agent.belieftree[who][i][2] = abs(agent.belieftree[who][i][1] - agent.belieftree[who][i][0]) / DC_denominator
+			if Pr_denominator != 0:
+				agent.belieftree[who][i][2] = abs(agent.belieftree[who][i][1] - agent.belieftree[who][i][0]) / Pr_denominator
 			else:
 				agent.belieftree[who][i][2] = 0
 
 		#####	
 		# Preference calculation for the policy core issues
 		PC_denominator = 0
-		# Select one by one the DC
+		# Select one by one the Pr
 		for j in range(len_PC):
 			PC_denominator = 0
 			# print('Selection PC' + str(j+1))
-			# print('State of the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + j][0])) # the state printed
-			# Selecting the causal relations starting from DC
-			for k in range(len_DC):
+			# print('State of the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_Pr + j][0])) # the state printed
+			# Selecting the causal relations starting from Pr
+			for k in range(len_Pr):
 				# Contingency for partial knowledge issues
-				if agent.belieftree[who][k][1] == None or agent.belieftree[who][k][0] == None or agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] == None:
+				if agent.belieftree[who][k][1] == None or agent.belieftree[who][k][0] == None or agent.belieftree[who][len_Pr+len_PC+len_S+j+(k*len_PC)][0] == None:
 					PC_denominator = 0
 				else:
-					# print('Causal Relation PC' + str(j+1) + ' - DC' + str(k+1) + ': ' + str(agent.belieftree[0][len_DC+len_PC+len_S+j+(k*len_PC)][1]))
-					# print('Gap of DC' + str(k+1) + ': ' + str((agent.belieftree[0][k][1] - agent.belieftree[0][k][0])))
+					# print('Causal Relation PC' + str(j+1) + ' - Pr' + str(k+1) + ': ' + str(agent.belieftree[0][len_Pr+len_PC+len_S+j+(k*len_PC)][1]))
+					# print('Gap of Pr' + str(k+1) + ': ' + str((agent.belieftree[0][k][1] - agent.belieftree[0][k][0])))
 					# Check if causal relation and gap are both positive of both negative
-					# print('agent.belieftree[' + str(who) + '][' + str(len_DC+len_PC+len_S+j+(k*len_PC)) + '][0]: ' + str(agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0]))
-					if (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
-					  or (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
-						PC_denominator = PC_denominator + abs(agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0]*\
+					# print('agent.belieftree[' + str(who) + '][' + str(len_Pr+len_PC+len_S+j+(k*len_PC)) + '][0]: ' + str(agent.belieftree[who][len_Pr+len_PC+len_S+j+(k*len_PC)][0]))
+					if (agent.belieftree[who][len_Pr+len_PC+len_S+j+(k*len_PC)][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
+					  or (agent.belieftree[who][len_Pr+len_PC+len_S+j+(k*len_PC)][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
+						PC_denominator = PC_denominator + abs(agent.belieftree[who][len_Pr+len_PC+len_S+j+(k*len_PC)][0]*\
 						  (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]))
 						# print('This is the PC numerator: ' + str(PC_denominator))
 					else:
@@ -1120,50 +1120,50 @@ class PolicyEmergence(Model):
 		# Then adding the gap of the policy core:
 		for i in range(len_PC):
 			# Contingency for partial knowledge issues
-			if agent.belieftree[who][len_DC + i][1] == None or agent.belieftree[who][len_DC + i][0] == None:
+			if agent.belieftree[who][len_Pr + i][1] == None or agent.belieftree[who][len_Pr + i][0] == None:
 				PC_denominator = PC_denominator
 			else:
-				# print('This is the gap for the PC' + str(i+1) + ': ' + str(agent.belieftree[0][len_DC + i][1] - agent.belieftree[0][len_DC + i][0]))
-				PC_denominator = PC_denominator + abs(agent.belieftree[who][len_DC + i][1] - agent.belieftree[who][len_DC + i][0])
+				# print('This is the gap for the PC' + str(i+1) + ': ' + str(agent.belieftree[0][len_Pr + i][1] - agent.belieftree[0][len_Pr + i][0]))
+				PC_denominator = PC_denominator + abs(agent.belieftree[who][len_Pr + i][1] - agent.belieftree[who][len_Pr + i][0])
 		# print('This is the PC denominator: ' + str(PC_denominator))
 		
 		# Calculating the numerator and the preference of all policy core issues:
 		# PC_numerator = 0
-		# Select one by one the DC
+		# Select one by one the Pr
 		for j in range(len_PC):
 			PC_numerator = 0
 			# print('Selection PC' + str(j+1))
-			# print('State of the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + j][0])) # the state printed
-			# Selecting the causal relations starting from DC
-			for k in range(len_DC):
+			# print('State of the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_Pr + j][0])) # the state printed
+			# Selecting the causal relations starting from Pr
+			for k in range(len_Pr):
 				# Contingency for partial knowledge issues
-				if agent.belieftree[who][k][1] == None or agent.belieftree[who][k][0] == None or agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] == None:
+				if agent.belieftree[who][k][1] == None or agent.belieftree[who][k][0] == None or agent.belieftree[who][len_Pr+len_PC+len_S+j+(k*len_PC)][0] == None:
 					PC_numerator = 0
 				else:
-					# print('Causal Relation PC' + str(j+1) + ' - DC' + str(k+1) + ': ' + str(agent.belieftree[0][len_DC+len_PC+len_S+j+(k*len_PC)][1]))
-					# print('Gap of DC' + str(k+1) + ': ' + str((agent.belieftree[0][k][1] - agent.belieftree[0][k][0])))
+					# print('Causal Relation PC' + str(j+1) + ' - Pr' + str(k+1) + ': ' + str(agent.belieftree[0][len_Pr+len_PC+len_S+j+(k*len_PC)][1]))
+					# print('Gap of Pr' + str(k+1) + ': ' + str((agent.belieftree[0][k][1] - agent.belieftree[0][k][0])))
 					# Check if causal relation and gap are both positive of both negative
-					if (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
-					  or (agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
-						PC_numerator = PC_numerator + abs(agent.belieftree[who][len_DC+len_PC+len_S+j+(k*len_PC)][0]*\
+					if (agent.belieftree[who][len_Pr+len_PC+len_S+j+(k*len_PC)][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
+					  or (agent.belieftree[who][len_Pr+len_PC+len_S+j+(k*len_PC)][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
+						PC_numerator = PC_numerator + abs(agent.belieftree[who][len_Pr+len_PC+len_S+j+(k*len_PC)][0]*\
 						  (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]))
 						# print('This is the PC numerator: ' + str(PC_numerator))
 					else:
 						PC_numerator = PC_numerator	
 			# Contingency for partial knowledge issues
-			if agent.belieftree[who][len_DC + j][1] == None or agent.belieftree[who][len_DC + j][0] == None:
+			if agent.belieftree[who][len_Pr + j][1] == None or agent.belieftree[who][len_Pr + j][0] == None:
 				PC_numerator = 0
 			else:
 				# Then adding the gap of the policy core:
-				# print('This is the gap for the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + j][1] - agent.belieftree[0][len_DC + j][0]))
-				PC_numerator = PC_numerator + abs(agent.belieftree[who][len_DC + j][1] - agent.belieftree[who][len_DC + j][0])
+				# print('This is the gap for the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_Pr + j][1] - agent.belieftree[0][len_Pr + j][0]))
+				PC_numerator = PC_numerator + abs(agent.belieftree[who][len_Pr + j][1] - agent.belieftree[who][len_Pr + j][0])
 			# print('The numerator is equal to: ' + str(PC_numerator))
 			# print('The denominator is equal to: ' + str(PC_denominator))
 			if PC_denominator != 0:
-				agent.belieftree[who][len_DC+j][2] = PC_numerator/PC_denominator 
-			# print('The new preference of the policy core PC' + str(j+1) + ' is: ' + str(agent.belieftree[0][len_DC+j][2]))
+				agent.belieftree[who][len_Pr+j][2] = PC_numerator/PC_denominator 
+			# print('The new preference of the policy core PC' + str(j+1) + ' is: ' + str(agent.belieftree[0][len_Pr+j][2]))
 			else:
-				agent.belieftree[who][len_DC+j][2] = 0
+				agent.belieftree[who][len_Pr+j][2] = 0
 
 	def preference_udapte_electorate(self, agent):
 
@@ -1183,19 +1183,19 @@ class PolicyEmergence(Model):
 
 		"""
 
-		len_DC = self.len_DC
+		len_Pr = self.len_Pr
 		len_PC = self.len_PC
 		len_S = self.len_S
 
 		#####
 		# Preference calculation for the deep core issues
-		DC_denominator = 0
-		for h in range(len_DC):
-			DC_denominator = DC_denominator + abs(agent.belieftree_electorate[h][1] - agent.belieftree_electorate[h][0])
-		for i in range(len_DC):
+		Pr_denominator = 0
+		for h in range(len_Pr):
+			Pr_denominator = Pr_denominator + abs(agent.belieftree_electorate[h][1] - agent.belieftree_electorate[h][0])
+		for i in range(len_Pr):
 			# There are rare occasions where the denominator could be 0
-			if DC_denominator != 0:
-				agent.belieftree_electorate[i][2] = abs(agent.belieftree_electorate[i][1] - agent.belieftree_electorate[i][0]) / DC_denominator
+			if Pr_denominator != 0:
+				agent.belieftree_electorate[i][2] = abs(agent.belieftree_electorate[i][1] - agent.belieftree_electorate[i][0]) / Pr_denominator
 			else:
 				agent.belieftree_electorate[i][2] = 0
 
@@ -1203,25 +1203,25 @@ class PolicyEmergence(Model):
 		# Preference calculation for the policy core issues
 		PC_denominator = 0
 		for h in range(len_PC):
-			PC_denominator = PC_denominator + abs(agent.belieftree_electorate[len_DC + h][1] - agent.belieftree_electorate[len_DC + h][0])
+			PC_denominator = PC_denominator + abs(agent.belieftree_electorate[len_Pr + h][1] - agent.belieftree_electorate[len_Pr + h][0])
 		for i in range(len_PC):
 			# There are rare occasions where the denominator could be 0
 			if PC_denominator != 0:
-				agent.belieftree_electorate[len_DC + i][2] = abs(agent.belieftree_electorate[len_DC + i][1] - agent.belieftree_electorate[len_DC + i][0]) / PC_denominator
+				agent.belieftree_electorate[len_Pr + i][2] = abs(agent.belieftree_electorate[len_Pr + i][1] - agent.belieftree_electorate[len_Pr + i][0]) / PC_denominator
 			else:
-				agent.belieftree_electorate[len_DC + i][2] = 0
+				agent.belieftree_electorate[len_Pr + i][2] = 0
 
 		#####
 		# Preference calculation for the secondary issues
 		S_denominator = 0
 		for h in range(len_S):
-			S_denominator = S_denominator + abs(agent.belieftree_electorate[len_DC + len_PC + h][1] - agent.belieftree_electorate[len_DC + len_PC + h][0])
+			S_denominator = S_denominator + abs(agent.belieftree_electorate[len_Pr + len_PC + h][1] - agent.belieftree_electorate[len_Pr + len_PC + h][0])
 		for i in range(len_S):
 			# There are rare occasions where the denominator could be 0
 			if S_denominator != 0:
-				agent.belieftree_electorate[len_DC + len_PC + i][2] = abs(agent.belieftree_electorate[len_DC + len_PC + i][1] - agent.belieftree_electorate[len_DC + len_PC + i][0]) / S_denominator
+				agent.belieftree_electorate[len_Pr + len_PC + i][2] = abs(agent.belieftree_electorate[len_Pr + len_PC + i][1] - agent.belieftree_electorate[len_Pr + len_PC + i][0]) / S_denominator
 			else:
-				agent.belieftree_electorate[len_DC + len_PC + i][2] = 0
+				agent.belieftree_electorate[len_Pr + len_PC + i][2] = 0
 
 	def issue_selection(self, agent):
 
@@ -1234,16 +1234,16 @@ class PolicyEmergence(Model):
 
 		"""	
 		
-		len_DC = self.len_DC
+		len_Pr = self.len_Pr
 		len_PC = self.len_PC
 		len_S = self.len_S
 
 		# Selection of the agenda setting issue (policy core)
 		as_issue = [None for k in range(len_PC)]
 		for i in range(len_PC):
-			as_issue[i] = agent.belieftree[0][len_DC + i][2]
+			as_issue[i] = agent.belieftree[0][len_Pr + i][2]
 		# Recording which issue is selected by the policymaker
-		agent.select_as_issue = len_DC + as_issue.index(max(as_issue))
+		agent.select_as_issue = len_Pr + as_issue.index(max(as_issue))
 
 	def issue_selection_as_3S(self, agent):
 
@@ -1268,7 +1268,7 @@ class PolicyEmergence(Model):
 
 		"""
 
-		len_DC = self.len_DC
+		len_Pr = self.len_Pr
 		len_PC = self.len_PC
 		len_S = self.len_S
 
@@ -1282,24 +1282,24 @@ class PolicyEmergence(Model):
 		grade_prob_list = []
 
 		# Calculating the numerator and the preference of all policy core issues:
-		# Select one by one the DC
+		# Select one by one the Pr
 		for j in range(len_PC):
 			grade_prob = 0
 			# print('Selection PC' + str(j+1))
-			# print('State of the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + j][0])) # the state printed
-			# Selecting the causal relations starting from DC
-			for k in range(len_DC):
+			# print('State of the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_Pr + j][0])) # the state printed
+			# Selecting the causal relations starting from Pr
+			for k in range(len_Pr):
 				# print(' ')
-				# print(len_DC + len_PC + len_S + j + k*len_PC)
+				# print(len_Pr + len_PC + len_S + j + k*len_PC)
 				# Contingency for partial knowledge issues
 				if agent.belieftree[0][k][1] != None and agent.belieftree[0][k][0] != None:
-					# print('Causal Relation PC' + str(j+1) + ' - DC' + str(k+1) + ': ' + str(agent.belieftree[0][len_DC+len_PC+len_S+(j+(k*len_PC))][0]))
-					# print('Gap of DC' + str(k+1) + ': ' + str(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
+					# print('Causal Relation PC' + str(j+1) + ' - Pr' + str(k+1) + ': ' + str(agent.belieftree[0][len_Pr+len_PC+len_S+(j+(k*len_PC))][0]))
+					# print('Gap of Pr' + str(k+1) + ': ' + str(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
 					# Check if causal relation and gap are both positive of both negative
-					if (agent.belieftree[0][len_DC+len_PC+len_S+(j+(k*len_PC))][0] < 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) < 0) \
-						or (agent.belieftree[0][len_DC+len_PC+len_S+(j+(k*len_PC))][0] > 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) > 0):
+					if (agent.belieftree[0][len_Pr+len_PC+len_S+(j+(k*len_PC))][0] < 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) < 0) \
+						or (agent.belieftree[0][len_Pr+len_PC+len_S+(j+(k*len_PC))][0] > 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) > 0):
 						# print('Calculating')
-						grade_prob = grade_prob + abs(agent.belieftree[0][len_DC+len_PC+len_S+(j+(k*len_PC))][0] * \
+						grade_prob = grade_prob + abs(agent.belieftree[0][len_Pr+len_PC+len_S+(j+(k*len_PC))][0] * \
 							(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
 						# print('This is the PC numerator: ' + str(grade_prob))
 					else:
@@ -1307,12 +1307,12 @@ class PolicyEmergence(Model):
 				else:
 					grade_prob = 0
 			# Contingency for partial knowledge issues
-			if agent.belieftree[0][len_DC + j][1] == None or agent.belieftree[0][len_DC + j][0] == None:
+			if agent.belieftree[0][len_Pr + j][1] == None or agent.belieftree[0][len_Pr + j][0] == None:
 				grade_prob = 0
 			else:
 				# Then adding the gap of the policy core:
-				# print('This is the gap for the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + j][1] - agent.belieftree[0][len_DC + j][0]))
-				grade_prob = grade_prob + abs(agent.belieftree[0][len_DC + j][1] - agent.belieftree[0][len_DC + j][0])
+				# print('This is the gap for the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_Pr + j][1] - agent.belieftree[0][len_Pr + j][0]))
+				grade_prob = grade_prob + abs(agent.belieftree[0][len_Pr + j][1] - agent.belieftree[0][len_Pr + j][0])
 			grade_prob_list.append(grade_prob)
 			total_list.append(grade_prob)
 		
@@ -1331,7 +1331,7 @@ class PolicyEmergence(Model):
 			for j in range(len_PC):
 				# print('Policy number: ' + str(p) + ' with impact: ' + str(policies[p][j]))
 				# Calculating the grade of the policy
-				grade_poli = grade_poli + (agent.belieftree[0][len_DC + j][1] - (agent.belieftree[0][len_DC + j][0] * agent.belieftree_policy[0][p][j]))
+				grade_poli = grade_poli + (agent.belieftree[0][len_Pr + j][1] - (agent.belieftree[0][len_Pr + j][0] * agent.belieftree_policy[0][p][j]))
 			grade_poli_list.append(grade_poli)
 			total_list.append(grade_poli)
 
@@ -1360,7 +1360,7 @@ class PolicyEmergence(Model):
 		# Selection of the problem #
 		############################
 
-		agent.select_problem_3S_as = len_DC + grade_prob_list.index(max(grade_prob_list))
+		agent.select_problem_3S_as = len_Pr + grade_prob_list.index(max(grade_prob_list))
 		# print(agent.select_problem_3S_as)
 
 		############################
@@ -1393,7 +1393,7 @@ class PolicyEmergence(Model):
 
 		"""
 
-		len_DC = self.len_DC
+		len_Pr = self.len_Pr
 		len_PC = self.len_PC
 		len_S = self.len_S
 
@@ -1409,23 +1409,23 @@ class PolicyEmergence(Model):
 		k = self.agenda_prob_3S_as
 
 		# Calculating the numerator and the preference of all policy core issues:
-		# Select one by one the DC
+		# Select one by one the Pr
 		for j in range(len_S):
 			grade_prob = 0
 			# print('Selection S' + str(j+1))
-			# print('State of the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + j][0])) # the state printed
+			# print('State of the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_Pr + j][0])) # the state printed
 			# Selecting the causal relations starting from PC
 			# print(' ')
-			# print(len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC))
+			# print(len_Pr + len_PC + len_S + len_Pr*len_PC + j*len_PC + (k-len_Pr))
 			# Contingency for partial knowledge issues
 			if agent.belieftree[0][k][1] != None and agent.belieftree[0][k][0] != None:
-				# print('Causal Relation S' + str(j+1) + ' - PC' + str(k+1) + ': ' + str(agent.belieftree[0][len_DC+len_PC+len_S+(j+(k*len_PC))][0]))
+				# print('Causal Relation S' + str(j+1) + ' - PC' + str(k+1) + ': ' + str(agent.belieftree[0][len_Pr+len_PC+len_S+(j+(k*len_PC))][0]))
 				# print('Gap of PC' + str(k+1) + ': ' + str(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
 				# Check if causal relation and gap are both positive of both negative
-				if (agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] < 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) < 0) \
-					or (agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] > 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) > 0):
+				if (agent.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + j*len_PC + (k-len_Pr)][0] < 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) < 0) \
+					or (agent.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + j*len_PC + (k-len_Pr)][0] > 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) > 0):
 					# print('Calculating')
-					grade_prob = grade_prob + abs(agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + j*len_PC + (k-len_DC)][0] * \
+					grade_prob = grade_prob + abs(agent.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + j*len_PC + (k-len_Pr)][0] * \
 						(agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
 					# print('This is the PC numerator: ' + str(grade_prob))
 				else:
@@ -1433,12 +1433,12 @@ class PolicyEmergence(Model):
 			else:
 				grade_prob = 0
 			# Contingency for partial knowledge issues
-			if agent.belieftree[0][len_DC + j][1] == None or agent.belieftree[0][len_DC + j][0] == None:
+			if agent.belieftree[0][len_Pr + j][1] == None or agent.belieftree[0][len_Pr + j][0] == None:
 				grade_prob = grade_prob
 			else:
 				# Then adding the gap of the policy core:
-				# print('This is the gap for the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + j][1] - agent.belieftree[0][len_DC + j][0]))
-				grade_prob = grade_prob + abs(agent.belieftree[0][len_DC + j][1] - agent.belieftree[0][len_DC + j][0])
+				# print('This is the gap for the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_Pr + j][1] - agent.belieftree[0][len_Pr + j][0]))
+				grade_prob = grade_prob + abs(agent.belieftree[0][len_Pr + j][1] - agent.belieftree[0][len_Pr + j][0])
 			grade_prob_list.append(grade_prob)
 			total_list.append(grade_prob)
 		
@@ -1456,7 +1456,7 @@ class PolicyEmergence(Model):
 			grade_poli = 0
 			for j in range(len_S):
 				# Calculating the grade of the policy
-				grade_poli = grade_poli + (agent.belieftree[0][len_DC + len_PC + j][1] - (agent.belieftree[0][len_DC + len_PC + j][0] * agent.belieftree_instrument[0][p][j]))
+				grade_poli = grade_poli + (agent.belieftree[0][len_Pr + len_PC + j][1] - (agent.belieftree[0][len_Pr + len_PC + j][0] * agent.belieftree_instrument[0][p][j]))
 			grade_poli_list.append(grade_poli)
 			total_list.append(grade_poli)
 
@@ -1485,7 +1485,7 @@ class PolicyEmergence(Model):
 		# Selection of the problem #
 		############################
 
-		agent.select_problem_3S_pf = len_DC + len_PC + grade_prob_list.index(max(grade_prob_list))
+		agent.select_problem_3S_pf = len_Pr + len_PC + grade_prob_list.index(max(grade_prob_list))
 		# print(agent.select_problem_3S_pf)
 
 		############################
@@ -1525,7 +1525,7 @@ class PolicyEmergence(Model):
 
 		"""
 
-		len_DC = self.len_DC
+		len_Pr = self.len_Pr
 		len_PC = self.len_PC
 		len_S = self.len_S
 		instruments = self.instruments
@@ -1536,7 +1536,7 @@ class PolicyEmergence(Model):
 
 		# Calculation of the denominator first
 		S_denominator = 0
-		# Select one by one the DC
+		# Select one by one the Pr
 		## We dont want to go through all PC but just one PC - the question is then to change all the j for what number it should be
 		if AS_theory != 2:
 			j = agent.select_as_issue
@@ -1544,18 +1544,18 @@ class PolicyEmergence(Model):
 			j = agent.select_problem_3S_as
 		# for j in range(len_PC):
 		# print('Selection PC' + str(j+1))
-		# print('State of the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC+j][0])) # the state printed
-		# Selecting the causal relations starting from DC
+		# print('State of the PC' + str(j+1) + ': ' + str(agent.belieftree[0][len_Pr+j][0])) # the state printed
+		# Selecting the causal relations starting from Pr
 		for k in range(len_S):
-			# print('Causal Relation PC' + str(j+1) + ' - S' + str(k+1) + ': ' + str(agent.belieftree[0][len_DC+len_PC+len_S+(len_DC*len_PC)+(j+k)][1]))
+			# print('Causal Relation PC' + str(j+1) + ' - S' + str(k+1) + ': ' + str(agent.belieftree[0][len_Pr+len_PC+len_S+(len_Pr*len_PC)+(j+k)][1]))
 			# print('Gap of PC' + str(j+1) + ': ' + str((agent.belieftree[0][j][1] - agent.belieftree[0][j][0])))
 			# Check is gap of PC and causal relation to PC are both negative or both positive!
 			# Check if causal relation and gap are both positive of both negative
 			# Pass the issues - pass the first layer of links - pass the unrelated links
-			if agent.belieftree[who][j][1] != None and agent.belieftree[who][j][0] != None and agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0] != None:
-				if (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0] < 0 and (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]) < 0) \
-					or (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0] > 0 and (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]) > 0):
-					S_denominator = S_denominator + abs(agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (j - len_DC)*len_S + k][0]*\
+			if agent.belieftree[who][j][1] != None and agent.belieftree[who][j][0] != None and agent.belieftree[who][len_Pr + len_PC + len_S + (len_Pr*len_PC) + (j - len_Pr)*len_S + k][0] != None:
+				if (agent.belieftree[who][len_Pr + len_PC + len_S + (len_Pr*len_PC) + (j - len_Pr)*len_S + k][0] < 0 and (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]) < 0) \
+					or (agent.belieftree[who][len_Pr + len_PC + len_S + (len_Pr*len_PC) + (j - len_Pr)*len_S + k][0] > 0 and (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]) > 0):
+					S_denominator = S_denominator + abs(agent.belieftree[who][len_Pr + len_PC + len_S + (len_Pr*len_PC) + (j - len_Pr)*len_S + k][0]*\
 					  (agent.belieftree[who][j][1] - agent.belieftree[who][j][0]))
 					# print('This is the S denominator: ' + str(S_denominator))
 				else:
@@ -1565,35 +1565,35 @@ class PolicyEmergence(Model):
 			# Then adding the gap of the policy core:
 
 		for i in range(len_S):
-			if agent.belieftree[who][len_DC + len_PC + i][0] != 'No':
-				# print('This is the gap for the S' + str(i+1) + ': ' + str(agent.belieftree[0][len_DC + len_PC + i][1] - agent.belieftree[0][len_DC + len_PC + i][0]))
-				if agent.belieftree[who][len_DC + len_PC + i][1] != None and agent.belieftree[who][len_DC + len_PC + i][0] != None:
-					S_denominator = S_denominator + abs(agent.belieftree[who][len_DC + len_PC + i][1] - agent.belieftree[who][len_DC + len_PC + i][0])
+			if agent.belieftree[who][len_Pr + len_PC + i][0] != 'No':
+				# print('This is the gap for the S' + str(i+1) + ': ' + str(agent.belieftree[0][len_Pr + len_PC + i][1] - agent.belieftree[0][len_Pr + len_PC + i][0]))
+				if agent.belieftree[who][len_Pr + len_PC + i][1] != None and agent.belieftree[who][len_Pr + len_PC + i][0] != None:
+					S_denominator = S_denominator + abs(agent.belieftree[who][len_Pr + len_PC + i][1] - agent.belieftree[who][len_Pr + len_PC + i][0])
 				else:
 					S_denominator = 0
 		# print('This is the S denominator: ' + str(S_denominator))
 
 		# Calculating the numerator and the preference of all policy core issues:
 		S_numerator = 0
-		# Select one by one the DC
+		# Select one by one the Pr
 		
 		for j in range(len_S):
 			S_numerator = 0
 			# print('Selection S' + str(j+1))
-			# print('State of the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + len_PC + j][0])) # the state printed
+			# print('State of the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_Pr + len_PC + j][0])) # the state printed
 			# Selecting the causal relations starting from PC
 			if AS_theory != 2:
 				k = agent.select_as_issue
 			if AS_theory == 2:
 				k = agent.select_problem_3S_as
 			# print("This is the index of the selected policy: " + str(k))
-			# print('Causal Relation S' + str(j+1) + ' - PC' + str(k+1) + ': ' + str(agent.belieftree[0][len_DC+len_PC+len_S+(len_DC*len_PC)+(j+(k*2))][1]))
-			# print('Gap of PC' + str(k+1) + ': ' + str((agent.belieftree[0][len_DC + k][1] - agent.belieftree[0][len_DC + k][0])))
+			# print('Causal Relation S' + str(j+1) + ' - PC' + str(k+1) + ': ' + str(agent.belieftree[0][len_Pr+len_PC+len_S+(len_Pr*len_PC)+(j+(k*2))][1]))
+			# print('Gap of PC' + str(k+1) + ': ' + str((agent.belieftree[0][len_Pr + k][1] - agent.belieftree[0][len_Pr + k][0])))
 			# Check if causal relation and gap are both positive of both negative
-			if agent.belieftree[who][k][1] != None and agent.belieftree[who][k][0] != None and agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0] != None:
-				if (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
-					or (agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
-					S_numerator = S_numerator + abs(agent.belieftree[who][len_DC + len_PC + len_S + (len_DC*len_PC) + (k - len_DC)*len_S + j][0]*\
+			if agent.belieftree[who][k][1] != None and agent.belieftree[who][k][0] != None and agent.belieftree[who][len_Pr + len_PC + len_S + (len_Pr*len_PC) + (k - len_Pr)*len_S + j][0] != None:
+				if (agent.belieftree[who][len_Pr + len_PC + len_S + (len_Pr*len_PC) + (k - len_Pr)*len_S + j][0] < 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) < 0) \
+					or (agent.belieftree[who][len_Pr + len_PC + len_S + (len_Pr*len_PC) + (k - len_Pr)*len_S + j][0] > 0 and (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]) > 0):
+					S_numerator = S_numerator + abs(agent.belieftree[who][len_Pr + len_PC + len_S + (len_Pr*len_PC) + (k - len_Pr)*len_S + j][0]*\
 						  (agent.belieftree[who][k][1] - agent.belieftree[who][k][0]))
 					# print('This is the S numerator: ' + str(S_numerator))
 				else:
@@ -1601,26 +1601,26 @@ class PolicyEmergence(Model):
 			else:
 				S_numerator = S_numerator
 			# Then adding the gap of the policy core:
-			# print('This is the gap for the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_DC + len_PC + j][1] - agent.belieftree[0][len_DC + len_PC + j][0]))
-			if agent.belieftree[who][len_DC + len_PC + j][0] != 'No':
-				if agent.belieftree[who][len_DC + len_PC + j][1] != None and agent.belieftree[who][len_DC + len_PC + j][0] != None:
-					S_numerator = S_numerator + abs(agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0])
+			# print('This is the gap for the S' + str(j+1) + ': ' + str(agent.belieftree[0][len_Pr + len_PC + j][1] - agent.belieftree[0][len_Pr + len_PC + j][0]))
+			if agent.belieftree[who][len_Pr + len_PC + j][0] != 'No':
+				if agent.belieftree[who][len_Pr + len_PC + j][1] != None and agent.belieftree[who][len_Pr + len_PC + j][0] != None:
+					S_numerator = S_numerator + abs(agent.belieftree[who][len_Pr + len_PC + j][1] - agent.belieftree[who][len_Pr + len_PC + j][0])
 				else:
 					S_numerator = 0
 
 			# print('The numerator is equal to: ' + str(S_numerator))
 			# print('The denominator is equal to: ' + str(S_denominator))
-			# print('agent.belieftree[' + str(who) + '][len_DC + len_PC + ' + str(j) + '][1]: ' + str(agent.belieftree[who][len_DC + len_PC + j][1]))
-			# print('agent.belieftree[' + str(who) + '][len_DC + len_PC + ' + str(j) + '][0]: ' + str(agent.belieftree[who][len_DC + len_PC + j][0]))
+			# print('agent.belieftree[' + str(who) + '][len_Pr + len_PC + ' + str(j) + '][1]: ' + str(agent.belieftree[who][len_Pr + len_PC + j][1]))
+			# print('agent.belieftree[' + str(who) + '][len_Pr + len_PC + ' + str(j) + '][0]: ' + str(agent.belieftree[who][len_Pr + len_PC + j][0]))
 			
 			if S_denominator != 0:
-				agent.belieftree[who][len_DC+len_PC+j][2] = S_numerator/S_denominator 
+				agent.belieftree[who][len_Pr+len_PC+j][2] = S_numerator/S_denominator 
 			else:
-				agent.belieftree[who][len_DC+len_PC+j][2] = 0
-			# print('The new preference of the policy core S' + str(j+1) + ' according to the agenda is: ' + str(agent.belieftree[who][len_DC+len_PC+j][2]))
+				agent.belieftree[who][len_Pr+len_PC+j][2] = 0
+			# print('The new preference of the policy core S' + str(j+1) + ' according to the agenda is: ' + str(agent.belieftree[who][len_Pr+len_PC+j][2]))
 
 		# print(agent)
-		# print('Secondary preferences: ' + str(agent.belieftree[who][len_DC+len_PC+j][2]))
+		# print('Secondary preferences: ' + str(agent.belieftree[who][len_Pr+len_PC+j][2]))
 		# print(' ')
 
 		##################################################################################################
@@ -1637,30 +1637,30 @@ class PolicyEmergence(Model):
 				# print('This is the number of secondary belief affected: ' + str(len_S))
 				# print('This is instrument number: ' + str(i) + ' with value ' + str(instruments[i][j]) \
 				# 	+ ' with secondary belief: ' + str(j))
-				# print('Aim of the actor: ' + str(agent.belieftree[0][len_DC + len_PC + j][1]))
-				# print('State of the actor: ' + str(agent.belieftree[0][len_DC + len_PC + j][0]))
-				# print('This is the gap: ' + str(agent.belieftree[0][len_DC + len_PC + j][1] - agent.belieftree[0][len_DC + len_PC + j][0]))
-				if agent.belieftree[who][len_DC + len_PC + j][0] != 'No':
-					if agent.belieftree[who][len_DC + len_PC + j][1] != None and agent.belieftree[who][len_DC + len_PC + j][0] != None:
-						if (instruments[i][j] > 0 and (agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0]) > 0 ) \
-						  or (instruments[i][j] < 0 and (agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0]) < 0 ):
+				# print('Aim of the actor: ' + str(agent.belieftree[0][len_Pr + len_PC + j][1]))
+				# print('State of the actor: ' + str(agent.belieftree[0][len_Pr + len_PC + j][0]))
+				# print('This is the gap: ' + str(agent.belieftree[0][len_Pr + len_PC + j][1] - agent.belieftree[0][len_Pr + len_PC + j][0]))
+				if agent.belieftree[who][len_Pr + len_PC + j][0] != 'No':
+					if agent.belieftree[who][len_Pr + len_PC + j][1] != None and agent.belieftree[who][len_Pr + len_PC + j][0] != None:
+						if (instruments[i][j] > 0 and (agent.belieftree[who][len_Pr + len_PC + j][1] - agent.belieftree[who][len_Pr + len_PC + j][0]) > 0 ) \
+						  or (instruments[i][j] < 0 and (agent.belieftree[who][len_Pr + len_PC + j][1] - agent.belieftree[who][len_Pr + len_PC + j][0]) < 0 ):
 							# print('*************************************************')
 							# print('I will now calculate the grade of the instrument:')
-							# print('This is the gap in the secondary belief: ' + str(agent.belieftree[0][len_DC + len_PC + j][1] - agent.belieftree[0][len_DC + len_PC + j][0]))
-							# print('This is the corresponding preference for this secondary belief: ' + str(agent.belieftree[who][len_DC+len_PC+j][2]))
+							# print('This is the gap in the secondary belief: ' + str(agent.belieftree[0][len_Pr + len_PC + j][1] - agent.belieftree[0][len_Pr + len_PC + j][0]))
+							# print('This is the corresponding preference for this secondary belief: ' + str(agent.belieftree[who][len_Pr+len_PC+j][2]))
 							# print('And this is the instrument corresponding value: ' + str(instruments[i][j]))
 
 							agent.instrument_preferences[who][i] = agent.instrument_preferences[who][i] + \
-								(instruments[i][j] * (agent.belieftree[who][len_DC + len_PC + j][1] - agent.belieftree[who][len_DC + len_PC + j][0]) * \
-								(agent.belieftree[who][len_DC+len_PC+j][2]))
+								(instruments[i][j] * (agent.belieftree[who][len_Pr + len_PC + j][1] - agent.belieftree[who][len_Pr + len_PC + j][0]) * \
+								(agent.belieftree[who][len_Pr+len_PC+j][2]))
 
 							# print(' ')
 							# print('agent.instrument_preferences' + str(agent.instrument_preferences[who][i]))
 							# print('Who: ' + str(who))
 							# print('instruments[' + str(i) + '][' + str(j) + ']: ' + str(instruments[i][j]))
-							# print('agent.belieftree[' + str(who) + '][len_DC + len_PC + ' + str(j) + '][1]: ' + str(agent.belieftree[who][len_DC + len_PC + j][1]))
-							# print('agent.belieftree[' + str(who) + '][len_DC + len_PC + ' + str(j) + '][0]: ' + str(agent.belieftree[who][len_DC + len_PC + j][0]))
-							# print('instrument_secondary_preferences[' + str(who) + '][' + str(j) + ']: ' + str(agent.belieftree[who][len_DC+len_PC+j][2]))
+							# print('agent.belieftree[' + str(who) + '][len_Pr + len_PC + ' + str(j) + '][1]: ' + str(agent.belieftree[who][len_Pr + len_PC + j][1]))
+							# print('agent.belieftree[' + str(who) + '][len_Pr + len_PC + ' + str(j) + '][0]: ' + str(agent.belieftree[who][len_Pr + len_PC + j][0]))
+							# print('instrument_secondary_preferences[' + str(who) + '][' + str(j) + ']: ' + str(agent.belieftree[who][len_Pr+len_PC+j][2]))
 
 							# print('This is the grade of the instrument at this point: ' + str(agent.instrument_preferences[i]))
 							# print('*************************************************')
@@ -1780,7 +1780,7 @@ class PolicyEmergence(Model):
 		for links in self.link_list:
 			# print(links)
 			conflict_level_temp = copy.copy(links.conflict_level)
-			for issues in range(self.len_DC + self.len_PC + self.len_S):
+			for issues in range(self.len_Pr + self.len_PC + self.len_S):
 				# This is all based on partial knowledge
 				# AGENT 1 - based on the partial knowledge he has of 
 				# For the calculation of the state conflict level:
@@ -1880,7 +1880,7 @@ class PolicyEmergence(Model):
 
 			# print(links.conflict_level)
 
-	def coalition_creation_as(self, agent_action_list, link_list, DC_ACF_interest, coalitions_number_as, tick_number, coalitions_list_as, coalitions_list_as_total, coalition_threshold, target):
+	def coalition_creation_as(self, agent_action_list, link_list, Pr_ACF_interest, coalitions_number_as, tick_number, coalitions_list_as, coalitions_list_as_total, coalition_threshold, target):
 
 		"""
 		The coalition creation function (agenda setting)
@@ -1919,21 +1919,21 @@ class PolicyEmergence(Model):
 				if leader == links.agent1 and links.agent2 in coalition_agent_list:
 					# Threshold check
 					# print(' ')
-					# print('Leader beliefs: ' + str(leader.belieftree[0][DC_ACF_interest][1]))
+					# print('Leader beliefs: ' + str(leader.belieftree[0][Pr_ACF_interest][1]))
 					# print('Agent considered: ' + str(links.agent2.unique_id))
-					# print('Agents perceived beliefs: ' + str(leader.belieftree[1 + links.agent2.unique_id][DC_ACF_interest][1]))
-					if leader.belieftree[1 + links.agent2.unique_id][DC_ACF_interest][target] < leader.belieftree[0][DC_ACF_interest][target] + coalition_threshold and \
-						leader.belieftree[1 + links.agent2.unique_id][DC_ACF_interest][target] > leader.belieftree[0][DC_ACF_interest][target] - coalition_threshold:			
+					# print('Agents perceived beliefs: ' + str(leader.belieftree[1 + links.agent2.unique_id][Pr_ACF_interest][1]))
+					if leader.belieftree[1 + links.agent2.unique_id][Pr_ACF_interest][target] < leader.belieftree[0][Pr_ACF_interest][target] + coalition_threshold and \
+						leader.belieftree[1 + links.agent2.unique_id][Pr_ACF_interest][target] > leader.belieftree[0][Pr_ACF_interest][target] - coalition_threshold:			
 						coalition_members.append(links.agent2)
 						coalition_agent_list.remove(links.agent2)
 
 				elif leader == links.agent2 and links.agent1 in coalition_agent_list:
 					# print(' ')
-					# print('Leader beliefs: ' + str(leader.belieftree[0][DC_ACF_interest][1]))
+					# print('Leader beliefs: ' + str(leader.belieftree[0][Pr_ACF_interest][1]))
 					# print('Agent considered: ' + str(links.agent1.unique_id))
-					# print('Agents perceived beliefs: ' + str(leader.belieftree[1 + links.agent1.unique_id][DC_ACF_interest][1]))
-					if leader.belieftree[1 + links.agent1.unique_id][DC_ACF_interest][target] < leader.belieftree[0][DC_ACF_interest][target] + coalition_threshold and \
-						leader.belieftree[1 + links.agent1.unique_id][DC_ACF_interest][target] > leader.belieftree[0][DC_ACF_interest][target] - coalition_threshold:
+					# print('Agents perceived beliefs: ' + str(leader.belieftree[1 + links.agent1.unique_id][Pr_ACF_interest][1]))
+					if leader.belieftree[1 + links.agent1.unique_id][Pr_ACF_interest][target] < leader.belieftree[0][Pr_ACF_interest][target] + coalition_threshold and \
+						leader.belieftree[1 + links.agent1.unique_id][Pr_ACF_interest][target] > leader.belieftree[0][Pr_ACF_interest][target] - coalition_threshold:
 						coalition_members.append(links.agent1)
 						coalition_agent_list.remove(links.agent1)
 			# print('Number of members: ' + str(len(coalition_members)))
@@ -2058,7 +2058,7 @@ class PolicyEmergence(Model):
 			issue_of_interest = []
 			for issue_choice in range(self.len_S):
 				if self.instruments[coalition.issue][issue_choice] != 0:
-					issue_of_interest.append(self.len_DC + self.len_PC + issue_choice)
+					issue_of_interest.append(self.len_Pr + self.len_PC + issue_choice)
 
 			# Update of different member parameters
 			for agents_member in coalition.members:

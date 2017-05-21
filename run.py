@@ -21,18 +21,15 @@ inputs_dict = dict()
 # Pseudo random generator seed
 # random.seed(42)
 
-# Team strategies - THis might not be used yet.
-team_strategy = 1
-
 # ACF principle belief of interest
-DC_ACF_interest = 0
+Pr_ACF_interest = 0
 
 # Method chosen:
 # 0: Backbone, 1: Backbone+, 2: 3S, 3: ACF
 # Note right now several parts of the model require that the same method be used for both
 # parts of the model - this is mostly related to the input method. This will be changed
 # in the future.
-AS_theory = 2
+AS_theory = 3
 PF_theory = AS_theory
 
 # This is set up to use only in the case of exploration
@@ -110,6 +107,7 @@ for run_number in range(run_number_total):
 			agents.run_number = run_number
 		inputs_dict["Run_number"] = run_number
 
+		# Selecting the data that needs to be collected throughout the model
 		if AS_theory == 0 or PF_theory == 0:
 			datacollector = DataCollector(
 				# Model
@@ -273,7 +271,7 @@ for run_number in range(run_number_total):
 				})
 
 		# Running the model
-		test_model = PolicyEmergence(team_strategy, DC_ACF_interest, datacollector, run_number, inputs_dict, events)
+		test_model = PolicyEmergence(Pr_ACF_interest, datacollector, run_number, inputs_dict, events)
 		for i in range(ticks):
 			print('   ')
 			print('--------------------- STEP ' + str(i+1) + ' ---------------------')

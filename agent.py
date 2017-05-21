@@ -705,7 +705,7 @@ class Agent:
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
 
@@ -715,14 +715,14 @@ class Agent:
 		# print(agents.select_issue_3S_as)
 
 		# Calculation needed for the choice of the causal relation
-		prefered_DC = []
-		for deep_core_issues in range(len_DC):
-			prefered_DC.append(agents.belieftree[0][deep_core_issues][2])
-		prefered_DC = prefered_DC.index(max(prefered_DC))
+		prefered_Pr = []
+		for deep_core_issues in range(len_Pr):
+			prefered_Pr.append(agents.belieftree[0][deep_core_issues][2])
+		prefered_Pr = prefered_Pr.index(max(prefered_Pr))
 
 		# a. Belonging level update (completed)
 		if agents.team_as[0] != None:
-			self.belonging_level_as(agents, len_DC, len_PC)
+			self.belonging_level_as(agents, len_Pr, len_PC)
 
 		# b. Leave team check (completed)
 		if agents.team_as[0] != None:
@@ -768,8 +768,8 @@ class Agent:
 						for agent_members in team.members:
 							# Opposite of the requirements for the creation of a team
 
-							if abs(team.lead.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.team_as[0].issue - len_DC)][0] - \
-								agent_members.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.team_as[0].issue - len_DC)][0]) >= team_belief_problem_threshold or \
+							if abs(team.lead.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.team_as[0].issue - len_Pr)][0] - \
+								agent_members.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.team_as[0].issue - len_Pr)][0]) >= team_belief_problem_threshold or \
 								abs(agent_members.belieftree[0][agents.select_problem_3S_as][0] - agent_members.belieftree[0][agents.select_problem_3S_as][1]) < team_gap_threshold:
 								# Disband the team if the leader doesnt meet the requirements anymore
 								if agent_members == team.lead:
@@ -790,8 +790,8 @@ class Agent:
 						agent_removed = 0
 						for agent_members in team.members:
 							# Opposite of the requirements for the creation of a team
-							if abs(team.lead.belieftree_policy[0][agents.team_as[0].issue][team.lead.select_problem_3S_as - len_DC] - \
-								agent_members.belieftree_policy[0][agents.team_as[0].issue][team.lead.select_problem_3S_as - len_DC]) >= team_belief_policy_threshold or \
+							if abs(team.lead.belieftree_policy[0][agents.team_as[0].issue][team.lead.select_problem_3S_as - len_Pr] - \
+								agent_members.belieftree_policy[0][agents.team_as[0].issue][team.lead.select_problem_3S_as - len_Pr]) >= team_belief_policy_threshold or \
 								abs(agent_members.belieftree[0][team.lead.select_problem_3S_as][0] - agent_members.belieftree[0][team.lead.select_problem_3S_as][1]) < team_gap_threshold:
 								# Disband the team if the leader doesnt meet the requirements anymore
 								if agent_members == team.lead:
@@ -811,7 +811,7 @@ class Agent:
 					if agents.team_as[0] != None:
 						if agent_removed == 1:
 							for agent_members in team.members:
-								self.belonging_level_as(agent_members, len_DC, len_PC)
+								self.belonging_level_as(agent_members, len_Pr, len_PC)
 
 								# If the belonging level is below 30%, the agents are removed (similar to a previous loop)
 								if agent_members.team_as[1] < 0.3:
@@ -845,14 +845,14 @@ class Agent:
 
 							# None check
 							check_none = 0
-							if agents.belieftree[1+join_team.lead.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (join_team.issue - len_DC)][0] == None:
-								agents.belieftree[1+join_team.lead.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (join_team.issue - len_DC)][0] = 0
+							if agents.belieftree[1+join_team.lead.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (join_team.issue - len_Pr)][0] == None:
+								agents.belieftree[1+join_team.lead.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (join_team.issue - len_Pr)][0] = 0
 								check_none = 1
 
 							# First we check that the agent meets both requirements (based on partial knowledge) (we assume that the agent knows who the leader is)
 							if abs(agents.belieftree[0][join_team.lead.select_problem_3S_as][0] - agents.belieftree[0][join_team.lead.select_problem_3S_as][1]) >= team_gap_threshold and \
-								abs(agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (join_team.issue - len_DC)][0] - \
-							  	agents.belieftree[1+join_team.lead.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (join_team.issue - len_DC)][0]) < team_belief_problem_threshold:
+								abs(agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (join_team.issue - len_Pr)][0] - \
+							  	agents.belieftree[1+join_team.lead.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (join_team.issue - len_Pr)][0]) < team_belief_problem_threshold:
 
 								# Add the agent to the team
 								join_team.members.append(agents)
@@ -864,14 +864,14 @@ class Agent:
 								self.knowledge_exchange_team(join_team, join_team.issue, 0)
 
 								# Change belonging level
-								self.belonging_level_as(agents, len_DC, len_PC)
+								self.belonging_level_as(agents, len_Pr, len_PC)
 
 								# Notify that the loop can be stopped as the agent has been added
 								added_team_check = 1
 
 							# None reset
 							if check_none == 1:
-								agents.belieftree[1+join_team.lead.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (join_team.issue - len_DC)][0] = None
+								agents.belieftree[1+join_team.lead.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (join_team.issue - len_Pr)][0] = None
 
 							# update of the resources
 							agents.resources[1] -= 0.02 * agents.resources[0]
@@ -893,16 +893,16 @@ class Agent:
 							# None check
 							check_none = 0
 
-							# team.lead.belieftree_policy[0][agents.team_as[0].issue][team.lead.select_problem_3S_as - len_DC]
+							# team.lead.belieftree_policy[0][agents.team_as[0].issue][team.lead.select_problem_3S_as - len_Pr]
 
-							if agents.belieftree_policy[1+join_team.lead.unique_id][join_team.issue][join_team.lead.select_problem_3S_as - len_DC] == None:
-								agents.belieftree_policy[1+join_team.lead.unique_id][join_team.issue][join_team.lead.select_problem_3S_as - len_DC] = 0
+							if agents.belieftree_policy[1+join_team.lead.unique_id][join_team.issue][join_team.lead.select_problem_3S_as - len_Pr] == None:
+								agents.belieftree_policy[1+join_team.lead.unique_id][join_team.issue][join_team.lead.select_problem_3S_as - len_Pr] = 0
 								check_none = 1
 
 							# First we check that the agent meets both requirements (based on partial knowledge) (we assume that the agent knows who the leader is)
 							if abs(agents.belieftree[0][join_team.issue][0] - agents.belieftree[0][join_team.issue][1]) >= team_gap_threshold and \
-								abs(agents.belieftree_policy[0][join_team.issue][join_team.lead.select_problem_3S_as - len_DC] - \
-								agents.belieftree_policy[1+join_team.lead.unique_id][join_team.issue][join_team.lead.select_problem_3S_as - len_DC]) < team_belief_policy_threshold:
+								abs(agents.belieftree_policy[0][join_team.issue][join_team.lead.select_problem_3S_as - len_Pr] - \
+								agents.belieftree_policy[1+join_team.lead.unique_id][join_team.issue][join_team.lead.select_problem_3S_as - len_Pr]) < team_belief_policy_threshold:
 								print(' ')
 								print('Checked - Join 1!')
 
@@ -915,14 +915,14 @@ class Agent:
 								self.knowledge_exchange_team(join_team, join_team.issue, 0)
 
 								# Change belonging level
-								self.belonging_level_as(agents, len_DC, len_PC)
+								self.belonging_level_as(agents, len_Pr, len_PC)
 
 								# Notify that the loop can be stopped as the agent has been added
 								added_team_check = 1
 
 							# None reset
 							if check_none == 1:
-								agents.belieftree_policy[1+join_team.lead.unique_id][join_team.issue][join_team.lead.select_problem_3S_as - len_DC] = None
+								agents.belieftree_policy[1+join_team.lead.unique_id][join_team.issue][join_team.lead.select_problem_3S_as - len_Pr] = None
 
 							# update of the resources
 							agents.resources[1] -= 0.02 * agents.resources[0]
@@ -974,13 +974,13 @@ class Agent:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = 0
 									if agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] == None:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = 0
-									if agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] == None:
-										agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = 0
+									if agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] == None:
+										agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = 0
 
 									# Check for the gap and the similarity in states based on partial knowledge - if okay, add the agent to the list
 									if abs(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] - agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1]) >= team_gap_threshold and \
-										abs(agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] - \
-									  	agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0]) < team_belief_problem_threshold:
+										abs(agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] - \
+									  	agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0]) < team_belief_problem_threshold:
 										# Add the agent to the list of potential candidates
 										team_list_potential_agent.append(links.agent2)
 
@@ -988,28 +988,28 @@ class Agent:
 									# Knowledge gained by the lead agent:
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = links.agent2.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = links.agent2.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-									agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-										links.agent2.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] + (random.random()/2) - 0.25
+									agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+										links.agent2.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] + (random.random()/2) - 0.25
 									# 1-1 check
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = \
 										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0])
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = \
 										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1])
-									agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0])
+									agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0])
 
 									# Knowledge gained by the secondary link agent:
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = agents.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = agents.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-									links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-										agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] + (random.random()/2) - 0.25
+									links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+										agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] + (random.random()/2) - 0.25
 									# 1-1 check
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = \
 										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0])
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = \
 										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1])
-									links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0])
+									links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0])
 
 									# Adjusting resources
 									agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1023,13 +1023,13 @@ class Agent:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = 0
 										if agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] == None:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = 0
-										if agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] == None:
-											agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = 0
+										if agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] == None:
+											agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge
 										if abs(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] - agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1]) >= team_gap_threshold and \
-											abs(agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] - \
-										  	agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0]) < team_belief_problem_threshold:
+											abs(agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] - \
+										  	agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0]) < team_belief_problem_threshold:
 											
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent1)
@@ -1038,28 +1038,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = links.agent1.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = links.agent1.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-										agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											links.agent1.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] + (random.random()/2) - 0.25
+										agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											links.agent1.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0])
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1])
-										agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0])
+										agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = agents.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = agents.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-										links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] + (random.random()/2) - 0.25
+										links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0])
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1])
-										links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0])
+										links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1071,8 +1071,8 @@ class Agent:
 							# Make a new list containing the agent that actually match the requirements
 							for potential_agent in team_list_potential_agent:
 								if agents.belieftree[0][agents.select_problem_3S_as][0] != 'No':
-									if abs(agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] - \
-										potential_agent.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0]) < team_belief_problem_threshold and \
+									if abs(agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] - \
+										potential_agent.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0]) < team_belief_problem_threshold and \
 										abs(potential_agent.belieftree[0][agents.select_problem_3S_as][0] - potential_agent.belieftree[0][agents.select_problem_3S_as][1]) >= team_gap_threshold:
 								  		team_list_actual_agent.append(potential_agent)
 								else:
@@ -1141,13 +1141,13 @@ class Agent:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = 0
 									if agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] == None:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = 0
-									if agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] == None:
-										agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = 0
+									if agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] == None:
+										agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = 0
 
 									# Check for the gap and the similarity in states based on partial knowledge - if okay, add the agent to the list
 									if abs(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] - agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1]) >= team_gap_threshold and \
-										abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] - \
-									  	agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC]) < team_belief_policy_threshold:
+										abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] - \
+									  	agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr]) < team_belief_policy_threshold:
 										# Add the agent to the list of potential candidates
 										team_list_potential_agent.append(links.agent2)
 
@@ -1155,28 +1155,28 @@ class Agent:
 									# Knowledge gained by the lead agent:
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = links.agent2.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = links.agent2.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-									agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-										links.agent2.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] + (random.random()/2) - 0.25
+									agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+										links.agent2.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] + (random.random()/2) - 0.25
 									# 1-1 check
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = \
 										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0])
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = \
 										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1])
-									agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-										self.one_minus_one_check(agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC])
+									agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+										self.one_minus_one_check(agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr])
 
 									# Knowledge gained by the secondary link agent:
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = agents.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = agents.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-									links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-										agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] + (random.random()/2) - 0.25
+									links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+										agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] + (random.random()/2) - 0.25
 									# 1-1 check
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = \
 										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0])
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = \
 										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1])
-									links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-										self.one_minus_one_check(links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC])
+									links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+										self.one_minus_one_check(links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr])
 
 									# Adjusting resources
 									agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1190,13 +1190,13 @@ class Agent:
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = 0
 									if agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] == None:
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = 0
-									if agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] == None:
-										agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = 0
+									if agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] == None:
+										agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = 0
 
 									# Check for the gap and the similarity in states based on partial knowledge
 									if abs(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] - agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1]) >= team_gap_threshold and \
-										abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] - \
-									  	agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC]) < team_belief_policy_threshold:
+										abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] - \
+									  	agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr]) < team_belief_policy_threshold:
 										
 										# Add the agent to the list of potential candidates
 										team_list_potential_agent.append(links.agent1)
@@ -1205,28 +1205,28 @@ class Agent:
 									# Knowledge gained by the lead agent:
 									agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = links.agent1.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 									agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = links.agent1.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-									agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-										links.agent1.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] + (random.random()/2) - 0.25
+									agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+										links.agent1.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] + (random.random()/2) - 0.25
 									# 1-1 check
 									agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = \
 										self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0])
 									agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = \
 										self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1])
-									agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-										self.one_minus_one_check(agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC])
+									agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+										self.one_minus_one_check(agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr])
 
 									# Knowledge gained by the secondary link agent:
 									links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = agents.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 									links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = agents.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-									links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-										agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] + (random.random()/2) - 0.25
+									links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+										agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] + (random.random()/2) - 0.25
 									# 1-1 check
 									links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = \
 										self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0])
 									links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = \
 										self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1])
-									links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-										self.one_minus_one_check(links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC])
+									links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+										self.one_minus_one_check(links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr])
 
 									# Adjusting resources
 									agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1238,8 +1238,8 @@ class Agent:
 							# Make a new list containing the agent that actually match the requirements
 							for potential_agent in team_list_potential_agent:
 								if agents.belieftree[0][agents.select_problem_3S_as][0] != 'No':
-									if abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] - \
-										potential_agent.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC]) < team_belief_policy_threshold and \
+									if abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] - \
+										potential_agent.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr]) < team_belief_policy_threshold and \
 										abs(potential_agent.belieftree[0][agents.select_problem_3S_as][0] - potential_agent.belieftree[0][agents.select_problem_3S_as][1]) >= team_gap_threshold:
 								  		team_list_actual_agent.append(potential_agent)
 								else:
@@ -1317,13 +1317,13 @@ class Agent:
 											agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = 0
 										if agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] == None:
 											agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = 0
-										if agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] == None:
-											agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = 0
+										if agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] == None:
+											agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge - if okay, add the agent to the list
 										if abs(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] - agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1]) >= team_gap_threshold and \
-											abs(agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] - \
-										  	agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0]) < team_belief_problem_threshold:
+											abs(agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] - \
+										  	agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0]) < team_belief_problem_threshold:
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent2)
 
@@ -1331,28 +1331,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = links.agent2.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = links.agent2.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-										agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											links.agent2.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] + (random.random()/2) - 0.25
+										agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											links.agent2.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0])
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1])
-										agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0])
+										agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = agents.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = agents.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-										links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] + (random.random()/2) - 0.25
+										links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = \
 											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0])
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = \
 											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1])
-										links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0])
+										links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1366,13 +1366,13 @@ class Agent:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = 0
 										if agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] == None:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = 0
-										if agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] == None:
-											agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = 0
+										if agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] == None:
+											agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge 
 										if abs(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] - agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1]) >= team_gap_threshold and \
-											abs(agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] - \
-										  	agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0]) < team_belief_problem_threshold:
+											abs(agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] - \
+										  	agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0]) < team_belief_problem_threshold:
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent1)
 
@@ -1380,28 +1380,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = links.agent1.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = links.agent1.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-										agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											links.agent1.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] + (random.random()/2) - 0.25
+										agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											links.agent1.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0])
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1])
-										agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0])
+										agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = agents.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = agents.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-										links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] + (random.random()/2) - 0.25
+										links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0])
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1])
-										links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] = \
-											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0])
+										links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] = \
+											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1416,10 +1416,10 @@ class Agent:
 						if len(team_list_potential_agent) == 2:
 
 							# We check that the actual beliefs are within 0.2
-							if abs(agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] - \
-								team_list_potential_agent[0].belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0]) < team_belief_problem_threshold and \
-								abs(agents.belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0] - \
-							  	team_list_potential_agent[1].belieftree[0][len_DC + len_PC + len_S + prefered_DC*len_PC + (agents.select_problem_3S_as - len_DC)][0]) < team_belief_problem_threshold and \
+							if abs(agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] - \
+								team_list_potential_agent[0].belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0]) < team_belief_problem_threshold and \
+								abs(agents.belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0] - \
+							  	team_list_potential_agent[1].belieftree[0][len_Pr + len_PC + len_S + prefered_Pr*len_PC + (agents.select_problem_3S_as - len_Pr)][0]) < team_belief_problem_threshold and \
 								abs(team_list_potential_agent[0].belieftree[0][agents.select_problem_3S_as][0] - team_list_potential_agent[0].belieftree[0][agents.select_problem_3S_as][1]) >= team_gap_threshold and \
 								abs(team_list_potential_agent[1].belieftree[0][agents.select_problem_3S_as][0] - team_list_potential_agent[1].belieftree[0][agents.select_problem_3S_as][1]) >= team_gap_threshold:
 								# Now we can create the team						
@@ -1482,13 +1482,13 @@ class Agent:
 											agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = 0
 										if agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] == None:
 											agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = 0
-										if agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] == None:
-											agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = 0
+										if agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] == None:
+											agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge - if okay, add the agent to the list
 										if abs(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] - agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1]) >= team_gap_threshold and \
-											abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] - \
-										  	agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC]) < team_belief_policy_threshold:
+											abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] - \
+										  	agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr]) < team_belief_policy_threshold:
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent2)
 
@@ -1496,28 +1496,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = links.agent2.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = links.agent2.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-										agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-											links.agent2.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] + (random.random()/2) - 0.25
+										agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+											links.agent2.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][0])
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_as][1])
-										agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-											self.one_minus_one_check(agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC])
+										agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+											self.one_minus_one_check(agents.belieftree_policy[1+links.agent2.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = agents.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = agents.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-										links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-											agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] + (random.random()/2) - 0.25
+										links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+											agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = \
 											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0])
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = \
 											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1])
-										links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-											self.one_minus_one_check(links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC])
+										links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+											self.one_minus_one_check(links.agent2.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1531,13 +1531,13 @@ class Agent:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = 0
 										if agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] == None:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = 0
-										if agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] == None:
-											agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = 0
+										if agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] == None:
+											agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge 
 										if abs(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] - agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1]) >= team_gap_threshold and \
-											abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] - \
-										  	agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC]) < team_belief_policy_threshold:
+											abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] - \
+										  	agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr]) < team_belief_policy_threshold:
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent1)
 
@@ -1545,28 +1545,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = links.agent1.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = links.agent1.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-										agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-											links.agent1.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] + (random.random()/2) - 0.25
+										agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+											links.agent1.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][0])
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_as][1])
-										agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-											self.one_minus_one_check(agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC])
+										agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+											self.one_minus_one_check(agents.belieftree_policy[1+links.agent1.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = agents.belieftree[0][agents.select_problem_3S_as][0] + (random.random()/2) - 0.25
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = agents.belieftree[0][agents.select_problem_3S_as][1] + (random.random()/2) - 0.25
-										links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-											agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] + (random.random()/2) - 0.25
+										links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+											agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][0])
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_as][1])
-										links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] = \
-											self.one_minus_one_check(links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC])
+										links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] = \
+											self.one_minus_one_check(links.agent1.belieftree_policy[1+agents.unique_id][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1581,10 +1581,10 @@ class Agent:
 						if len(team_list_potential_agent) == 2:
 
 							# We check that the actual beliefs are within 0.2
-							if abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] - \
-								team_list_potential_agent[0].belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC]) < team_belief_policy_threshold and \
-								abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC] - \
-							  	team_list_potential_agent[1].belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_DC]) < team_belief_policy_threshold and \
+							if abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] - \
+								team_list_potential_agent[0].belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr]) < team_belief_policy_threshold and \
+								abs(agents.belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr] - \
+							  	team_list_potential_agent[1].belieftree_policy[0][agents.select_policy_3S_as][agents.select_problem_3S_as - len_Pr]) < team_belief_policy_threshold and \
 								abs(team_list_potential_agent[0].belieftree[0][agents.select_problem_3S_as][0] - team_list_potential_agent[0].belieftree[0][agents.select_problem_3S_as][1]) >= team_gap_threshold and \
 								abs(team_list_potential_agent[1].belieftree[0][agents.select_problem_3S_as][0] - team_list_potential_agent[1].belieftree[0][agents.select_problem_3S_as][1]) >= team_gap_threshold:
 								# Now we can create the team						
@@ -1647,7 +1647,7 @@ class Agent:
 		
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
 
@@ -1655,12 +1655,12 @@ class Agent:
 		# print('Test')
 		# print('This would be the CR of interest')
 		# # For the PF
-		# print(len_DC + len_PC + len_S + len_DC*len_PC + agenda_prob_3S_as*len_PC + (agents.team_as[0].issue - len_DC - len_PC))
+		# print(len_Pr + len_PC + len_S + len_Pr*len_PC + agenda_prob_3S_as*len_PC + (agents.team_as[0].issue - len_Pr - len_PC))
 
 		# a. Belonging level update (completed)
 		if agents.team_pf[0] != None:
 			self.knowledge_exchange_team(agents.team_pf[0], agents.team_pf[0].issue, 0)
-			self.belonging_level_pf(agents, len_DC, len_PC)
+			self.belonging_level_pf(agents, len_Pr, len_PC)
 
 		# b. Leave team check (completed)
 		if agents.team_pf[0] != None:
@@ -1710,8 +1710,8 @@ class Agent:
 
 						for agent_members in team.members:
 							# Opposite of the requirements for the creation of a team
-							if abs(team.lead.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (team.issue - len_DC - len_PC)][0] - \
-								agent_members.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (team.issue - len_DC - len_PC)][0]) >= team_belief_problem_threshold or \
+							if abs(team.lead.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (team.issue - len_Pr - len_PC)][0] - \
+								agent_members.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (team.issue - len_Pr - len_PC)][0]) >= team_belief_problem_threshold or \
 								abs(agent_members.belieftree[0][agents.select_problem_3S_pf][0] - agent_members.belieftree[0][agents.select_problem_3S_pf][1]) < team_gap_threshold:
 								# Disband the team if the leader doesnt meet the requirements anymore
 								if agent_members == team.lead:
@@ -1730,8 +1730,8 @@ class Agent:
 						agent_removed = 0
 						for agent_members in team.members:
 							# Opposite of the requirements for the creation of a team
-							if abs(team.lead.belieftree_instrument[0][agents.team_pf[0].issue][team.lead.select_problem_3S_pf - len_DC - len_PC] - \
-								agent_members.belieftree_instrument[0][agents.team_pf[0].issue][team.lead.select_problem_3S_pf - len_DC - len_PC]) >= team_belief_policy_threshold or \
+							if abs(team.lead.belieftree_instrument[0][agents.team_pf[0].issue][team.lead.select_problem_3S_pf - len_Pr - len_PC] - \
+								agent_members.belieftree_instrument[0][agents.team_pf[0].issue][team.lead.select_problem_3S_pf - len_Pr - len_PC]) >= team_belief_policy_threshold or \
 								abs(agent_members.belieftree[0][team.lead.select_problem_3S_pf][0] - agent_members.belieftree[0][team.lead.select_problem_3S_pf][1]) < team_gap_threshold:
 								# Disband the team if the leader doesnt meet the requirements anymore
 								if agent_members == team.lead:
@@ -1749,7 +1749,7 @@ class Agent:
 					if agents.team_pf[0] != None:
 						if agent_removed == 1:
 							for agent_members in team.members:
-								self.belonging_level_pf(agent_members, len_DC, len_PC)
+								self.belonging_level_pf(agent_members, len_Pr, len_PC)
 
 								# If the belonging level is below 30%, the agents are removed (similar to a previous loop)
 								if agent_members.team_pf[1] < 0.3:
@@ -1786,14 +1786,14 @@ class Agent:
 
 							# None check
 							check_none = 0
-							if agents.belieftree[1+join_team.lead.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (join_team.issue - len_DC - len_PC)][0] == None:
-								agents.belieftree[1+join_team.lead.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (join_team.issue - len_DC - len_PC)][0] = 0
+							if agents.belieftree[1+join_team.lead.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (join_team.issue - len_Pr - len_PC)][0] == None:
+								agents.belieftree[1+join_team.lead.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (join_team.issue - len_Pr - len_PC)][0] = 0
 								check_none = 1
 
 							# First we check that the agent meets both requirements (based on partial knowledge) (we assume that the agent knows who the leader is)
 							if abs(agents.belieftree[0][join_team.issue][0] - agents.belieftree[0][join_team.issue][1]) >= team_gap_threshold and \
-								abs(agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (join_team.issue - len_DC - len_PC)][0] - \
-									agents.belieftree[1+join_team.lead.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (join_team.issue - len_DC - len_PC)][0]) < team_belief_problem_threshold:
+								abs(agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (join_team.issue - len_Pr - len_PC)][0] - \
+									agents.belieftree[1+join_team.lead.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (join_team.issue - len_Pr - len_PC)][0]) < team_belief_problem_threshold:
 
 								# Add the agent to the team
 								join_team.members.append(agents)
@@ -1804,14 +1804,14 @@ class Agent:
 								self.knowledge_exchange_team(join_team, join_team.issue, 0)
 
 								# Change belonging level
-								self.belonging_level_pf(agents, len_DC, len_PC)
+								self.belonging_level_pf(agents, len_Pr, len_PC)
 
 								# Notify that the loop can be stopped as the agent has been added
 								added_team_check = 1
 
 								# None reset
 								if check_none == 1:
-									agents.belieftree[1+join_team.lead.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (join_team.issue - len_DC - len_PC)][0] = None
+									agents.belieftree[1+join_team.lead.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (join_team.issue - len_Pr - len_PC)][0] = None
 
 							# update of the resources
 							agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1832,14 +1832,14 @@ class Agent:
 
 							# None check
 							check_none = 0
-							if agents.belieftree_instrument[1+join_team.lead.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] == None:
-								agents.belieftree_instrument[1+join_team.lead.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = 0
+							if agents.belieftree_instrument[1+join_team.lead.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] == None:
+								agents.belieftree_instrument[1+join_team.lead.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = 0
 								check_none = 1
 
 							# First we check that the agent meets both requirements (based on partial knowledge) (we assume that the agent knows who the leader is)
 							if abs(agents.belieftree[0][join_team.lead.select_problem_3S_pf][0] - agents.belieftree[0][join_team.lead.select_problem_3S_pf][1]) >= team_gap_threshold and \
-								abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] - \
-									agents.belieftree_instrument[1+join_team.lead.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC]) < team_belief_policy_threshold:
+								abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] - \
+									agents.belieftree_instrument[1+join_team.lead.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC]) < team_belief_policy_threshold:
 
 								# Add the agent to the team
 								join_team.members.append(agents)
@@ -1850,14 +1850,14 @@ class Agent:
 								self.knowledge_exchange_team(join_team, join_team.issue, 0)
 
 								# Change belonging level
-								self.belonging_level_pf(agents, len_DC, len_PC)
+								self.belonging_level_pf(agents, len_Pr, len_PC)
 
 								# Notify that the loop can be stopped as the agent has been added
 								added_team_check = 1
 
 							# None reset
 							if check_none == 1:
-								agents.belieftree_instrument[1+join_team.lead.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = None
+								agents.belieftree_instrument[1+join_team.lead.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = None
 
 							# update of the resources
 							agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1906,13 +1906,13 @@ class Agent:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = 0
 									if agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] == None:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = 0
-									if agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] == None:
-										agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = 0
+									if agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] == None:
+										agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = 0
 
 									# Check for the gap and the similarity in states based on partial knowledge - if okay, add the agent to the list
 									if abs(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] - agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1]) >= team_gap_threshold and \
-										abs(agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] - \
-									  	agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0]) < team_belief_problem_threshold:
+										abs(agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] - \
+									  	agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0]) < team_belief_problem_threshold:
 										# Add the agent to the list of potential candidates
 										team_list_potential_agent.append(links.agent2)
 
@@ -1920,28 +1920,28 @@ class Agent:
 									# Knowledge gained by the lead agent:
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = links.agent2.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = links.agent2.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-									agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-										links.agent2.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] + (random.random()/2) - 0.25
+									agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+										links.agent2.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] + (random.random()/2) - 0.25
 									# 1-1 check
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = \
 										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0])
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = \
 										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1])
-									agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0])
+									agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0])
 
 									# Knowledge gained by the secondary link agent:
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-									links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-										agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] + (random.random()/2) - 0.25
+									links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+										agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] + (random.random()/2) - 0.25
 									# 1-1 check
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = \
 										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0])
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = \
 										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1])
-									links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0])
+									links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0])
 
 									# Adjusting resources
 									agents.resources[1] -= 0.02 * agents.resources[0]
@@ -1955,13 +1955,13 @@ class Agent:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = 0
 										if agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] == None:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = 0
-										if agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] == None:
-											agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = 0
+										if agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] == None:
+											agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge
 										if abs(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] - agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1]) >= team_gap_threshold and \
-											abs(agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] - \
-										  	agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0]) < team_belief_problem_threshold:
+											abs(agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] - \
+										  	agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0]) < team_belief_problem_threshold:
 											
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent1)
@@ -1970,28 +1970,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = links.agent1.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = links.agent1.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											links.agent1.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] + (random.random()/2) - 0.25
+										agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											links.agent1.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0])
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1])
-										agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0])
+										agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] + (random.random()/2) - 0.25
+										links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0])
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1])
-										links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0])
+										links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -2003,8 +2003,8 @@ class Agent:
 							# Make a new list containing the agent that actually match the requirements
 							for potential_agent in team_list_potential_agent:
 								if agents.belieftree[0][agents.select_problem_3S_pf][0] != 'No':
-									if abs(agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] - \
-										potential_agent.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0]) < team_belief_problem_threshold and \
+									if abs(agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] - \
+										potential_agent.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0]) < team_belief_problem_threshold and \
 								  		abs(potential_agent.belieftree[0][agents.select_problem_3S_pf][0] - potential_agent.belieftree[0][agents.select_problem_3S_pf][1]) >= team_gap_threshold:
 								  		team_list_actual_agent.append(potential_agent)
 								else:
@@ -2074,13 +2074,13 @@ class Agent:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = 0
 									if agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] == None:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = 0
-									if agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] == None:
-										agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = 0
+									if agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] == None:
+										agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = 0
 
 									# Check for the gap and the similarity in states based on partial knowledge - if okay, add the agent to the list
 									if abs(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] - agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1]) >= team_gap_threshold and \
-										abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] - \
-									  	agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC]) < team_belief_policy_threshold:
+										abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] - \
+									  	agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC]) < team_belief_policy_threshold:
 										# Add the agent to the list of potential candidates
 										team_list_potential_agent.append(links.agent2)
 
@@ -2088,28 +2088,28 @@ class Agent:
 									# Knowledge gained by the lead agent:
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = links.agent2.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = links.agent2.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-									agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-										links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] + (random.random()/2) - 0.25
+									agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+										links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] + (random.random()/2) - 0.25
 									# 1-1 check
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = \
 										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0])
 									agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = \
 										self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1])
-									agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-										self.one_minus_one_check(agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC])
+									agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+										self.one_minus_one_check(agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC])
 
 									# Knowledge gained by the secondary link agent:
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-									links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-										agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] + (random.random()/2) - 0.25
+									links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+										agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] + (random.random()/2) - 0.25
 									# 1-1 check
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = \
 										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0])
 									links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = \
 										self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1])
-									links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-										self.one_minus_one_check(links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC])
+									links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+										self.one_minus_one_check(links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC])
 
 									# Adjusting resources
 									agents.resources[1] -= 0.02 * agents.resources[0]
@@ -2123,13 +2123,13 @@ class Agent:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = 0
 										if agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] == None:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = 0
-										if agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] == None:
-											agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = 0
+										if agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] == None:
+											agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge
 										if abs(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] - agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1]) >= team_gap_threshold and \
-											abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] - \
-										  	agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC]) < team_belief_policy_threshold:
+											abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] - \
+										  	agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC]) < team_belief_policy_threshold:
 											
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent1)
@@ -2138,28 +2138,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = links.agent1.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = links.agent1.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] + (random.random()/2) - 0.25
+										agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0])
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1])
-										agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											self.one_minus_one_check(agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC])
+										agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											self.one_minus_one_check(agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] + (random.random()/2) - 0.25
+										links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0])
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1])
-										links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											self.one_minus_one_check(links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC])
+										links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											self.one_minus_one_check(links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -2171,8 +2171,8 @@ class Agent:
 							# Make a new list containing the agent that actually match the requirements
 							for potential_agent in team_list_potential_agent:
 								if agents.belieftree[0][agents.select_problem_3S_pf][0] != 'No':
-									if abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] - \
-										potential_agent.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC]) < team_belief_policy_threshold and \
+									if abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] - \
+										potential_agent.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC]) < team_belief_policy_threshold and \
 								  		abs(potential_agent.belieftree[0][agents.select_problem_3S_pf][0] - potential_agent.belieftree[0][agents.select_problem_3S_pf][1]) >= team_gap_threshold:
 								  		team_list_actual_agent.append(potential_agent)
 								else:
@@ -2251,13 +2251,13 @@ class Agent:
 											agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = 0
 										if agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] == None:
 											agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = 0
-										if agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] == None:
-											agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = 0
+										if agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] == None:
+											agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge - if okay, add the agent to the list
 										if abs(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] - agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1]) >= team_gap_threshold and \
-											abs(agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] - \
-											agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0]) < team_belief_problem_threshold:
+											abs(agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] - \
+											agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0]) < team_belief_problem_threshold:
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent2)
 
@@ -2265,28 +2265,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = links.agent2.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = links.agent2.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											links.agent2.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] + (random.random()/2) - 0.25
+										agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											links.agent2.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0])
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1])
-										agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0])
+										agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] + (random.random()/2) - 0.25
+										links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0])
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1])
-										links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0])
+										links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -2300,13 +2300,13 @@ class Agent:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = 0
 										if agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] == None:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = 0
-										if agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + ((agenda_prob_3S_as-len_DC)-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] == None:
-											agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = 0
+										if agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + ((agenda_prob_3S_as-len_Pr)-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] == None:
+											agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge 
 										if abs(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] - agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1]) >= team_gap_threshold and \
-											abs(agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] - \
-											agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0]) < team_belief_problem_threshold:
+											abs(agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] - \
+											agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0]) < team_belief_problem_threshold:
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent1)
 
@@ -2314,28 +2314,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = links.agent1.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = links.agent1.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											links.agent1.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] + (random.random()/2) - 0.25
+										agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											links.agent1.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0])
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1])
-										agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0])
+										agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] + (random.random()/2) - 0.25
+										links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0])
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1])
-										links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] = \
-											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0])
+										links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] = \
+											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -2350,10 +2350,10 @@ class Agent:
 						if len(team_list_potential_agent) == 2:
 
 							# We check that the actual beliefs are within 0.2
-							if abs(agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] - \
-								team_list_potential_agent[0].belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0]) < team_belief_problem_threshold and \
-								abs(agents.belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0] - \
-								team_list_potential_agent[1].belieftree[0][len_DC + len_PC + len_S + len_DC*len_PC + (agenda_prob_3S_as-len_DC)*len_PC + (agents.select_problem_3S_pf - len_DC - len_PC)][0]) < team_belief_problem_threshold and \
+							if abs(agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] - \
+								team_list_potential_agent[0].belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0]) < team_belief_problem_threshold and \
+								abs(agents.belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0] - \
+								team_list_potential_agent[1].belieftree[0][len_Pr + len_PC + len_S + len_Pr*len_PC + (agenda_prob_3S_as-len_Pr)*len_PC + (agents.select_problem_3S_pf - len_Pr - len_PC)][0]) < team_belief_problem_threshold and \
 								abs(team_list_potential_agent[0].belieftree[0][agents.select_problem_3S_pf][0] - team_list_potential_agent[0].belieftree[0][agents.select_problem_3S_pf][1]) >= team_gap_threshold and \
 								abs(team_list_potential_agent[1].belieftree[0][agents.select_problem_3S_pf][0] - team_list_potential_agent[1].belieftree[0][agents.select_problem_3S_pf][1]) >= team_gap_threshold:
 								# Now we can create the team						
@@ -2417,13 +2417,13 @@ class Agent:
 											agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = 0
 										if agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] == None:
 											agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = 0
-										if agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] == None:
-											agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = 0
+										if agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] == None:
+											agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge - if okay, add the agent to the list
 										if abs(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] - agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1]) >= team_gap_threshold and \
-											abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] - \
-											agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC]) < team_belief_policy_threshold:
+											abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] - \
+											agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC]) < team_belief_policy_threshold:
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent2)
 
@@ -2431,28 +2431,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = links.agent2.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = links.agent2.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] + (random.random()/2) - 0.25
+										agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											links.agent2.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][0])
 										agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent2.unique_id][agents.select_problem_3S_pf][1])
-										agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											self.one_minus_one_check(agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC])
+										agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											self.one_minus_one_check(agents.belieftree_instrument[1+links.agent2.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] + (random.random()/2) - 0.25
+										links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0])
 										links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(links.agent2.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1])
-										links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											self.one_minus_one_check(links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC])
+										links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											self.one_minus_one_check(links.agent2.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -2466,13 +2466,13 @@ class Agent:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = 0
 										if agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] == None:
 											agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = 0
-										if agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] == None:
-											agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = 0
+										if agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] == None:
+											agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = 0
 
 										# Check for the gap and the similarity in states based on partial knowledge 
 										if abs(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] - agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1]) >= team_gap_threshold and \
-											abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] - \
-											agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC]) < team_belief_policy_threshold:
+											abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] - \
+											agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC]) < team_belief_policy_threshold:
 											# Add the agent to the list of potential candidates
 											team_list_potential_agent.append(links.agent1)
 
@@ -2480,28 +2480,28 @@ class Agent:
 										# Knowledge gained by the lead agent:
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = links.agent1.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = links.agent1.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] + (random.random()/2) - 0.25
+										agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											links.agent1.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] + (random.random()/2) - 0.25
 										# 1-1 check
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][0])
 										agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(agents.belieftree[1+links.agent1.unique_id][agents.select_problem_3S_pf][1])
-										agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											self.one_minus_one_check(agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC])
+										agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											self.one_minus_one_check(agents.belieftree_instrument[1+links.agent1.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC])
 
 										# Knowledge gained by the secondary link agent:
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = agents.belieftree[0][agents.select_problem_3S_pf][0] + (random.random()/2) - 0.25
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = agents.belieftree[0][agents.select_problem_3S_pf][1] + (random.random()/2) - 0.25
-										links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] + (random.random()/2) - 0.25
+										links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] + (random.random()/2) - 0.25
 										# 1-1 check
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][0])
 										links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1] = \
 											self.one_minus_one_check(links.agent1.belieftree[1+agents.unique_id][agents.select_problem_3S_pf][1])
-										links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] = \
-											self.one_minus_one_check(links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC])
+										links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] = \
+											self.one_minus_one_check(links.agent1.belieftree_instrument[1+agents.unique_id][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC])
 
 										# Adjusting resources
 										agents.resources[1] -= 0.02 * agents.resources[0]
@@ -2516,10 +2516,10 @@ class Agent:
 						if len(team_list_potential_agent) == 2:
 
 							# We check that the actual beliefs are within 0.2
-							if abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] - \
-								team_list_potential_agent[0].belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC]) < team_belief_policy_threshold and \
-								abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC] - \
-								team_list_potential_agent[1].belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_DC - len_PC]) < team_belief_policy_threshold and \
+							if abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] - \
+								team_list_potential_agent[0].belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC]) < team_belief_policy_threshold and \
+								abs(agents.belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC] - \
+								team_list_potential_agent[1].belieftree_instrument[0][agents.select_policy_3S_pf][agents.select_problem_3S_pf - len_Pr - len_PC]) < team_belief_policy_threshold and \
 								abs(team_list_potential_agent[0].belieftree[0][agents.select_problem_3S_pf][0] - team_list_potential_agent[0].belieftree[0][agents.select_problem_3S_pf][1]) >= team_gap_threshold and \
 								abs(team_list_potential_agent[1].belieftree[0][agents.select_problem_3S_pf][0] - team_list_potential_agent[1].belieftree[0][agents.select_problem_3S_pf][1]) >= team_gap_threshold:
 								# Now we can create the team						
@@ -2668,7 +2668,7 @@ class Agent:
 		agents_removal.team_pf[0] = None
 		agents_removal.team_pf[1] = None
 
-	def belonging_level_as(self, agents, len_DC, len_PC):
+	def belonging_level_as(self, agents, len_Pr, len_PC):
 
 		"""
 		Belonging level calculation function (agenda setting)
@@ -2697,7 +2697,7 @@ class Agent:
 		# 	issue_avg_belief = 0
 		agents.team_as[1] = 1 - abs(agents.belieftree[0][agents.team_as[0].issue][0] - issue_avg_belief)
 
-	def belonging_level_pf(self, agents, len_DC, len_PC):
+	def belonging_level_pf(self, agents, len_Pr, len_PC):
 
 		"""
 		Belonging level calculation function (policy formulation)
@@ -2787,16 +2787,16 @@ class Agent:
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
-		total_issue_number = len_DC + len_PC + len_S
+		total_issue_number = len_Pr + len_PC + len_S
 
 		# Selection of the cw of interest
 		cw_of_interest = []
 		# We only consider the causal relations related to the problem on the agenda
 		for cw_choice in range(len(deep_core)):
-				cw_of_interest.append(len_DC + len_PC + len_S + (agents.select_as_issue - len_DC) + cw_choice * len(policy_core))
+				cw_of_interest.append(len_Pr + len_PC + len_S + (agents.select_as_issue - len_Pr) + cw_choice * len(policy_core))
 
 		# print(' ')
 		# print('Causal relations of interest: ' + str(cw_of_interest))
@@ -2919,10 +2919,10 @@ class Agent:
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
-		total_issue_number = len_DC + len_PC + len_S
+		total_issue_number = len_Pr + len_PC + len_S
 
 		# Here are the modifications related to the policy formulation
 		# Looking for the relevant causal relations for the policy formulation
@@ -2930,16 +2930,16 @@ class Agent:
 		cw_of_interest = []
 		# We only consider the causal relations related to the problem on the agenda
 		for cw_choice in range(len(secondary)):
-			if agents.belieftree[0][len_DC + len_PC + len_S + (len_DC * len_PC) + (agenda_as_issue - len_DC)*len_S + cw_choice][0] \
+			if agents.belieftree[0][len_Pr + len_PC + len_S + (len_Pr * len_PC) + (agenda_as_issue - len_Pr)*len_S + cw_choice][0] \
 				* instruments[agents.select_pinstrument][cw_choice] != 0:
-				cw_of_interest.append(len_DC + len_PC + len_S + (len_DC * len_PC) + (agenda_as_issue - len_DC)*len_S + cw_choice)
+				cw_of_interest.append(len_Pr + len_PC + len_S + (len_Pr * len_PC) + (agenda_as_issue - len_Pr)*len_S + cw_choice)
 		of_interest.append(cw_of_interest)
 
 		# Looking for the relevant issues for the policy formulation
 		issue_of_interest = []
 		for issue_choice in range(len(secondary)):
 			if instruments[agents.select_pinstrument][issue_choice] != 0:
-				issue_of_interest.append(len_DC + len_PC + issue_choice)
+				issue_of_interest.append(len_Pr + len_PC + issue_choice)
 		of_interest.append(issue_of_interest)
 
 		# Making sure there are enough resources
@@ -3065,16 +3065,16 @@ class Agent:
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
-		total_issue_number = len_DC + len_PC + len_S
+		total_issue_number = len_Pr + len_PC + len_S
 
 		# Selection of the cw of interest
 		cw_of_interest = []
 		# We only consider the causal relations related to the problem selected by the agent
 		for cw_choice in range(len(deep_core)):
-				cw_of_interest.append(len_DC + len_PC + len_S + (agents.select_problem_3S_as - len_DC) + cw_choice * len(policy_core))
+				cw_of_interest.append(len_Pr + len_PC + len_S + (agents.select_problem_3S_as - len_Pr) + cw_choice * len(policy_core))
 
 		# Selection of the impact of interest
 		impact_number = len(agents.belieftree_policy[0][agents.select_policy_3S_as])
@@ -3257,23 +3257,23 @@ class Agent:
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
-		total_issue_number = len_DC + len_PC + len_S
+		total_issue_number = len_Pr + len_PC + len_S
 
 		# Selection of the cw of interest
 		cw_of_interest = []
-		# Select one by one the DC
+		# Select one by one the Pr
 		j = agenda_prob_3S_as
 		# for j in range(len_PC):
-		# Selecting the causal relations starting from DC
+		# Selecting the causal relations starting from Pr
 		for k in range(len_S):
 			# Contingency for partial knowledge issues
-			# print(len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC)
-			if (agents.belieftree[0][len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC][0] < 0 and (agents.belieftree[0][j][1] - agents.belieftree[0][j][0]) < 0) \
-			  or (agents.belieftree[0][len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC][0] > 0 and (agents.belieftree[0][j][1] - agents.belieftree[0][j][0]) > 0):
-				cw_of_interest.append(len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC)
+			# print(len_Pr + len_PC + len_S + len_PC*len_Pr + (j-len_Pr) + k*len_PC)
+			if (agents.belieftree[0][len_Pr + len_PC + len_S + len_PC*len_Pr + (j-len_Pr) + k*len_PC][0] < 0 and (agents.belieftree[0][j][1] - agents.belieftree[0][j][0]) < 0) \
+			  or (agents.belieftree[0][len_Pr + len_PC + len_S + len_PC*len_Pr + (j-len_Pr) + k*len_PC][0] > 0 and (agents.belieftree[0][j][1] - agents.belieftree[0][j][0]) > 0):
+				cw_of_interest.append(len_Pr + len_PC + len_S + len_PC*len_Pr + (j-len_Pr) + k*len_PC)
 
 		# Selection of the impact of interest
 		impact_number = len(agents.belieftree_instrument[0][agents.select_policy_3S_pf])
@@ -3936,7 +3936,7 @@ class Externalparties(Agent):
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
 
@@ -3950,7 +3950,7 @@ class Externalparties(Agent):
 		# Selecting the relevant causal relations
 		cw_of_interest = []
 		for cw_choice in range(len(deep_core)):
-				cw_of_interest.append(len_DC + len_PC + len_S + (agents.select_as_issue - len_DC) + cw_choice * len(policy_core))
+				cw_of_interest.append(len_Pr + len_PC + len_S + (agents.select_as_issue - len_Pr) + cw_choice * len(policy_core))
 
 		# Making sure that there are enough resources
 		while agents.resources_actions > 0.001:
@@ -4049,7 +4049,7 @@ class Externalparties(Agent):
 
 			actions_EP_grades_EInfluence = []
 			# FIRST - Calculation of the best option
-			for issue_num in range(len_DC + len_PC):
+			for issue_num in range(len_Pr + len_PC):
 				actions_EP_grades_EInfluence_ind = []
 				# Going through all agents that are electorate from the master_list
 				agents_electorate = []
@@ -4076,7 +4076,7 @@ class Externalparties(Agent):
 							agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 								* agents.resources[0] * 0.1 / electorate_number
 							# Update of the preference
-							self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+							self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 							# Calculation of the new gradec
 							issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -4086,7 +4086,7 @@ class Externalparties(Agent):
 							agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 								* agents.resources[0] * 0.1 * affiliation_weights[0] / electorate_number
 							# Update of the preference
-							self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+							self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 							# Calculation of the new gradec
 							issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -4096,7 +4096,7 @@ class Externalparties(Agent):
 							agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 								* agents.resources[0] * 0.1 * affiliation_weights[1] / electorate_number
 							# Update of the preference
-							self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+							self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 							# Calculation of the new gradec
 							issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -4106,7 +4106,7 @@ class Externalparties(Agent):
 							agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 								* agents.resources[0] * 0.1 * affiliation_weights[2] / electorate_number
 							# Update of the preference
-							self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+							self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 							# Calculation of the new grade
 							issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -4117,7 +4117,7 @@ class Externalparties(Agent):
 
 
 						# Re-updating the preference levels
-						self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+						self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 
 					actions_EP_grades_EInfluence_ind.append(issue_num_grade)
 
@@ -4153,7 +4153,7 @@ class Externalparties(Agent):
 				agents_el.belieftree_electorate[best_EInfluence][1] = self.one_minus_one_check(agents_el.belieftree_electorate[best_EInfluence][1])
 
 				# Re-updating the preference levels
-				self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+				self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 
 			agents.resources_actions_EInfluence -= agents.resources[0] * 0.1
 			# agents.resources_actions -= agents.resources[0] * 0.1
@@ -4178,7 +4178,7 @@ class Externalparties(Agent):
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
 
@@ -4188,10 +4188,10 @@ class Externalparties(Agent):
 		# We only consider the causal relations related to the issue on the agenda
 		print(agents.select_pinstrument)
 		for cw_choice in range(len(secondary)):
-			# Index explanation - pass all issues, then all causal relations related to the PC-DC links, then reach the links related to the issue on the agenda
-			if agents.belieftree[0][len_DC + len_PC + len_S + (len_DC * len_PC) + (agenda_as_issue - len_DC)*len_S + cw_choice][0] \
+			# Index explanation - pass all issues, then all causal relations related to the PC-Pr links, then reach the links related to the issue on the agenda
+			if agents.belieftree[0][len_Pr + len_PC + len_S + (len_Pr * len_PC) + (agenda_as_issue - len_Pr)*len_S + cw_choice][0] \
 				* instruments[agents.select_pinstrument][cw_choice] != 0:
-				cw_of_interest.append(len_DC + len_PC + len_S + (len_DC * len_PC) + (agenda_as_issue - len_DC)*len_S + cw_choice)
+				cw_of_interest.append(len_Pr + len_PC + len_S + (len_Pr * len_PC) + (agenda_as_issue - len_Pr)*len_S + cw_choice)
 
 		
 		# Looking for the relevant issues for the policy formulation
@@ -4200,7 +4200,7 @@ class Externalparties(Agent):
 		issue_of_interest = []
 		for issue_choice in range(len(secondary)):
 			if instruments[agents.select_pinstrument][issue_choice] != 0:
-				issue_of_interest.append(len_DC + len_PC + issue_choice)
+				issue_of_interest.append(len_Pr + len_PC + issue_choice)
 
 		# Assignment of the resources for the two main types of actions:
 		agents.resources_actions_EInfluence = agents.resources_actions * 0.2
@@ -4412,7 +4412,7 @@ class Externalparties(Agent):
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
 
@@ -4426,7 +4426,7 @@ class Externalparties(Agent):
 		cw_of_interest = []
 		# We only consider the causal relations related to the problem on the agenda
 		for cw_choice in range(len(deep_core)):
-				cw_of_interest.append(len_DC + len_PC + len_S + (agents.select_problem_3S_as - len_DC) + cw_choice * len(policy_core))
+				cw_of_interest.append(len_Pr + len_PC + len_S + (agents.select_problem_3S_as - len_Pr) + cw_choice * len(policy_core))
 
 		# If the team is advocating for a problem, the following tasks are completed
 		if agents.select_issue_3S_as == 'problem':
@@ -4614,7 +4614,7 @@ class Externalparties(Agent):
 		while agents.resources_actions_EInfluence > 0.001:
 			actions_EP_grades_EInfluence = []
 			# FIRST - Calculation of the best option
-			for issue_num in range(len_DC + len_PC):
+			for issue_num in range(len_Pr + len_PC):
 				actions_EP_grades_EInfluence_ind = []
 				# Going through all agents that are electorate from the master_list
 				agents_electorate = []
@@ -4642,7 +4642,7 @@ class Externalparties(Agent):
 							agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 								* agents.resources[0] * 0.1 / electorate_number
 							# Update of the preference
-							self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+							self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 							# Calculation of the new gradec
 							issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -4652,7 +4652,7 @@ class Externalparties(Agent):
 							agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 								* agents.resources[0] * 0.1 * affiliation_weights[0] / electorate_number
 							# Update of the preference
-							self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+							self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 							# Calculation of the new gradec
 							issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -4662,7 +4662,7 @@ class Externalparties(Agent):
 							agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 								* agents.resources[0] * 0.1 * affiliation_weights[1] / electorate_number
 							# Update of the preference
-							self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+							self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 							# Calculation of the new gradec
 							issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -4672,7 +4672,7 @@ class Externalparties(Agent):
 							agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 								* agents.resources[0] * 0.1 * affiliation_weights[2] / electorate_number
 							# Update of the preference
-							self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+							self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 							# Calculation of the new grade
 							issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -4683,7 +4683,7 @@ class Externalparties(Agent):
 
 
 						# Re-updating the preference levels
-						self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+						self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 
 					actions_EP_grades_EInfluence_ind.append(issue_num_grade)
 
@@ -4719,7 +4719,7 @@ class Externalparties(Agent):
 					self.one_minus_one_check(agents_el.belieftree_electorate[best_EInfluence][1])
 
 				# Re-updating the preference levels
-				self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+				self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 
 			agents.resources_actions_EInfluence -= agents.resources[0] * 0.1
 
@@ -4747,7 +4747,7 @@ class Externalparties(Agent):
 
 		"""
 
-		len_DC = len(deep_core)
+		len_Pr = len(deep_core)
 		len_PC = len(policy_core)
 		len_S = len(secondary)
 
@@ -4760,16 +4760,16 @@ class Externalparties(Agent):
 
 		# Selection of the cw of interest
 		cw_of_interest = []
-		# Select one by one the DC
+		# Select one by one the Pr
 		j = agenda_prob_3S_as
 		# for j in range(len_PC):
-		# Selecting the causal relations starting from DC
+		# Selecting the causal relations starting from Pr
 		for k in range(len_S):
 			# Contingency for partial knowledge issues
-			# print(len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC)
-			if (agents.belieftree[0][len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC][0] < 0 and (agents.belieftree[0][j][1] - agents.belieftree[0][j][0]) < 0) \
-			  or (agents.belieftree[0][len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC][0] > 0 and (agents.belieftree[0][j][1] - agents.belieftree[0][j][0]) > 0):
-				cw_of_interest.append(len_DC + len_PC + len_S + len_PC*len_DC + (j-len_DC) + k*len_PC)
+			# print(len_Pr + len_PC + len_S + len_PC*len_Pr + (j-len_Pr) + k*len_PC)
+			if (agents.belieftree[0][len_Pr + len_PC + len_S + len_PC*len_Pr + (j-len_Pr) + k*len_PC][0] < 0 and (agents.belieftree[0][j][1] - agents.belieftree[0][j][0]) < 0) \
+			  or (agents.belieftree[0][len_Pr + len_PC + len_S + len_PC*len_Pr + (j-len_Pr) + k*len_PC][0] > 0 and (agents.belieftree[0][j][1] - agents.belieftree[0][j][0]) > 0):
+				cw_of_interest.append(len_Pr + len_PC + len_S + len_PC*len_Pr + (j-len_Pr) + k*len_PC)
 		
 
 		# If the team is advocating for a problem, the following tasks are completed
@@ -4956,7 +4956,7 @@ class Externalparties(Agent):
 		while agents.resources_actions_EInfluence > 0.001:
 				actions_EP_grades_EInfluence = []
 				# FIRST - Calculation of the best option
-				for issue_num in range(len_DC + len_PC):
+				for issue_num in range(len_Pr + len_PC):
 					actions_EP_grades_EInfluence_ind = []
 					# Going through all agents that are electorate from the master_list
 					agents_electorate = []
@@ -4984,7 +4984,7 @@ class Externalparties(Agent):
 								agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 									* agents.resources[0] * 0.1 / electorate_number
 								# Update of the preference
-								self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+								self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 								# Calculation of the new gradec
 								issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -4994,7 +4994,7 @@ class Externalparties(Agent):
 								agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 									* agents.resources[0] * 0.1 * affiliation_weights[0] / electorate_number
 								# Update of the preference
-								self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+								self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 								# Calculation of the new gradec
 								issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -5004,7 +5004,7 @@ class Externalparties(Agent):
 								agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 									* agents.resources[0] * 0.1 * affiliation_weights[1] / electorate_number
 								# Update of the preference
-								self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+								self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 								# Calculation of the new gradec
 								issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -5014,7 +5014,7 @@ class Externalparties(Agent):
 								agents_el.belieftree_electorate[issue_num][1] += (agents.belieftree[0][issue_num][1] - agents_el.belieftree_electorate[issue_num][1]) \
 									* agents.resources[0] * 0.1 * affiliation_weights[2] / electorate_number
 								# Update of the preference
-								self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+								self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 								# Calculation of the new grade
 								issue_num_grade = abs(agents.belieftree[0][issue_num][2] - agents_el.belieftree_electorate[issue_num][2])
 
@@ -5025,7 +5025,7 @@ class Externalparties(Agent):
 
 
 							# Re-updating the preference levels
-							self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+							self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 
 						actions_EP_grades_EInfluence_ind.append(issue_num_grade)
 
@@ -5061,11 +5061,11 @@ class Externalparties(Agent):
 						self.one_minus_one_check(agents_el.belieftree_electorate[best_EInfluence][1])
 
 					# Re-updating the preference levels
-					self.preference_udapte_electorate(agents_el, len_DC, len_PC, len_S)
+					self.preference_udapte_electorate(agents_el, len_Pr, len_PC, len_S)
 
 				agents.resources_actions_EInfluence -= agents.resources[0] * 0.1
 
-	def preference_udapte_electorate(self, agent, len_DC, len_PC, len_S):
+	def preference_udapte_electorate(self, agent, len_Pr, len_PC, len_S):
 
 		"""
 		Electorate preference update function
@@ -5085,13 +5085,13 @@ class Externalparties(Agent):
 
 		#####
 		# Preference calculation for the deep core issues
-		DC_denominator = 0
-		for h in range(len_DC):
-			DC_denominator = DC_denominator + abs(agent.belieftree_electorate[h][1] - agent.belieftree_electorate[h][0])
-		for i in range(len_DC):
+		Pr_denominator = 0
+		for h in range(len_Pr):
+			Pr_denominator = Pr_denominator + abs(agent.belieftree_electorate[h][1] - agent.belieftree_electorate[h][0])
+		for i in range(len_Pr):
 			# There are rare occasions where the denominator could be 0
-			if DC_denominator != 0:
-				agent.belieftree_electorate[i][2] = abs(agent.belieftree_electorate[i][1] - agent.belieftree_electorate[i][0]) / DC_denominator
+			if Pr_denominator != 0:
+				agent.belieftree_electorate[i][2] = abs(agent.belieftree_electorate[i][1] - agent.belieftree_electorate[i][0]) / Pr_denominator
 			else:
 				agent.belieftree_electorate[i][2] = 0
 
@@ -5099,22 +5099,22 @@ class Externalparties(Agent):
 		# Preference calculation for the policy core issues
 		PC_denominator = 0
 		for h in range(len_PC):
-			PC_denominator = PC_denominator + abs(agent.belieftree_electorate[len_DC + h][1] - agent.belieftree_electorate[len_DC + h][0])
+			PC_denominator = PC_denominator + abs(agent.belieftree_electorate[len_Pr + h][1] - agent.belieftree_electorate[len_Pr + h][0])
 		for i in range(len_PC):
 			# There are rare occasions where the denominator could be 0
 			if PC_denominator != 0:
-				agent.belieftree_electorate[len_DC + i][2] = abs(agent.belieftree_electorate[len_DC + i][1] - agent.belieftree_electorate[len_DC + i][0]) / PC_denominator
+				agent.belieftree_electorate[len_Pr + i][2] = abs(agent.belieftree_electorate[len_Pr + i][1] - agent.belieftree_electorate[len_Pr + i][0]) / PC_denominator
 			else:
-				agent.belieftree_electorate[len_DC + i][2] = 0
+				agent.belieftree_electorate[len_Pr + i][2] = 0
 
 		#####
 		# Preference calculation for the secondary issues
 		S_denominator = 0
 		for h in range(len_S):
-			S_denominator = S_denominator + abs(agent.belieftree_electorate[len_DC + len_PC + h][1] - agent.belieftree_electorate[len_DC + len_PC + h][0])
+			S_denominator = S_denominator + abs(agent.belieftree_electorate[len_Pr + len_PC + h][1] - agent.belieftree_electorate[len_Pr + len_PC + h][0])
 		for i in range(len_S):
 			# There are rare occasions where the denominator could be 0
 			if S_denominator != 0:
-				agent.belieftree_electorate[len_DC + len_PC + i][2] = abs(agent.belieftree_electorate[len_DC + len_PC + i][1] - agent.belieftree_electorate[len_DC + len_PC + i][0]) / S_denominator
+				agent.belieftree_electorate[len_Pr + len_PC + i][2] = abs(agent.belieftree_electorate[len_Pr + len_PC + i][1] - agent.belieftree_electorate[len_Pr + len_PC + i][0]) / S_denominator
 			else:
-				agent.belieftree_electorate[len_DC + len_PC + i][2] = 0
+				agent.belieftree_electorate[len_Pr + len_PC + i][2] = 0

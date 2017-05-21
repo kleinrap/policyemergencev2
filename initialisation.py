@@ -1,6 +1,5 @@
 import random
 import copy
-print('This is just a test for GitHub')
 
 from mesa.space import MultiGrid
 from schedule import RandomActivationByBreed
@@ -13,42 +12,30 @@ from network_creation import PolicyNetworkLinks
 
 def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_theory, PF_theory):
 
-	if experiment_input[16][run_number] != False:
-		inputs_dict["coalition_threshold"] = experiment_input[16][run_number]
-	else:
-		inputs_dict["coalition_threshold"] = 0.35
-
-	if experiment_input[13][run_number] != False:
-		inputs_dict["team_gap_threshold"] = experiment_input[13][run_number]
-	else:
-		inputs_dict["team_gap_threshold"] = 0.8
-	if experiment_input[14][run_number] != False:
-		inputs_dict["team_belief_problem_threshold"] = experiment_input[14][run_number]
-	else:
-		inputs_dict["team_belief_problem_threshold"] = 0.5
-	if experiment_input[15][run_number] != False:
-		inputs_dict["team_belief_policy_threshold"] = experiment_input[15][run_number]
-	else:
-		inputs_dict["team_belief_policy_threshold"] = 0.5
-
-	agenda_as_issue = None
-	agenda_instrument = None
-	agenda_prob_3S = None
-	agenda_poli_3S = None
-	inputs_dict["Agenda_inputs"] = [agenda_as_issue, agenda_instrument, agenda_prob_3S, agenda_poli_3S]
-
+	####################################################################################################
+	# INITIALISATION of the technical model parameters
+	####################################################################################################
 
 	# Creating the canvas for the forest fire model
 	inputs_dict["height"] = 100
 	inputs_dict["width"] = 100
 
-	# Technical model inputs
+	# Specification of the initial values for the technical side of the forest fire model
 	instrument_campSites = 0.1
 	instrument_planting = 0.1
 	thin_burning_probability = 0.002
 	firefighter_force = 0.1
 	instrument_prevention = 0.02
-	inputs_dict["technical_input"] = [instrument_campSites, instrument_planting, thin_burning_probability, firefighter_force, instrument_prevention]	
+	inputs_dict["technical_input"] = [instrument_campSites, instrument_planting, thin_burning_probability, \
+		firefighter_force, instrument_prevention]
+
+	# Parameters inputs:
+	grid = MultiGrid(inputs_dict["height"], inputs_dict["width"], torus=True)
+	# technical_model = Technical_Model(len_Pr, len_PC, len_S)
+
+	####################################################################################################
+	# INITIALISATION of the agents parameters
+	####################################################################################################
 
 	# Agents inputs
 	affiliation_number = 3 # CURRENTLY THIS NUMBER CANNOT BE CHANGED OR THE CODE WONT WORK
@@ -56,23 +43,25 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 	affiliation_weights = [experiment_input[1][run_number], experiment_input[2][run_number], experiment_input[3][run_number]]
 	inputs_dict["affiliation_input"] =  [affiliation_number, affiliation_weights]
 	
-	policymaker_number = agent_inputs[0]# 9
+	policymaker_number = agent_inputs[0]
 	policyentre_number = 3 * policymaker_number
-	externalparties_number = agent_inputs[1] #15
+	externalparties_number = agent_inputs[1]
 	electorate_number = affiliation_number
 	inputs_dict["total_agent_number"] =  [externalparties_number, policymaker_number, policyentre_number]
 
+	####################################################################################################
+	# INITIALISATION of the belief tree
 
 	# Belief tree structure inputs
-	inputs_dict["deep_core"] = ["DC1", "DC2"]
-	len_DC = len(inputs_dict["deep_core"])
+	inputs_dict["deep_core"] = ["Pr1", "Pr2"]
+	len_Pr = len(inputs_dict["deep_core"])
 	inputs_dict["policy_core"] = ["PC1", "PC2", "PC3"]
 	len_PC = len(inputs_dict["policy_core"])
 	inputs_dict["secondary"] = ["S1", "S2", "S3", "S4", "S5"]
 	len_S = len(inputs_dict["secondary"])
 
 	# Inputs for the external parties state selection:
-	issues_number = len_DC + len_PC + len_S
+	issues_number = len_Pr + len_PC + len_S
 	# 1 means that the external party will collect the information, 0 not
 	# The number of lists used will depend on the number of external parties used
 	# IMPORTANT NOTE - THE CODE IS MADE IN SUCH A WAY THAT ONLY THE SECONDARY ISSUES CAN BE NOT CONSIDERED
@@ -95,7 +84,10 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 	# no_interest_states[11] = [1, 1, 1, 1, 1, 1, 1, 0, 0, 1]
 	inputs_dict["No_interest_states"] = no_interest_states
 
-	# Policies inputs (three streams only)
+	####################################################################################################
+	# INITIALISATION of the policies and policy instruments
+
+	# Policies inputs (This is only used in the 3S model)
 	policies_number = 10
 	policies_start = [0 for i in range(len_PC)]
 	policies = []
@@ -232,28 +224,26 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 
 	inputs_dict["Instruments"] = instruments
 
+	####################################################################################################
+	# INITIALISATION of the agents themselves
+
+	# Team strategies
+	# This has not yet been coded within the code present here. The different strategies are present in the 
+	# formalisation in the report however.
 	team_strategy = 1
 
-	# Creation of the truth agent
-	x = random.randrange(inputs_dict["width"])
-	y = random.randrange(inputs_dict["height"])
-
-	# Parameters inputs:
-	grid = MultiGrid(inputs_dict["height"], inputs_dict["width"], torus=True)
-	# technical_model = Technical_Model(len_DC, len_PC, len_S)
-
-	# Derived inputs:
+		# Derived inputs:
 	total_agent_number = externalparties_number + policymaker_number + policyentre_number
 	# For the truth agents
 	belieftree_truth = [None for i in range(issues_number)]
 	# For the electorate
 	belieftree_electorate = [None for i in range(issues_number)]
 	# For all other agents
-	causalrelation_number = len_DC*len_PC + len_PC*len_S
+	causalrelation_number = len_Pr*len_PC + len_PC*len_S
 	belieftree = [[None] for i in range(total_agent_number)]
 	for i in range(len(belieftree)):
 		# STATE - AIM - PREFERENCE for the issues and None - VALUE - NONE for the causal relations
-		belieftree[i] = [[None, None, None] for i in range(len_DC + len_PC + len_S + causalrelation_number)]
+		belieftree[i] = [[None, None, None] for i in range(len_Pr + len_PC + len_S + causalrelation_number)]
 
 	# Each of the active agent is assigned a unique ID
 	unique_id = 0
@@ -278,7 +268,6 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 	
 	inputs_dict["representation"] = [experiment_input[4][run_number]/100, 1 - (experiment_input[4][run_number]/200), 1 - (experiment_input[4][run_number]/200)]
 
-
 	if sum(inputs_dict["representation"]) != 1 or len(inputs_dict["representation"]) != affiliation_number:
 		print('There is a problem in the electorate representation calculation')
 	for i in range(electorate_number):
@@ -289,8 +278,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		affiliation = i
 		# Creating the initial values for the belief tree per affiliation - Self aims
 		if affiliation == 0:
-			belieftree_electorate[0][1] = 0		# DC1 - Economy
-			belieftree_electorate[1][1] = 1	 	# DC2 - Environment
+			belieftree_electorate[0][1] = 0		# Pr1 - Economy
+			belieftree_electorate[1][1] = 1	 	# Pr2 - Environment
 			belieftree_electorate[2][1] = 1 		# PC1 - Forest size
 			belieftree_electorate[3][1] = -0.6		# PC2 - Tourism
 			belieftree_electorate[4][1] = 0.2		# PC3 - Safety
@@ -303,8 +292,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree_electorate[j][1] = round(belieftree_electorate[j][1] + (random.random()/10) - 0.05, 5)
 				belieftree_electorate[j][1] = one_minus_one_check(belieftree_electorate[j][1])
 		if affiliation == 1:
-			belieftree_electorate[0][1] = 1		# DC1
-			belieftree_electorate[1][1] = 0	 	# DC2
+			belieftree_electorate[0][1] = 1		# Pr1
+			belieftree_electorate[1][1] = 0	 	# Pr2
 			belieftree_electorate[2][1] = 0.5 		# PC1
 			belieftree_electorate[3][1] = 1		# PC2
 			belieftree_electorate[4][1] = -0.5		# PC3
@@ -317,8 +306,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree_electorate[j][1] = round(belieftree_electorate[j][1] + (random.random()/10) - 0.05, 5)
 				belieftree_electorate[j][1] = one_minus_one_check(belieftree_electorate[j][1])
 		if affiliation == 2:
-			belieftree_electorate[0][1] = 1		# DC1
-			belieftree_electorate[1][1] = 1	 	# DC2
+			belieftree_electorate[0][1] = 1		# Pr1
+			belieftree_electorate[1][1] = 1	 	# Pr2
 			belieftree_electorate[2][1] = 1		# PC1
 			belieftree_electorate[3][1] = -0.7		# PC2
 			belieftree_electorate[4][1] = 1		# PC3
@@ -345,8 +334,7 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		random.seed(1)
 		for i in range(externalparties_number):
 			affiliation_list.append(random.randrange(affiliation_number))
-
-	random.seed()
+		random.seed()
 	
 	for i in range(externalparties_number):
 		x = random.randrange(inputs_dict["width"])
@@ -361,7 +349,7 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		# print('    ')
 		# print('Initial belief tree: ' + str(belieftree))
 		# Creation of the first part of the own belief tree containing the issues
-		belieftree_empty_issues = [[None, 0, 0] for f in range(len_DC + len_PC + len_S)]
+		belieftree_empty_issues = [[None, 0, 0] for f in range(len_Pr + len_PC + len_S)]
 		# print('    ')
 		# print('Issue belief tree: ' + str(belieftree_empty_issues))
 		# print('    ')
@@ -382,7 +370,7 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		# Addition of the simplified agent tree after the first spot in the total belief tree
 
 		for r in range(total_agent_number):
-			belieftree_empty_agents = [[None, None, None] for p in range(len_DC + len_PC + len_S)]
+			belieftree_empty_agents = [[None, None, None] for p in range(len_Pr + len_PC + len_S)]
 			for l in range(causalrelation_number):
 				belieftree_empty_agents.append([None])
 			belieftree.append(belieftree_empty_agents)
@@ -415,8 +403,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 			# Creating the initial values for the belief tree per affiliation - Self aims
 			if affiliation == 0:
 				# resources = 1
-				belieftree[0][0][1] = -0.8 		# DC1 - Economy
-				belieftree[0][1][1] = 0.7 		# DC2 - Environment
+				belieftree[0][0][1] = -0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = 0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = 1 		# PC1 - Forest Size
 				belieftree[0][3][1] = -0.7		# PC2 - Tourism
 				belieftree[0][4][1] = 0.8		# PC3 - Safety
@@ -425,12 +413,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = -0.7		# S3 - Monitoring
 				belieftree[0][8][1] = -0.8		# S4 - Firefighters
 				belieftree[0][9][1] = -0.9		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -447,13 +435,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -575,8 +563,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 1:
-				belieftree[0][0][1] = 0.8 		# DC1 - Economy
-				belieftree[0][1][1] = -0.7 		# DC2 - Environment
+				belieftree[0][0][1] = 0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = -1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.7		# PC2 - Tourism
 				belieftree[0][4][1] = -0.8		# PC3 - Safety
@@ -585,12 +573,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.7		# S3 - Monitoring
 				belieftree[0][8][1] = 0.8		# S4 - Firefighters
 				belieftree[0][9][1] = 0.9		# S5 - Prevention
-				belieftree[0][10][0] = -0.9		# DC1 - PC1
-				belieftree[0][11][0] = -0.8		# DC1 - PC2
-				belieftree[0][12][0] = 0.7		# DC1 - PC3
-				belieftree[0][13][0] = -0.9		# DC2 - PC1
-				belieftree[0][14][0] = 0.9		# DC2 - PC2
-				belieftree[0][15][0] = -0.6		# DC2 - PC3
+				belieftree[0][10][0] = -0.9		# Pr1 - PC1
+				belieftree[0][11][0] = -0.8		# Pr1 - PC2
+				belieftree[0][12][0] = 0.7		# Pr1 - PC3
+				belieftree[0][13][0] = -0.9		# Pr2 - PC1
+				belieftree[0][14][0] = 0.9		# Pr2 - PC2
+				belieftree[0][15][0] = -0.6		# Pr2 - PC3
 				belieftree[0][16][0] = 0.6		# PC1 - S1
 				belieftree[0][17][0] = -0.9		# PC1 - S2
 				belieftree[0][18][0] = -0.6		# PC1 - S3
@@ -607,13 +595,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = -0.6		# PC3 - S4
 				belieftree[0][30][0] = 0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -735,8 +723,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 2:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -745,12 +733,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = -0.2		# DC1 - PC1
-				belieftree[0][11][0] = 0.3		# DC1 - PC2
-				belieftree[0][12][0] = 0.3		# DC1 - PC3
-				belieftree[0][13][0] = 0		# DC2 - PC1
-				belieftree[0][14][0] = 0.1		# DC2 - PC2
-				belieftree[0][15][0] = -0.2		# DC2 - PC3
+				belieftree[0][10][0] = -0.2		# Pr1 - PC1
+				belieftree[0][11][0] = 0.3		# Pr1 - PC2
+				belieftree[0][12][0] = 0.3		# Pr1 - PC3
+				belieftree[0][13][0] = 0		# Pr2 - PC1
+				belieftree[0][14][0] = 0.1		# Pr2 - PC2
+				belieftree[0][15][0] = -0.2		# Pr2 - PC3
 				belieftree[0][16][0] = 0.2		# PC1 - S1
 				belieftree[0][17][0] = -0.3		# PC1 - S2
 				belieftree[0][18][0] = -0.1		# PC1 - S3
@@ -767,13 +755,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0		# PC3 - S4
 				belieftree[0][30][0] = 0.1		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -899,8 +887,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 			# Creating the initial values for the belief tree per affiliation - Self aims
 			if affiliation == 0:
 				# resources = 1
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -909,12 +897,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -931,13 +919,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -1059,8 +1047,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 1:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -1069,12 +1057,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = -0.9		# DC1 - PC1
-				belieftree[0][11][0] = -0.8		# DC1 - PC2
-				belieftree[0][12][0] = 0.7		# DC1 - PC3
-				belieftree[0][13][0] = -0.9		# DC2 - PC1
-				belieftree[0][14][0] = 0.9		# DC2 - PC2
-				belieftree[0][15][0] = -0.6		# DC2 - PC3
+				belieftree[0][10][0] = -0.9		# Pr1 - PC1
+				belieftree[0][11][0] = -0.8		# Pr1 - PC2
+				belieftree[0][12][0] = 0.7		# Pr1 - PC3
+				belieftree[0][13][0] = -0.9		# Pr2 - PC1
+				belieftree[0][14][0] = 0.9		# Pr2 - PC2
+				belieftree[0][15][0] = -0.6		# Pr2 - PC3
 				belieftree[0][16][0] = 0.6		# PC1 - S1
 				belieftree[0][17][0] = -0.9		# PC1 - S2
 				belieftree[0][18][0] = -0.6		# PC1 - S3
@@ -1091,13 +1079,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = -0.6		# PC3 - S4
 				belieftree[0][30][0] = 0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -1219,8 +1207,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 2:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -1229,12 +1217,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = 0.1		# DC1 - PC1
-				belieftree[0][11][0] = -0.2		# DC1 - PC2
-				belieftree[0][12][0] = -0.3		# DC1 - PC3
-				belieftree[0][13][0] = -0.4		# DC2 - PC1
-				belieftree[0][14][0] = -0.1		# DC2 - PC2
-				belieftree[0][15][0] = -0.1		# DC2 - PC3
+				belieftree[0][10][0] = 0.1		# Pr1 - PC1
+				belieftree[0][11][0] = -0.2		# Pr1 - PC2
+				belieftree[0][12][0] = -0.3		# Pr1 - PC3
+				belieftree[0][13][0] = -0.4		# Pr2 - PC1
+				belieftree[0][14][0] = -0.1		# Pr2 - PC2
+				belieftree[0][15][0] = -0.1		# Pr2 - PC3
 				belieftree[0][16][0] = -0.2		# PC1 - S1
 				belieftree[0][17][0] = -0.1		# PC1 - S2
 				belieftree[0][18][0] = -0.2		# PC1 - S3
@@ -1251,13 +1239,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.1		# PC3 - S4
 				belieftree[0][30][0] = 0.3		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -1382,8 +1370,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		if experiment_input[0][run_number] == 3:
 			# Creating the initial values for the belief tree per affiliation - Self aims
 			if affiliation == 0:
-				belieftree[0][0][1] = -0.8 		# DC1 - Economy
-				belieftree[0][1][1] = 0.7 		# DC2 - Environment
+				belieftree[0][0][1] = -0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = 0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = 1 		# PC1 - Forest Size
 				belieftree[0][3][1] = -0.7		# PC2 - Tourism
 				belieftree[0][4][1] = 0.8		# PC3 - Safety
@@ -1392,12 +1380,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = -0.7		# S3 - Monitoring
 				belieftree[0][8][1] = -0.8		# S4 - Firefighters
 				belieftree[0][9][1] = -0.9		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -1414,13 +1402,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -1542,8 +1530,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 1:
-				belieftree[0][0][1] = 0.8 		# DC1 - Economy
-				belieftree[0][1][1] = -0.7 		# DC2 - Environment
+				belieftree[0][0][1] = 0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = -1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.7		# PC2 - Tourism
 				belieftree[0][4][1] = -0.8		# PC3 - Safety
@@ -1552,12 +1540,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.7		# S3 - Monitoring
 				belieftree[0][8][1] = 0.8		# S4 - Firefighters
 				belieftree[0][9][1] = 0.9		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -1574,13 +1562,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -1702,8 +1690,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 2:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -1712,12 +1700,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -1734,13 +1722,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -1906,8 +1894,7 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		random.seed(1)
 		for i in range(policymaker_number):
 			affiliation_list.append(random.randrange(affiliation_number))
-
-	random.seed()
+		random.seed()
 	
 	for i in range(policymaker_number):
 		agent_id = i
@@ -1917,13 +1904,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 
 		# Belief tree:
 		belieftree = [None]
-		belieftree_empty_issues = [[0, 0, 0] for f in range(len_DC + len_PC + len_S)]
+		belieftree_empty_issues = [[0, 0, 0] for f in range(len_Pr + len_PC + len_S)]
 		belieftree_full = belieftree_empty_issues
 		for p in range(causalrelation_number):
 			belieftree_full.append([0])
 		belieftree[0] = belieftree_full
 		for r in range(total_agent_number):
-			belieftree_empty_agents = [[None, None, None] for p in range(len_DC + len_PC + len_S)]
+			belieftree_empty_agents = [[None, None, None] for p in range(len_Pr + len_PC + len_S)]
 			for l in range(causalrelation_number):
 				belieftree_empty_agents.append([None])
 			belieftree.append(belieftree_empty_agents)
@@ -1957,8 +1944,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 			# Creating the initial values for the belief tree per affiliation - Self aims
 			if affiliation == 0:
 				# resources = 1
-				belieftree[0][0][1] = -0.8 		# DC1 - Economy
-				belieftree[0][1][1] = 0.7 		# DC2 - Environment
+				belieftree[0][0][1] = -0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = 0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = 1 		# PC1 - Forest Size
 				belieftree[0][3][1] = -0.7		# PC2 - Tourism
 				belieftree[0][4][1] = 0.8		# PC3 - Safety
@@ -1967,12 +1954,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = -0.7		# S3 - Monitoring
 				belieftree[0][8][1] = -0.8		# S4 - Firefighters
 				belieftree[0][9][1] = -0.9		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -1989,13 +1976,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -2117,8 +2104,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 1:
-				belieftree[0][0][1] = 0.8 		# DC1 - Economy
-				belieftree[0][1][1] = -0.7 		# DC2 - Environment
+				belieftree[0][0][1] = 0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = -1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.7		# PC2 - Tourism
 				belieftree[0][4][1] = -0.8		# PC3 - Safety
@@ -2127,12 +2114,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.7		# S3 - Monitoring
 				belieftree[0][8][1] = 0.8		# S4 - Firefighters
 				belieftree[0][9][1] = 0.9		# S5 - Prevention
-				belieftree[0][10][0] = -0.9		# DC1 - PC1
-				belieftree[0][11][0] = -0.8		# DC1 - PC2
-				belieftree[0][12][0] = 0.7		# DC1 - PC3
-				belieftree[0][13][0] = -0.9		# DC2 - PC1
-				belieftree[0][14][0] = 0.9		# DC2 - PC2
-				belieftree[0][15][0] = -0.6		# DC2 - PC3
+				belieftree[0][10][0] = -0.9		# Pr1 - PC1
+				belieftree[0][11][0] = -0.8		# Pr1 - PC2
+				belieftree[0][12][0] = 0.7		# Pr1 - PC3
+				belieftree[0][13][0] = -0.9		# Pr2 - PC1
+				belieftree[0][14][0] = 0.9		# Pr2 - PC2
+				belieftree[0][15][0] = -0.6		# Pr2 - PC3
 				belieftree[0][16][0] = 0.6		# PC1 - S1
 				belieftree[0][17][0] = -0.9		# PC1 - S2
 				belieftree[0][18][0] = -0.6		# PC1 - S3
@@ -2149,13 +2136,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = -0.6		# PC3 - S4
 				belieftree[0][30][0] = 0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -2277,8 +2264,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 2:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -2287,12 +2274,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = -0.2		# DC1 - PC1
-				belieftree[0][11][0] = 0.3		# DC1 - PC2
-				belieftree[0][12][0] = 0.3		# DC1 - PC3
-				belieftree[0][13][0] = 0		# DC2 - PC1
-				belieftree[0][14][0] = 0.1		# DC2 - PC2
-				belieftree[0][15][0] = -0.2		# DC2 - PC3
+				belieftree[0][10][0] = -0.2		# Pr1 - PC1
+				belieftree[0][11][0] = 0.3		# Pr1 - PC2
+				belieftree[0][12][0] = 0.3		# Pr1 - PC3
+				belieftree[0][13][0] = 0		# Pr2 - PC1
+				belieftree[0][14][0] = 0.1		# Pr2 - PC2
+				belieftree[0][15][0] = -0.2		# Pr2 - PC3
 				belieftree[0][16][0] = 0.2		# PC1 - S1
 				belieftree[0][17][0] = -0.3		# PC1 - S2
 				belieftree[0][18][0] = -0.1		# PC1 - S3
@@ -2309,13 +2296,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0		# PC3 - S4
 				belieftree[0][30][0] = 0.1		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -2441,8 +2428,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 			# Creating the initial values for the belief tree per affiliation - Self aims
 			if affiliation == 0:
 				# resources = 1
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -2451,12 +2438,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -2473,13 +2460,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -2601,8 +2588,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 1:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -2611,12 +2598,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = -0.9		# DC1 - PC1
-				belieftree[0][11][0] = -0.8		# DC1 - PC2
-				belieftree[0][12][0] = 0.7		# DC1 - PC3
-				belieftree[0][13][0] = -0.9		# DC2 - PC1
-				belieftree[0][14][0] = 0.9		# DC2 - PC2
-				belieftree[0][15][0] = -0.6		# DC2 - PC3
+				belieftree[0][10][0] = -0.9		# Pr1 - PC1
+				belieftree[0][11][0] = -0.8		# Pr1 - PC2
+				belieftree[0][12][0] = 0.7		# Pr1 - PC3
+				belieftree[0][13][0] = -0.9		# Pr2 - PC1
+				belieftree[0][14][0] = 0.9		# Pr2 - PC2
+				belieftree[0][15][0] = -0.6		# Pr2 - PC3
 				belieftree[0][16][0] = 0.6		# PC1 - S1
 				belieftree[0][17][0] = -0.9		# PC1 - S2
 				belieftree[0][18][0] = -0.6		# PC1 - S3
@@ -2633,13 +2620,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = -0.6		# PC3 - S4
 				belieftree[0][30][0] = 0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -2761,8 +2748,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 2:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -2771,12 +2758,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = 0.1		# DC1 - PC1
-				belieftree[0][11][0] = -0.2		# DC1 - PC2
-				belieftree[0][12][0] = -0.3		# DC1 - PC3
-				belieftree[0][13][0] = -0.4		# DC2 - PC1
-				belieftree[0][14][0] = -0.1		# DC2 - PC2
-				belieftree[0][15][0] = -0.1		# DC2 - PC3
+				belieftree[0][10][0] = 0.1		# Pr1 - PC1
+				belieftree[0][11][0] = -0.2		# Pr1 - PC2
+				belieftree[0][12][0] = -0.3		# Pr1 - PC3
+				belieftree[0][13][0] = -0.4		# Pr2 - PC1
+				belieftree[0][14][0] = -0.1		# Pr2 - PC2
+				belieftree[0][15][0] = -0.1		# Pr2 - PC3
 				belieftree[0][16][0] = -0.2		# PC1 - S1
 				belieftree[0][17][0] = -0.1		# PC1 - S2
 				belieftree[0][18][0] = -0.2		# PC1 - S3
@@ -2793,13 +2780,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.1		# PC3 - S4
 				belieftree[0][30][0] = 0.3		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -2924,8 +2911,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		if experiment_input[0][run_number] == 3:
 			# Creating the initial values for the belief tree per affiliation - Self aims
 			if affiliation == 0:
-				belieftree[0][0][1] = -0.8 		# DC1 - Economy
-				belieftree[0][1][1] = 0.7 		# DC2 - Environment
+				belieftree[0][0][1] = -0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = 0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = 1 		# PC1 - Forest Size
 				belieftree[0][3][1] = -0.7		# PC2 - Tourism
 				belieftree[0][4][1] = 0.8		# PC3 - Safety
@@ -2934,12 +2921,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = -0.7		# S3 - Monitoring
 				belieftree[0][8][1] = -0.8		# S4 - Firefighters
 				belieftree[0][9][1] = -0.9		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -2956,13 +2943,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -3084,8 +3071,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 1:
-				belieftree[0][0][1] = 0.8 		# DC1 - Economy
-				belieftree[0][1][1] = -0.7 		# DC2 - Environment
+				belieftree[0][0][1] = 0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = -1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.7		# PC2 - Tourism
 				belieftree[0][4][1] = -0.8		# PC3 - Safety
@@ -3094,12 +3081,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.7		# S3 - Monitoring
 				belieftree[0][8][1] = 0.8		# S4 - Firefighters
 				belieftree[0][9][1] = 0.9		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -3116,13 +3103,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -3244,8 +3231,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 2:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -3254,12 +3241,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -3276,13 +3263,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -3445,8 +3432,7 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		random.seed(1)
 		for i in range(policyentre_number):
 			affiliation_list.append(random.randrange(affiliation_number))
-
-	random.seed()
+		random.seed()
 	
 	for i in range(policyentre_number):
 		x = random.randrange(inputs_dict["width"])
@@ -3455,13 +3441,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		agent_id = i
 		# Belief tree:
 		belieftree = [None]
-		belieftree_empty_issues = [[0, 0, 0] for f in range(len_DC + len_PC + len_S)]
+		belieftree_empty_issues = [[0, 0, 0] for f in range(len_Pr + len_PC + len_S)]
 		belieftree_full = belieftree_empty_issues
 		for p in range(causalrelation_number):
 			belieftree_full.append([0])
 		belieftree[0] = belieftree_full
 		for r in range(total_agent_number):
-			belieftree_empty_agents = [[None, None, None] for p in range(len_DC + len_PC + len_S)]
+			belieftree_empty_agents = [[None, None, None] for p in range(len_Pr + len_PC + len_S)]
 			for l in range(causalrelation_number):
 				belieftree_empty_agents.append([None])
 			belieftree.append(belieftree_empty_agents)
@@ -3494,8 +3480,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 			# Creating the initial values for the belief tree per affiliation - Self aims
 			if affiliation == 0:
 				# resources = 1
-				belieftree[0][0][1] = -0.8 		# DC1 - Economy
-				belieftree[0][1][1] = 0.7 		# DC2 - Environment
+				belieftree[0][0][1] = -0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = 0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = 1 		# PC1 - Forest Size
 				belieftree[0][3][1] = -0.7		# PC2 - Tourism
 				belieftree[0][4][1] = 0.8		# PC3 - Safety
@@ -3504,12 +3490,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = -0.7		# S3 - Monitoring
 				belieftree[0][8][1] = -0.8		# S4 - Firefighters
 				belieftree[0][9][1] = -0.9		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -3526,13 +3512,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -3654,8 +3640,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 1:
-				belieftree[0][0][1] = 0.8 		# DC1 - Economy
-				belieftree[0][1][1] = -0.7 		# DC2 - Environment
+				belieftree[0][0][1] = 0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = -1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.7		# PC2 - Tourism
 				belieftree[0][4][1] = -0.8		# PC3 - Safety
@@ -3664,12 +3650,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.7		# S3 - Monitoring
 				belieftree[0][8][1] = 0.8		# S4 - Firefighters
 				belieftree[0][9][1] = 0.9		# S5 - Prevention
-				belieftree[0][10][0] = -0.9		# DC1 - PC1
-				belieftree[0][11][0] = -0.8		# DC1 - PC2
-				belieftree[0][12][0] = 0.7		# DC1 - PC3
-				belieftree[0][13][0] = -0.9		# DC2 - PC1
-				belieftree[0][14][0] = 0.9		# DC2 - PC2
-				belieftree[0][15][0] = -0.6		# DC2 - PC3
+				belieftree[0][10][0] = -0.9		# Pr1 - PC1
+				belieftree[0][11][0] = -0.8		# Pr1 - PC2
+				belieftree[0][12][0] = 0.7		# Pr1 - PC3
+				belieftree[0][13][0] = -0.9		# Pr2 - PC1
+				belieftree[0][14][0] = 0.9		# Pr2 - PC2
+				belieftree[0][15][0] = -0.6		# Pr2 - PC3
 				belieftree[0][16][0] = 0.6		# PC1 - S1
 				belieftree[0][17][0] = -0.9		# PC1 - S2
 				belieftree[0][18][0] = -0.6		# PC1 - S3
@@ -3686,13 +3672,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = -0.6		# PC3 - S4
 				belieftree[0][30][0] = 0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -3814,8 +3800,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 2:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -3824,12 +3810,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = -0.2		# DC1 - PC1
-				belieftree[0][11][0] = 0.3		# DC1 - PC2
-				belieftree[0][12][0] = 0.3		# DC1 - PC3
-				belieftree[0][13][0] = 0		# DC2 - PC1
-				belieftree[0][14][0] = 0.1		# DC2 - PC2
-				belieftree[0][15][0] = -0.2		# DC2 - PC3
+				belieftree[0][10][0] = -0.2		# Pr1 - PC1
+				belieftree[0][11][0] = 0.3		# Pr1 - PC2
+				belieftree[0][12][0] = 0.3		# Pr1 - PC3
+				belieftree[0][13][0] = 0		# Pr2 - PC1
+				belieftree[0][14][0] = 0.1		# Pr2 - PC2
+				belieftree[0][15][0] = -0.2		# Pr2 - PC3
 				belieftree[0][16][0] = 0.2		# PC1 - S1
 				belieftree[0][17][0] = -0.3		# PC1 - S2
 				belieftree[0][18][0] = -0.1		# PC1 - S3
@@ -3846,13 +3832,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0		# PC3 - S4
 				belieftree[0][30][0] = 0.1		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -3978,8 +3964,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 			# Creating the initial values for the belief tree per affiliation - Self aims
 			if affiliation == 0:
 				# resources = 1
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -3988,12 +3974,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -4010,13 +3996,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -4138,8 +4124,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 1:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -4148,12 +4134,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = -0.9		# DC1 - PC1
-				belieftree[0][11][0] = -0.8		# DC1 - PC2
-				belieftree[0][12][0] = 0.7		# DC1 - PC3
-				belieftree[0][13][0] = -0.9		# DC2 - PC1
-				belieftree[0][14][0] = 0.9		# DC2 - PC2
-				belieftree[0][15][0] = -0.6		# DC2 - PC3
+				belieftree[0][10][0] = -0.9		# Pr1 - PC1
+				belieftree[0][11][0] = -0.8		# Pr1 - PC2
+				belieftree[0][12][0] = 0.7		# Pr1 - PC3
+				belieftree[0][13][0] = -0.9		# Pr2 - PC1
+				belieftree[0][14][0] = 0.9		# Pr2 - PC2
+				belieftree[0][15][0] = -0.6		# Pr2 - PC3
 				belieftree[0][16][0] = 0.6		# PC1 - S1
 				belieftree[0][17][0] = -0.9		# PC1 - S2
 				belieftree[0][18][0] = -0.6		# PC1 - S3
@@ -4170,13 +4156,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = -0.6		# PC3 - S4
 				belieftree[0][30][0] = 0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -4298,8 +4284,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 2:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -4308,12 +4294,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = 0.1		# DC1 - PC1
-				belieftree[0][11][0] = -0.2		# DC1 - PC2
-				belieftree[0][12][0] = -0.3		# DC1 - PC3
-				belieftree[0][13][0] = -0.4		# DC2 - PC1
-				belieftree[0][14][0] = -0.1		# DC2 - PC2
-				belieftree[0][15][0] = -0.1		# DC2 - PC3
+				belieftree[0][10][0] = 0.1		# Pr1 - PC1
+				belieftree[0][11][0] = -0.2		# Pr1 - PC2
+				belieftree[0][12][0] = -0.3		# Pr1 - PC3
+				belieftree[0][13][0] = -0.4		# Pr2 - PC1
+				belieftree[0][14][0] = -0.1		# Pr2 - PC2
+				belieftree[0][15][0] = -0.1		# Pr2 - PC3
 				belieftree[0][16][0] = -0.2		# PC1 - S1
 				belieftree[0][17][0] = -0.1		# PC1 - S2
 				belieftree[0][18][0] = -0.2		# PC1 - S3
@@ -4330,13 +4316,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.1		# PC3 - S4
 				belieftree[0][30][0] = 0.3		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -4461,8 +4447,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		if experiment_input[0][run_number] == 3:
 			# Creating the initial values for the belief tree per affiliation - Self aims
 			if affiliation == 0:
-				belieftree[0][0][1] = -0.8 		# DC1 - Economy
-				belieftree[0][1][1] = 0.7 		# DC2 - Environment
+				belieftree[0][0][1] = -0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = 0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = 1 		# PC1 - Forest Size
 				belieftree[0][3][1] = -0.7		# PC2 - Tourism
 				belieftree[0][4][1] = 0.8		# PC3 - Safety
@@ -4471,12 +4457,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = -0.7		# S3 - Monitoring
 				belieftree[0][8][1] = -0.8		# S4 - Firefighters
 				belieftree[0][9][1] = -0.9		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -4493,13 +4479,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -4621,8 +4607,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 1:
-				belieftree[0][0][1] = 0.8 		# DC1 - Economy
-				belieftree[0][1][1] = -0.7 		# DC2 - Environment
+				belieftree[0][0][1] = 0.8 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.7 		# Pr2 - Environment
 				belieftree[0][2][1] = -1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.7		# PC2 - Tourism
 				belieftree[0][4][1] = -0.8		# PC3 - Safety
@@ -4631,12 +4617,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.7		# S3 - Monitoring
 				belieftree[0][8][1] = 0.8		# S4 - Firefighters
 				belieftree[0][9][1] = 0.9		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -4653,13 +4639,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -4781,8 +4767,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 						belieftree_instrument[0][q][p] = belieftree_instrument[0][q][p] + (random.random()/10) - 0.05
 						belieftree_instrument[0][q][p] = one_minus_one_check(belieftree_instrument[0][q][p])
 			if affiliation == 2:
-				belieftree[0][0][1] = 0.2 		# DC1 - Economy
-				belieftree[0][1][1] = -0.3 		# DC2 - Environment
+				belieftree[0][0][1] = 0.2 		# Pr1 - Economy
+				belieftree[0][1][1] = -0.3 		# Pr2 - Environment
 				belieftree[0][2][1] = -0.1 		# PC1 - Forest Size
 				belieftree[0][3][1] = 0.2		# PC2 - Tourism
 				belieftree[0][4][1] = -0.1		# PC3 - Safety
@@ -4791,12 +4777,12 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][7][1] = 0.3		# S3 - Monitoring
 				belieftree[0][8][1] = 0.1		# S4 - Firefighters
 				belieftree[0][9][1] = 0.2		# S5 - Prevention
-				belieftree[0][10][0] = 0.9		# DC1 - PC1
-				belieftree[0][11][0] = 0.8		# DC1 - PC2
-				belieftree[0][12][0] = -0.7		# DC1 - PC3
-				belieftree[0][13][0] = 0.9		# DC2 - PC1
-				belieftree[0][14][0] = -0.9		# DC2 - PC2
-				belieftree[0][15][0] = 0.6		# DC2 - PC3
+				belieftree[0][10][0] = 0.9		# Pr1 - PC1
+				belieftree[0][11][0] = 0.8		# Pr1 - PC2
+				belieftree[0][12][0] = -0.7		# Pr1 - PC3
+				belieftree[0][13][0] = 0.9		# Pr2 - PC1
+				belieftree[0][14][0] = -0.9		# Pr2 - PC2
+				belieftree[0][15][0] = 0.6		# Pr2 - PC3
 				belieftree[0][16][0] = -0.6		# PC1 - S1
 				belieftree[0][17][0] = 0.9		# PC1 - S2
 				belieftree[0][18][0] = 0.6		# PC1 - S3
@@ -4813,13 +4799,13 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 				belieftree[0][29][0] = 0.6		# PC3 - S4
 				belieftree[0][30][0] = -0.8		# PC3 - S5
 				# Randomising the issues
-				for j in range(len_DC + len_PC + len_S):
+				for j in range(len_Pr + len_PC + len_S):
 					belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
 					belieftree[0][j][1] = one_minus_one_check(belieftree[0][j][1])
 				# Randomising the causal relations
 				for q in range(causalrelation_number):
-					belieftree[0][q + len_DC + len_PC + len_S][0] = round(belieftree[0][q + len_DC + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
-					belieftree[0][q + len_DC + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_DC + len_PC + len_S][0])
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = round(belieftree[0][q + len_Pr + len_PC + len_S][0] + (random.random()/10) - 0.05, 5)
+					belieftree[0][q + len_Pr + len_PC + len_S][0] = one_minus_one_check(belieftree[0][q + len_Pr + len_PC + len_S][0])
 				# Policies belief tree
 				belieftree_policy[0][0][0] = 0.5
 				belieftree_policy[0][0][1] = 0
@@ -4970,23 +4956,41 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		# agent_action_list.append(policyentre)
 		inputs_dict["Agents"].append(policyentre)
 
+
+
+
+	####################################################################################################
+	# INITIALISATION of the backbone parameters
+	####################################################################################################
+
+	# Parameters for the agents arguments on the agenda for the 3S and B/B+
+	agenda_as_issue = None
+	agenda_instrument = None
+	agenda_prob_3S = None
+	agenda_poli_3S = None
+	inputs_dict["Agenda_inputs"] = [agenda_as_issue, agenda_instrument, agenda_prob_3S, agenda_poli_3S]
+
+	# Parameter related to the resource potency
 	if experiment_input[7][run_number] != False:
 		inputs_dict["resources_potency"] = experiment_input[7][run_number]
 	else:
 		inputs_dict["resources_potency"] = 1
 
-	
+	# Parameter related to the amount of resources used for each action performed
 	if experiment_input[8][run_number] != False:
 		inputs_dict["resources_weight_action"] = experiment_input[8][run_number]
 	else:
 		inputs_dict["resources_weight_action"] = 0.1
 
+	# Parameter related to the coefficients used for the different conflict levels
 	if experiment_input[10][run_number] != False and experiment_input[11][run_number] != False and experiment_input[12][run_number] != False:
 		inputs_dict["conflict_level_coef"] = [experiment_input[10][run_number], experiment_input[11][run_number], experiment_input[12][run_number]]
 	else:
 		inputs_dict["conflict_level_coef"] = [0.75, 0.85, 0.95]
-	
 
+	####################################################################################################
+	# INITIALISATION of the backbone+ parameters
+	####################################################################################################
 
 	# ############################
 	# # Creation of the network
@@ -5007,8 +5011,8 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 		inputs_dict["Trust_decay_coefficient"] = 0.05
 
 
-	conflict_level_1 = [[inputs_dict["conflict_level_coef"][1], inputs_dict["conflict_level_coef"][1]] for i in range(len_DC + len_PC + len_S + len_DC*len_PC + len_PC*len_S)]
-	conflict_level_2 = [[inputs_dict["conflict_level_coef"][1], inputs_dict["conflict_level_coef"][1]] for i in range(len_DC + len_PC + len_S + len_DC*len_PC + len_PC*len_S)]
+	conflict_level_1 = [[inputs_dict["conflict_level_coef"][1], inputs_dict["conflict_level_coef"][1]] for i in range(len_Pr + len_PC + len_S + len_Pr*len_PC + len_PC*len_S)]
+	conflict_level_2 = [[inputs_dict["conflict_level_coef"][1], inputs_dict["conflict_level_coef"][1]] for i in range(len_Pr + len_PC + len_S + len_Pr*len_PC + len_PC*len_S)]
 	conflict_level = [conflict_level_1, conflict_level_2]
 	# print('*************')
 	# print('This is the conflict level')
@@ -5037,7 +5041,7 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 	# print(link_list)
 	# print(len(self.link_list[PolicyNetworkLinks]))
 
-	conflict_level_update(inputs_dict["Link_list"], len_DC, len_PC, len_S, inputs_dict["conflict_level_coef"])
+	conflict_level_update(inputs_dict["Link_list"], len_Pr, len_PC, len_S, inputs_dict["conflict_level_coef"])
 
 	# print(' ')
 	# print(inputs_dict)
@@ -5045,6 +5049,51 @@ def initial_values(inputs_dict, experiment_input, run_number, agent_inputs, AS_t
 
 	# Restore randomness
 	random.seed()
+
+	####################################################################################################
+	# INITIALISATION of the three streams parameters
+	####################################################################################################
+
+	# Parameter related to the gap required within an agent's belief to create or join a team
+	if experiment_input[13][run_number] != False:
+		inputs_dict["team_gap_threshold"] = experiment_input[13][run_number]
+	else:
+		inputs_dict["team_gap_threshold"] = 0.8
+
+	# Parameter related to the belief similarity that is required for the problem to join
+	# or create a team
+	if experiment_input[14][run_number] != False:
+		inputs_dict["team_belief_problem_threshold"] = experiment_input[14][run_number]
+	else:
+		inputs_dict["team_belief_problem_threshold"] = 0.5
+
+	# Parameter related to the belief similarity that is required for the policy to join
+	# or create a team
+	if experiment_input[15][run_number] != False:
+		inputs_dict["team_belief_policy_threshold"] = experiment_input[15][run_number]
+	else:
+		inputs_dict["team_belief_policy_threshold"] = 0.5
+
+	####################################################################################################
+	# INITIALISATION of the ACF parameters
+	####################################################################################################
+
+	# Parameter related to the threshold to create a new coalition
+	if experiment_input[16][run_number] != False:
+		inputs_dict["coalition_threshold"] = experiment_input[16][run_number]
+	else:
+		inputs_dict["coalition_threshold"] = 0.35
+
+
+	
+
+	
+
+
+	
+	
+
+	
 
 	return inputs_dict
 
@@ -5063,7 +5112,7 @@ def add(self, agent):
 	agent_class = type(agent)
 	self.agent_action_dict[agent_class].append(agent)
 
-def conflict_level_update(link_list, len_DC, len_PC, len_S, conflict_level_coef):
+def conflict_level_update(link_list, len_Pr, len_PC, len_S, conflict_level_coef):
 
 		"""
 		The conflict level update function
@@ -5076,7 +5125,7 @@ def conflict_level_update(link_list, len_DC, len_PC, len_S, conflict_level_coef)
 		for links in link_list:
 			# print(links)
 			conflict_level_temp = copy.copy(links.conflict_level)
-			for issues in range(len_DC + len_PC + len_S):
+			for issues in range(len_Pr + len_PC + len_S):
 				# This is all based on partial knowledge
 				# AGENT 1 - based on the partial knowledge he has of 
 				# For the calculation of the state conflict level:
@@ -5141,38 +5190,38 @@ def conflict_level_update(link_list, len_DC, len_PC, len_S, conflict_level_coef)
 			# print(links.conflict_level)
 
 			# For the causal relation part:
-			for issues in range(len_DC*len_PC + len_PC*len_S):
+			for issues in range(len_Pr*len_PC + len_PC*len_S):
 				# This is all based on partial knowledge
 				# AGENT 1 - based on the partial knowledge he has of 
 				# For the calculation of the state conflict level:
 
 				# If one of the beliefs is known to be 'No' then assign 'No' to the conflict level
-				if links.agent1.belieftree[1 + links.agent2.unique_id][len_DC + len_PC + len_S + issues][0] == 'No' or links.agent1.belieftree[0][len_DC + len_PC + len_S + issues][0] == 'No':
-					links.conflict_level[0][len_DC + len_PC + len_S + issues][0] = 'No'
+				if links.agent1.belieftree[1 + links.agent2.unique_id][len_Pr + len_PC + len_S + issues][0] == 'No' or links.agent1.belieftree[0][len_Pr + len_PC + len_S + issues][0] == 'No':
+					links.conflict_level[0][len_Pr + len_PC + len_S + issues][0] = 'No'
 				# If there is no knowledge of the other agent's beliefs, the conflict level is set to 0.85 by default
-				elif links.agent1.belieftree[1 + links.agent2.unique_id][len_DC + len_PC + len_S + issues][0] == None:
-					links.conflict_level[0][len_DC + len_PC + len_S + issues][0] = conflict_level_coef[1]
+				elif links.agent1.belieftree[1 + links.agent2.unique_id][len_Pr + len_PC + len_S + issues][0] == None:
+					links.conflict_level[0][len_Pr + len_PC + len_S + issues][0] = conflict_level_coef[1]
 				# If all beliefs are known, calculate the conflict level
 				else:
-					conflict_level_temp[0][len_DC + len_PC + len_S + issues][0] = abs(links.agent1.belieftree[0][len_DC + len_PC + len_S + issues][0] - links.agent1.belieftree[1 + links.agent2.unique_id][len_DC + len_PC + len_S + issues][0])
-					if conflict_level_temp[0][len_DC + len_PC + len_S + issues][0] <= 0.25:
-						links.conflict_level[0][len_DC + len_PC + len_S + issues][0] = conflict_level_coef[0]
-					if conflict_level_temp[0][len_DC + len_PC + len_S + issues][0] > 0.25 and conflict_level_temp[0][len_DC + len_PC + len_S + issues][0] <= 1.75:
-						links.conflict_level[0][len_DC + len_PC + len_S + issues][0] = conflict_level_coef[2]
-					if conflict_level_temp[0][len_DC + len_PC + len_S + issues][0] > 1.75:
-						links.conflict_level[0][len_DC + len_PC + len_S + issues][0] = conflict_level_coef[1]
+					conflict_level_temp[0][len_Pr + len_PC + len_S + issues][0] = abs(links.agent1.belieftree[0][len_Pr + len_PC + len_S + issues][0] - links.agent1.belieftree[1 + links.agent2.unique_id][len_Pr + len_PC + len_S + issues][0])
+					if conflict_level_temp[0][len_Pr + len_PC + len_S + issues][0] <= 0.25:
+						links.conflict_level[0][len_Pr + len_PC + len_S + issues][0] = conflict_level_coef[0]
+					if conflict_level_temp[0][len_Pr + len_PC + len_S + issues][0] > 0.25 and conflict_level_temp[0][len_Pr + len_PC + len_S + issues][0] <= 1.75:
+						links.conflict_level[0][len_Pr + len_PC + len_S + issues][0] = conflict_level_coef[2]
+					if conflict_level_temp[0][len_Pr + len_PC + len_S + issues][0] > 1.75:
+						links.conflict_level[0][len_Pr + len_PC + len_S + issues][0] = conflict_level_coef[1]
 				
 				# AGENT 2
 				# For the calculation of the state conflict level:
-				if links.agent2.belieftree[1 + links.agent1.unique_id][len_DC + len_PC + len_S + issues][0] == 'No' or links.agent2.belieftree[0][len_DC + len_PC + len_S + issues][0] == 'No':
-					links.conflict_level[1][len_DC + len_PC + len_S + issues][0] = 'No'
-				elif links.agent2.belieftree[1 + links.agent1.unique_id][len_DC + len_PC + len_S + issues][0] == None:
-					links.conflict_level[1][len_DC + len_PC + len_S + issues][0] = conflict_level_coef[1]
+				if links.agent2.belieftree[1 + links.agent1.unique_id][len_Pr + len_PC + len_S + issues][0] == 'No' or links.agent2.belieftree[0][len_Pr + len_PC + len_S + issues][0] == 'No':
+					links.conflict_level[1][len_Pr + len_PC + len_S + issues][0] = 'No'
+				elif links.agent2.belieftree[1 + links.agent1.unique_id][len_Pr + len_PC + len_S + issues][0] == None:
+					links.conflict_level[1][len_Pr + len_PC + len_S + issues][0] = conflict_level_coef[1]
 				else:
-					conflict_level_temp[1][len_DC + len_PC + len_S + issues][0] = abs(links.agent2.belieftree[0][len_DC + len_PC + len_S + issues][0] - links.agent2.belieftree[1 + links.agent1.unique_id][len_DC + len_PC + len_S + issues][0])
-					if conflict_level_temp[1][len_DC + len_PC + len_S + issues][0] <= 0.25:
-						links.conflict_level[1][len_DC + len_PC + len_S + issues][0] = conflict_level_coef[0]
-					if conflict_level_temp[1][len_DC + len_PC + len_S + issues][0] > 0.25 and conflict_level_temp[1][len_DC + len_PC + len_S + issues][0] <= 1.75:
-						links.conflict_level[1][len_DC + len_PC + len_S + issues][0] = conflict_level_coef[2]
-					if conflict_level_temp[1][len_DC + len_PC + len_S + issues][0] > 1.75:
-						links.conflict_level[1][len_DC + len_PC + len_S + issues][0] = conflict_level_coef[1]
+					conflict_level_temp[1][len_Pr + len_PC + len_S + issues][0] = abs(links.agent2.belieftree[0][len_Pr + len_PC + len_S + issues][0] - links.agent2.belieftree[1 + links.agent1.unique_id][len_Pr + len_PC + len_S + issues][0])
+					if conflict_level_temp[1][len_Pr + len_PC + len_S + issues][0] <= 0.25:
+						links.conflict_level[1][len_Pr + len_PC + len_S + issues][0] = conflict_level_coef[0]
+					if conflict_level_temp[1][len_Pr + len_PC + len_S + issues][0] > 0.25 and conflict_level_temp[1][len_Pr + len_PC + len_S + issues][0] <= 1.75:
+						links.conflict_level[1][len_Pr + len_PC + len_S + issues][0] = conflict_level_coef[2]
+					if conflict_level_temp[1][len_Pr + len_PC + len_S + issues][0] > 1.75:
+						links.conflict_level[1][len_Pr + len_PC + len_S + issues][0] = conflict_level_coef[1]
