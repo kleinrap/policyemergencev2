@@ -783,7 +783,6 @@ class Agent:
 										print('I AM THE AGENT, BREAK AFTER ME')
 										break
 
-
 					# If the team is advocating for a policy, perform the following actions:
 					elif agents.team_as[0].issue_type == 'policy':
 						team = agents.team_as[0]

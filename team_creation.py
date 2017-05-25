@@ -96,7 +96,11 @@ class Team():
 
 										cw_grade = ActionFunctions.action_grade_calculator(links, cw, 0, agents_in_team, affiliation_weights)
 										cw_grade_list.append(cw_grade)
+<<<<<<< Updated upstream
 
+=======
+										
+>>>>>>> Stashed changes
 							total_agent_grades.append(sum(cw_grade_list))
 
 						# STATES GRADING

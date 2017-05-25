@@ -174,7 +174,22 @@ class ActionFunctions:
 
 		return grade
 
+<<<<<<< Updated upstream
 	def action_implementor(links, issue, parameter, agents, agents_resources, affiliation_weights, resources_weight_action, resources_potency, blanket, action_agent_number):
+=======
+	def partial_knowledge_transfer(self, agent1, agent2, issue, parameter):
+
+		agent1.belieftree[1 + agent2.unique_id][issue][parameter] = agent2.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
+		agent1.belieftree[1 + agent2.unique_id][issue][parameter] = self.one_minus_one_check(agent1.belieftree[1 + agent2.unique_id][issue][parameter])
+		# Partial knowledge 2 with 1-1 check
+		agent2.belieftree[1 + agent1.unique_id][issue][parameter] = agent1.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
+		agent2.belieftree[1 + agent1.unique_id][issue][parameter] = self.one_minus_one_check(agent2.belieftree[1 + agent1.unique_id][issue][parameter])
+
+		results = [agent2.belieftree[0][issue][parameter], agent1.belieftree[1 + agent2.unique_id][issue][parameter], agent2.belieftree[1 + agent1.unique_id][issue][parameter]]
+		print(results)
+
+	def action_implementor(self, links, issue, parameter, agents, affiliation_weights, resources_weight_action, resources_potency, blanket, action_agent_number):
+>>>>>>> Stashed changes
 
 		if blanket == True:
 			resources_potency = resources_potency / action_agent_number
@@ -245,6 +260,7 @@ class ActionFunctions:
 			
 			# Checks and transfer of partial knowledge
 			# 1-1 check - new value
+<<<<<<< Updated upstream
 			links.agent1.belieftree[0][issue][parameter] = ActionFunctions.one_minus_one_check(links.agent1.belieftree[0][issue][parameter])
 			# Partial knowledge 1 with 1-1 check
 			agents.belieftree[1 + links.agent1.unique_id][issue][parameter] = links.agent1.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
@@ -252,6 +268,19 @@ class ActionFunctions:
 			# Partial knowledge 2 with 1-1 check
 			links.agent1.belieftree[1 + agents.unique_id][issue][parameter] = agents.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
 			links.agent1.belieftree[1 + agents.unique_id][issue][parameter] = ActionFunctions.one_minus_one_check(links.agent1.belieftree[1 + agents.unique_id][issue][parameter])
+=======
+			links.agent1.belieftree[0][issue][parameter] = self.one_minus_one_check(links.agent1.belieftree[0][issue][parameter])
+
+			partial_knowledge = self.partial_knowledge_transfer(links.agent2, links.agent1, issue, parameter)
+
+
+			# # Partial knowledge 1 with 1-1 check
+			# agents.belieftree[1 + links.agent1.unique_id][issue][parameter] = links.agent1.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
+			# agents.belieftree[1 + links.agent1.unique_id][issue][parameter] = self.one_minus_one_check(agents.belieftree[1 + links.agent1.unique_id][issue][parameter])
+			# # Partial knowledge 2 with 1-1 check
+			# links.agent1.belieftree[1 + agents.unique_id][issue][parameter] = agents.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
+			# links.agent1.belieftree[1 + agents.unique_id][issue][parameter] = self.one_minus_one_check(links.agent1.belieftree[1 + agents.unique_id][issue][parameter])
+>>>>>>> Stashed changes
 
 			results = [links.agent1.belieftree[0][issue][parameter], agents.belieftree[1 + links.agent1.unique_id][issue][parameter], links.agent1.belieftree[1 + agents.unique_id][issue][parameter]]
 		
