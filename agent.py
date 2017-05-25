@@ -3411,42 +3411,6 @@ class Agent:
 			agents.resources_actions -= agents.resources[0] * resources_weight_action
 
 
-	##############################################################################
-	######################## TO BE MODIFIED AND INTEGRATED #######################
-	##############################################################################
-
-	def knowledge_exchange_coalition_policy(self, team, cw_knowledge, parameter):
-
-		# Exchange of partial knowledge between the agents in the team
-		for agent_exchange1 in team.members:
-			for agent_exchange2 in team.members:
-				# Actual knowledge exchange with a randomness of 0.2
-				# print('Before: ' + str(agent_exchange1.belieftree[1 + agent_exchange2.unique_id][team.issue][0]))
-				agent_exchange1.belieftree_policy[1 + agent_exchange2.unique_id][cw_knowledge][parameter] = \
-				  agent_exchange2.belieftree_policy[0][cw_knowledge][0] + (random.random()/5) - 0.1
-				# print('After: ' + str(agent_exchange1.belieftree[1 + agent_exchange2.unique_id][team.issue][0]))
-				# 1-1 check
-				if agent_exchange1.belieftree_policy[1 + agent_exchange2.unique_id][cw_knowledge][parameter] > 1:
-					agent_exchange1.belieftree_policy[1 + agent_exchange2.unique_id][cw_knowledge][parameter] = 1
-				if agent_exchange1.belieftree_policy[1 + agent_exchange2.unique_id][cw_knowledge][parameter] < -1:
-					agent_exchange1.belieftree_policy[1 + agent_exchange2.unique_id][cw_knowledge][parameter]  = -1
-
-	def knowledge_exchange_coalition_instrument(self, team, cw_knowledge, parameter):
-
-		# Exchange of partial knowledge between the agents in the team
-		for agent_exchange1 in team.members:
-			for agent_exchange2 in team.members:
-				# Actual knowledge exchange with a randomness of 0.2
-				# print('Before: ' + str(agent_exchange1.belieftree[1 + agent_exchange2.unique_id][team.issue][0]))
-				agent_exchange1.belieftree_instrument[1 + agent_exchange2.unique_id][cw_knowledge][parameter] = \
-				  agent_exchange2.belieftree_instrument[0][cw_knowledge][0] + (random.random()/5) - 0.1
-				# print('After: ' + str(agent_exchange1.belieftree[1 + agent_exchange2.unique_id][team.issue][0]))
-				# 1-1 check
-				if agent_exchange1.belieftree_instrument[1 + agent_exchange2.unique_id][cw_knowledge][parameter] > 1:
-					agent_exchange1.belieftree_instrument[1 + agent_exchange2.unique_id][cw_knowledge][parameter] = 1
-				if agent_exchange1.belieftree_instrument[1 + agent_exchange2.unique_id][cw_knowledge][parameter] < -1:
-					agent_exchange1.belieftree_instrument[1 + agent_exchange2.unique_id][cw_knowledge][parameter]  = -1
-
 # Creation of the policy maker agents
 class Policymakers(Agent):
 

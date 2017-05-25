@@ -1,10 +1,6 @@
-Small tasks that still need to be performed:
-- The belonging level function in the agents.py file is used for both policy and problem teams incorrectly. Two different functions should be used. This applies to both the agenda setting and the policy formulation functions.
-- The knowledge exchange function in the agents.py file is used for both policy and problem teams incorrectly. Two different functions be used.
-- Address the decrease in partial knowledge of all agents when participating in teams or coalitions are the partial knowledge is only transmitted between agents interacting leading to a small exchange of knowledge for all of the members. (Done for intra not inter)
-- Address the lack of update of the awareness decay for the agents that are part of a coalition or a team as their awareness decay is not stopped when the coalition or the team is performing an action. This leads to an overall depletion of the awareness levels for all the agents within the system. (Done for intra not inter)
+Major tasks that would need to be performed:
 - Add the fact that the external parties have selective states interest - this has very very large ramification throughout the entire code and cannot be implemented in steps without robust safeguards.
+- Address the decrease in partial knowledge of all agents when participating in teams or coalitions are the partial knowledge is only transmitted between agents interacting leading to a small exchange of knowledge for all of the members.
+- Find how to calculate the appropriate belonging level for agents which are in teams.
 - Address the issue of initialisation of the policy hierarchy partial beliefs (3S). This has an major impact on the conflict level calculations.
-- Address the fact that for the conflict level of the shadow network of the teams, the full knowledge is used to constitute the conflict level which puts the teams at an advantage in their actions compared to individuals.
-- For each actor’s actions list, make sure that if all actions are the same grading, the action selected is random and not simply the first one in the list (as the maximum algorithms would do it)
-- Check the actions of the external parties towards the electorate (they were mis-implemented)
+- Address the fact that for the conflict level of the shadow network of the teams, the full knowledge is used to constitute the conflict level which puts the teams at an advantage in their actions compared to individuals. (This is related to an assumption on the partial knowledge of teams)
