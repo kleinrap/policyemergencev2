@@ -96,11 +96,7 @@ class Team():
 
 										cw_grade = ActionFunctions.action_grade_calculator(links, cw, 0, agents_in_team, affiliation_weights)
 										cw_grade_list.append(cw_grade)
-<<<<<<< Updated upstream
 
-=======
-										
->>>>>>> Stashed changes
 							total_agent_grades.append(sum(cw_grade_list))
 
 						# STATES GRADING
@@ -647,19 +643,12 @@ class Team():
 								teams.resources[0] * 0.1 * affiliation_weights[2]	
 
 						# print('After: ' + str(list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0]))
-						
+					
+						# 1-1 check
+						list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0])
+
 						# Checks and transfer of partial knowledge
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][cw_of_interest[best_action]][0] = list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][cw_of_interest[best_action]][0] = self.one_minus_one_check(teams.members[acting_agent].belieftree[1 + acted_upon_agent][cw_of_interest[best_action]][0])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][cw_of_interest[best_action]][0] = teams.members[acting_agent].belieftree[0][cw_of_interest[best_action]][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][cw_of_interest[best_action]][0] = \
-							self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][cw_of_interest[best_action]][0])
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, cw_of_interest[best_action], 0)
 
 					# Implement state influence action
 					if best_action == len(cw_of_interest):
@@ -690,17 +679,11 @@ class Team():
 							list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] += \
 								(teams.members[acting_agent].belieftree[0][teams.issue][0] - list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[2]	
 						
+						# 1-1 check
+						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0])
+
 						# Checks and transfer of partial knowledge
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0] = list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0] = self.one_minus_one_check(teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0] = teams.members[acting_agent].belieftree[0][teams.issue][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0])
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 0)
 
 					# Implement aim influence action
 					if best_action == len(cw_of_interest) + 1:
@@ -730,23 +713,12 @@ class Team():
 							(teams.members[acting_agent].affiliation == 2 and list_links_teams[acted_upon_agent].agent2.affiliation == 1):
 							list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] += \
 								(teams.members[acting_agent].belieftree[0][teams.issue][1] - list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[2]
-						
+				
+						# 1-1 check
+						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1])
+
 						# Checks and transfer of partial knowledge
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] = \
-							self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1] = \
-						  list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1] = \
-							self.one_minus_one_check(teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1] = \
-						  teams.members[acting_agent].belieftree[0][teams.issue][1] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1] = \
-							self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1])
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 1)
 
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
@@ -952,18 +924,11 @@ class Team():
 
 						# print('After: ' + str(list_links_teams[acted_upon_agent].agent2.belieftree[0][len(deep_core) + len(policy_core) + len(secondary) + best_action][0]))
 						
+						# 1-1 check
+						list_links_teams[acted_upon_agent].agent2.belieftree_policy[0][teams.issue][best_action] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree_policy[0][teams.issue][best_action])
+
 						# Checks and transfer of partial knowledge
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree_policy[0][teams.issue][best_action] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree_policy[0][teams.issue][best_action])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree_policy[1 + acted_upon_agent][teams.issue][best_action] = list_links_teams[acted_upon_agent].agent2.belieftree_policy[0][teams.issue][best_action] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree_policy[1 + acted_upon_agent][teams.issue][best_action] = self.one_minus_one_check(teams.members[acting_agent].belieftree_policy[1 + acted_upon_agent][teams.issue][best_action])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree_policy[1 + acting_agent][teams.issue][best_action] = teams.members[acting_agent].belieftree_policy[0][teams.issue][best_action] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree_policy[1 + acting_agent][teams.issue][best_action] = \
-							self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree_policy[1 + acting_agent][teams.issue][best_action])
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer_policy(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, best_action)
 
 					# Implement state influence action
 					if best_action == impact_number:
@@ -993,17 +958,11 @@ class Team():
 							list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] += \
 								(teams.members[acting_agent].belieftree[0][teams.issue][0] - list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[2]
 						
+						# 1-1 check
+						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0])
+
 						# Checks and transfer of partial knowledge
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0] = list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0] = self.one_minus_one_check(teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0] = teams.members[acting_agent].belieftree[0][teams.issue][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0])
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 0)
 
 					# Implement aim influence action
 					if best_action == impact_number + 1:
@@ -1033,17 +992,11 @@ class Team():
 							list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] += \
 								(teams.members[acting_agent].belieftree[0][teams.issue][1] - list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[2]
 						
+						# 1-1 check
+						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1])
+
 						# Checks and transfer of partial knowledge
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1] = list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1] = self.one_minus_one_check(teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1] = teams.members[acting_agent].belieftree[0][teams.issue][1] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1])
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 1)
 
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
@@ -1675,18 +1628,11 @@ class Team():
 
 						# print('After: ' + str(list_links_teams[acted_upon_agent].agent2.belieftree[0][len(deep_core) + len(policy_core) + len(secondary) + best_action - 1][0]))
 						
+						# 1-1 check
+						list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0])
+
 						# Checks and transfer of partial knowledge
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][cw_of_interest[best_action]][0] = list_links_teams[acted_upon_agent].agent2.belieftree[0][cw_of_interest[best_action]][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][cw_of_interest[best_action]][0] = self.one_minus_one_check(teams.members[acting_agent].belieftree[1 + acted_upon_agent][cw_of_interest[best_action]][0])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][cw_of_interest[best_action]][0] = teams.members[acting_agent].belieftree[0][cw_of_interest[best_action]][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][cw_of_interest[best_action]][0] = \
-							self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][cw_of_interest[best_action]][0])
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, cw_of_interest[best_action], 0)
 
 					# Implement state influence action
 					if best_action == len(cw_of_interest):
@@ -1719,15 +1665,10 @@ class Team():
 						
 						# Checks and transfer of partial knowledge
 						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0] = list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0] = self.one_minus_one_check(teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0] = teams.members[acting_agent].belieftree[0][teams.issue][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0])
+						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0])
+
+						# Checks and transfer of partial knowledge
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 0)
 
 					# Implement aim influence action
 					if best_action == len(cw_of_interest) + 1:
@@ -1758,18 +1699,11 @@ class Team():
 							list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] += \
 								(teams.members[acting_agent].belieftree[0][teams.issue][1] - list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[2]
 						
-						# Checks and transfer of partial knowledge
 						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1] = list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1] = self.one_minus_one_check(teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1] = teams.members[acting_agent].belieftree[0][teams.issue][1] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1])
+						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1])
 
+						# Checks and transfer of partial knowledge
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 1)
 
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
@@ -1971,19 +1905,11 @@ class Team():
 
 						# print('After: ' + str(list_links_teams[acted_upon_agent].agent2.belieftree[0][len(deep_core) + len(policy_core) + len(secondary) + best_action][0]))
 						
+						# 1-1 check
+						list_links_teams[acted_upon_agent].agent2.belieftree_instrument[0][teams.issue][best_action] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree_instrument[0][teams.issue][best_action])
+
 						# Checks and transfer of partial knowledge
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree_instrument[0][teams.issue][best_action] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree_instrument[0][teams.issue][best_action])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree_instrument[1 + acted_upon_agent][teams.issue][best_action] = list_links_teams[acted_upon_agent].agent2.belieftree_instrument[0][teams.issue][best_action] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree_instrument[1 + acted_upon_agent][teams.issue][best_action] = \
-							self.one_minus_one_check(teams.members[acting_agent].belieftree_instrument[1 + acted_upon_agent][teams.issue][best_action])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree_instrument[1 + acting_agent][teams.issue][best_action] = teams.members[acting_agent].belieftree_instrument[0][teams.issue][best_action] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree_instrument[1 + acting_agent][teams.issue][best_action] = \
-							self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree_instrument[1 + acting_agent][teams.issue][best_action])
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer_instrument(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, best_action)
 
 					# Implement state influence action
 					if best_action == impact_number:
@@ -2013,17 +1939,11 @@ class Team():
 							list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] += \
 								(teams.members[acting_agent].belieftree[0][teams.issue][0] - list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0]) * teams.resources[0] * 0.1 * affiliation_weights[2]
 						
+						# 1-1 check
+						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0])
+
 						# Checks and transfer of partial knowledge
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0] = list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0] = self.one_minus_one_check(teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][0])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0] = teams.members[acting_agent].belieftree[0][teams.issue][0] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][0])
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 0)
 
 					# Implement aim influence action
 					if best_action == impact_number + 1:
@@ -2053,17 +1973,11 @@ class Team():
 							list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] += \
 								(teams.members[acting_agent].belieftree[0][teams.issue][1] - list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1]) * teams.resources[0] * 0.1 * affiliation_weights[2]
 						
+						# 1-1 check
+						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] = ActionFunctions.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1])
+
 						# Checks and transfer of partial knowledge
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1])
-						# Exchange of knowledge - 0.2 - From acted upon to acting
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1] = list_links_teams[acted_upon_agent].agent2.belieftree[0][teams.issue][1] + (random.random()/5) - 0.1
-						# 1-1 check
-						teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1] = self.one_minus_one_check(teams.members[acting_agent].belieftree[1 + acted_upon_agent][teams.issue][1])
-						# Exchange of knowledge - 0.2 - From acting to acted upon
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1] = teams.members[acting_agent].belieftree[0][teams.issue][1] + (random.random()/5) - 0.1
-						# 1-1 check
-						list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1] = self.one_minus_one_check(list_links_teams[acted_upon_agent].agent2.belieftree[1 + acting_agent][teams.issue][1])
+						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 1)
 
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
@@ -2329,23 +2243,3 @@ class Team():
 					agent_exchange1.belieftree_instrument[1 + agent_exchange2.unique_id][cw_knowledge][parameter] = 1
 				if agent_exchange1.belieftree_instrument[1 + agent_exchange2.unique_id][cw_knowledge][parameter] < -1:
 					agent_exchange1.belieftree_instrument[1 + agent_exchange2.unique_id][cw_knowledge][parameter]  = -1
-
-	def one_minus_one_check(self, to_be_checked_parameter):
-
-		"""
-		One minus one check function
-		===========================
-
-		This function checks that a certain values does not got over one
-		and does not go below one due to the randomisation.
-		
-		"""
-
-		checked_parameter = 0
-		if to_be_checked_parameter > 1:
-			checked_parameter = 1
-		elif to_be_checked_parameter < -1:
-			checked_parameter = -1
-		else:
-			checked_parameter = to_be_checked_parameter
-		return checked_parameter

@@ -16,7 +16,7 @@ from agent import Policymakers, Electorate, Externalparties, Truth, Policyentres
 from network_creation import PolicyNetworkLinks
 from team_creation import Team
 from coalition_creation import Coalition
-
+from functions_actions import ActionFunctions
 
 # When running from this file (no visualisation)
 
@@ -355,10 +355,10 @@ class PolicyEmergence(Model):
 				for exchange in range(self.len_Pr):
 					agents1.belieftree[1 + agents2.unique_id][exchange][0] = agents2.belieftree[0][exchange][0] + (random.random()/10) - 0.05
 					agents1.belieftree[1 + agents2.unique_id][exchange][0] = \
-						self.one_minus_one_check2(agents1.belieftree[1 + agents2.unique_id][exchange][0])
+						ActionFunctions.one_minus_one_check(agents1.belieftree[1 + agents2.unique_id][exchange][0])
 					agents1.belieftree[1 + agents2.unique_id][exchange][1] = agents2.belieftree[0][exchange][1] + (random.random()/10) - 0.05
 					agents1.belieftree[1 + agents2.unique_id][exchange][1] = \
-						self.one_minus_one_check2(agents1.belieftree[1 + agents2.unique_id][exchange][1])
+						ActionFunctions.one_minus_one_check(agents1.belieftree[1 + agents2.unique_id][exchange][1])
 			# print(' ')
 			# print(agents1.belieftree)
 
@@ -370,13 +370,13 @@ class PolicyEmergence(Model):
 					for issue in range(self.len_Pr + self.len_PC + self.len_S):
 						agents.belieftree[1+who][issue][0] = copy.copy(agents.belieftree[0][issue][0] + random.random() - 0.5)
 						agents.belieftree[1+who][issue][1] = copy.copy(agents.belieftree[0][issue][1] + random.random() - 0.5)
-						agents.belieftree[1+who][issue][0] = self.one_minus_one_check2(agents.belieftree[1+who][issue][0])
-						agents.belieftree[1+who][issue][1] = self.one_minus_one_check2(agents.belieftree[1+who][issue][1])
+						agents.belieftree[1+who][issue][0] = ActionFunctions.one_minus_one_check(agents.belieftree[1+who][issue][0])
+						agents.belieftree[1+who][issue][1] = ActionFunctions.one_minus_one_check(agents.belieftree[1+who][issue][1])
 					for causalrelations in range(self.causalrelation_number):
 						agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0] = \
 							copy.copy(agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + causalrelations][0] + random.random() - 0.5)
 						agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0] = \
-							self.one_minus_one_check2(agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0])
+							ActionFunctions.one_minus_one_check(agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0])
 		
 		print('... cleared.')
 		print('   ')
@@ -1955,10 +1955,10 @@ class PolicyEmergence(Model):
 				for agents_exchange in coalition.members:
 					agents_member.belieftree[1 + agents_exchange.unique_id][coalition.issue][0] = agents_exchange.belieftree[0][coalition.issue][0] + (random.random()/5) - 0.1
 					agents_member.belieftree[1 + agents_exchange.unique_id][coalition.issue][0] = \
-						self.one_minus_one_check2(agents_member.belieftree[1 + agents_exchange.unique_id][coalition.issue][0])
+						ActionFunctions.one_minus_one_check(agents_member.belieftree[1 + agents_exchange.unique_id][coalition.issue][0])
 					agents_member.belieftree[1 + agents_exchange.unique_id][coalition.issue][1] = agents_exchange.belieftree[0][coalition.issue][1] + (random.random()/5) - 0.1
 					agents_member.belieftree[1 + agents_exchange.unique_id][coalition.issue][1] = \
-						self.one_minus_one_check2(agents_member.belieftree[1 + agents_exchange.unique_id][coalition.issue][1])
+						ActionFunctions.one_minus_one_check(agents_member.belieftree[1 + agents_exchange.unique_id][coalition.issue][1])
 				# Assignint coalition number and belonging value
 				if agents_member != leader:
 					# Assigning the coalition
@@ -2067,10 +2067,10 @@ class PolicyEmergence(Model):
 					for issue_num in issue_of_interest:
 						agents_member.belieftree[1 + agents_exchange.unique_id][issue_num][0] = agents_exchange.belieftree[0][issue_num][0] + (random.random()/5) - 0.1
 						agents_member.belieftree[1 + agents_exchange.unique_id][issue_num][0] = \
-							self.one_minus_one_check2(agents_member.belieftree[1 + agents_exchange.unique_id][issue_num][0])
+							ActionFunctions.one_minus_one_check(agents_member.belieftree[1 + agents_exchange.unique_id][issue_num][0])
 						agents_member.belieftree[1 + agents_exchange.unique_id][issue_num][1] = agents_exchange.belieftree[0][issue_num][1] + (random.random()/5) - 0.1
 						agents_member.belieftree[1 + agents_exchange.unique_id][issue_num][1] = \
-							self.one_minus_one_check2(agents_member.belieftree[1 + agents_exchange.unique_id][issue_num][1])
+							ActionFunctions.one_minus_one_check(agents_member.belieftree[1 + agents_exchange.unique_id][issue_num][1])
 						# print(agents_member.belieftree[1 + agents_exchange.unique_id][issue_num])
 
 					# Update the agent on the other's instrument preferences
@@ -2089,24 +2089,3 @@ class PolicyEmergence(Model):
 				# Assigning the team resources - sum of the belonging levels
 				coalition.resources[0] += agents_member.coalition_pf[1]
 				coalition.resources[1] = coalition.resources[0]
-
-	def one_minus_one_check2(self, to_be_checked_parameter):
-
-		"""
-		One minus one check function
-		===========================
-
-		This function checks that a certain values does not got over one
-		and does not go below one due to the randomisation.
-		
-		"""
-
-		checked_parameter = 0
-		if to_be_checked_parameter > 1:
-			checked_parameter = 1
-		elif to_be_checked_parameter < -1:
-			checked_parameter = -1
-		else:
-			checked_parameter = to_be_checked_parameter
-		return checked_parameter
-

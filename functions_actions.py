@@ -174,22 +174,41 @@ class ActionFunctions:
 
 		return grade
 
-<<<<<<< Updated upstream
-	def action_implementor(links, issue, parameter, agents, agents_resources, affiliation_weights, resources_weight_action, resources_potency, blanket, action_agent_number):
-=======
-	def partial_knowledge_transfer(self, agent1, agent2, issue, parameter):
+	def partial_knowledge_transfer(agent1, agent2, issue, parameter):
 
 		agent1.belieftree[1 + agent2.unique_id][issue][parameter] = agent2.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
-		agent1.belieftree[1 + agent2.unique_id][issue][parameter] = self.one_minus_one_check(agent1.belieftree[1 + agent2.unique_id][issue][parameter])
+		agent1.belieftree[1 + agent2.unique_id][issue][parameter] = ActionFunctions.one_minus_one_check(agent1.belieftree[1 + agent2.unique_id][issue][parameter])
 		# Partial knowledge 2 with 1-1 check
 		agent2.belieftree[1 + agent1.unique_id][issue][parameter] = agent1.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
-		agent2.belieftree[1 + agent1.unique_id][issue][parameter] = self.one_minus_one_check(agent2.belieftree[1 + agent1.unique_id][issue][parameter])
+		agent2.belieftree[1 + agent1.unique_id][issue][parameter] = ActionFunctions.one_minus_one_check(agent2.belieftree[1 + agent1.unique_id][issue][parameter])
 
 		results = [agent2.belieftree[0][issue][parameter], agent1.belieftree[1 + agent2.unique_id][issue][parameter], agent2.belieftree[1 + agent1.unique_id][issue][parameter]]
-		print(results)
 
-	def action_implementor(self, links, issue, parameter, agents, affiliation_weights, resources_weight_action, resources_potency, blanket, action_agent_number):
->>>>>>> Stashed changes
+	def partial_knowledge_transfer_policy(agent1, agent2, instrument, impact):
+
+		# Partial knowledge 1 with 1-1 check
+		agent1.belieftree_policy[1 + agent2.unique_id][instrument][impact] = agent2.belieftree_policy[0][instrument][impact] + (random.random()/5) - 0.1
+		agent1.belieftree_policy[1 + agent2.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(agent1.belieftree_policy[1 + agent2.unique_id][instrument][impact])
+		# Partial knowledge 2 with 1-1 check
+		agent2.belieftree_policy[1 + agent1.unique_id][instrument][impact] = agent1.belieftree_policy[0][instrument][impact] + (random.random()/5) - 0.1
+		agent2.belieftree_policy[1 + agent1.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(agent2.belieftree_policy[1 + agent1.unique_id][instrument][impact])
+
+		results = [agent2.belieftree_policy[0][instrument][impact], agent2.belieftree_policy[1 + agent2.unique_id][instrument][impact], \
+				agent2.belieftree_policy[1 + agent2.unique_id][instrument][impact]]
+
+	def partial_knowledge_transfer_instrument(agent1, agent2, instrument, impact):
+
+		# Partial knowledge 1 with 1-1 check
+		agent1.belieftree_instrument[1 + agent2.unique_id][instrument][impact] = agent2.belieftree_instrument[0][instrument][impact] + (random.random()/5) - 0.1
+		agent1.belieftree_instrument[1 + agent2.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(agent1.belieftree_instrument[1 + agent2.unique_id][instrument][impact])
+		# Partial knowledge 2 with 1-1 check
+		agent2.belieftree_instrument[1 + agent1.unique_id][instrument][impact] = agent1.belieftree_instrument[0][instrument][impact] + (random.random()/5) - 0.1
+		agent2.belieftree_instrument[1 + agent1.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(agent2.belieftree_instrument[1 + agent1.unique_id][instrument][impact])
+
+		results = [agent2.belieftree_instrument[0][instrument][impact], agent1.belieftree_instrument[1 + agent2.unique_id][instrument][impact], \
+				agent2.belieftree_instrument[1 + agent1.unique_id][instrument][impact]]
+
+	def action_implementor(links, issue, parameter, agents, agents_resources, affiliation_weights, resources_weight_action, resources_potency, blanket, action_agent_number):
 
 		if blanket == True:
 			resources_potency = resources_potency / action_agent_number
@@ -220,15 +239,11 @@ class ActionFunctions:
 
 			# print('After: ', links.agent2.belieftree[0][issue][parameter])
 
-			# Checks and transfer of partial knowledge
 			# 1-1 check - new value
 			links.agent2.belieftree[0][issue][parameter] = ActionFunctions.one_minus_one_check(links.agent2.belieftree[0][issue][parameter])
-			# Partial knowledge 1 with 1-1 check
-			agents.belieftree[1 + links.agent2.unique_id][issue][parameter] = links.agent2.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
-			agents.belieftree[1 + links.agent2.unique_id][issue][parameter] = ActionFunctions.one_minus_one_check(agents.belieftree[1 + links.agent2.unique_id][issue][parameter])
-			# Partial knowledge 2 with 1-1 check
-			links.agent2.belieftree[1 + agents.unique_id][issue][parameter] = agents.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
-			links.agent2.belieftree[1 + agents.unique_id][issue][parameter] = ActionFunctions.one_minus_one_check(links.agent2.belieftree[1 + agents.unique_id][issue][parameter])
+
+			# Checks and transfer of partial knowledge
+			partial_knowledge = ActionFunctions.partial_knowledge_transfer(links.agent1, links.agent2, issue, parameter)
 
 			results = [links.agent2.belieftree[0][issue][parameter], agents.belieftree[1 + links.agent2.unique_id][issue][parameter], links.agent2.belieftree[1 + agents.unique_id][issue][parameter]]
 
@@ -258,29 +273,11 @@ class ActionFunctions:
 
 			# print('After: ', links.agent1.belieftree[0][issue][parameter])
 			
-			# Checks and transfer of partial knowledge
 			# 1-1 check - new value
-<<<<<<< Updated upstream
 			links.agent1.belieftree[0][issue][parameter] = ActionFunctions.one_minus_one_check(links.agent1.belieftree[0][issue][parameter])
-			# Partial knowledge 1 with 1-1 check
-			agents.belieftree[1 + links.agent1.unique_id][issue][parameter] = links.agent1.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
-			agents.belieftree[1 + links.agent1.unique_id][issue][parameter] = ActionFunctions.one_minus_one_check(agents.belieftree[1 + links.agent1.unique_id][issue][parameter])
-			# Partial knowledge 2 with 1-1 check
-			links.agent1.belieftree[1 + agents.unique_id][issue][parameter] = agents.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
-			links.agent1.belieftree[1 + agents.unique_id][issue][parameter] = ActionFunctions.one_minus_one_check(links.agent1.belieftree[1 + agents.unique_id][issue][parameter])
-=======
-			links.agent1.belieftree[0][issue][parameter] = self.one_minus_one_check(links.agent1.belieftree[0][issue][parameter])
 
-			partial_knowledge = self.partial_knowledge_transfer(links.agent2, links.agent1, issue, parameter)
-
-
-			# # Partial knowledge 1 with 1-1 check
-			# agents.belieftree[1 + links.agent1.unique_id][issue][parameter] = links.agent1.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
-			# agents.belieftree[1 + links.agent1.unique_id][issue][parameter] = self.one_minus_one_check(agents.belieftree[1 + links.agent1.unique_id][issue][parameter])
-			# # Partial knowledge 2 with 1-1 check
-			# links.agent1.belieftree[1 + agents.unique_id][issue][parameter] = agents.belieftree[0][issue][parameter] + (random.random()/5) - 0.1
-			# links.agent1.belieftree[1 + agents.unique_id][issue][parameter] = self.one_minus_one_check(links.agent1.belieftree[1 + agents.unique_id][issue][parameter])
->>>>>>> Stashed changes
+			# Checks and transfer of partial knowledge
+			partial_knowledge = ActionFunctions.partial_knowledge_transfer(links.agent2, links.agent1, issue, parameter)
 
 			results = [links.agent1.belieftree[0][issue][parameter], agents.belieftree[1 + links.agent1.unique_id][issue][parameter], links.agent1.belieftree[1 + agents.unique_id][issue][parameter]]
 		
@@ -319,15 +316,10 @@ class ActionFunctions:
 
 			# print('After: ', links.agent2.belieftree_policy[0][instrument][impact])
 
-			# Checks and transfer of partial knowledge
 			# 1-1 check - new value
 			links.agent2.belieftree_policy[0][instrument][impact] = ActionFunctions.one_minus_one_check(links.agent2.belieftree_policy[0][instrument][impact])
-			# Partial knowledge 1 with 1-1 check
-			agents.belieftree_policy[1 + links.agent2.unique_id][instrument][impact] = links.agent2.belieftree_policy[0][instrument][impact] + (random.random()/5) - 0.1
-			agents.belieftree_policy[1 + links.agent2.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(agents.belieftree_policy[1 + links.agent2.unique_id][instrument][impact])
-			# Partial knowledge 2 with 1-1 check
-			links.agent2.belieftree_policy[1 + agents.unique_id][instrument][impact] = agents.belieftree_policy[0][instrument][impact] + (random.random()/5) - 0.1
-			links.agent2.belieftree_policy[1 + agents.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(links.agent2.belieftree_policy[1 + agents.unique_id][instrument][impact])
+
+			partial_knowledge = ActionFunctions.partial_knowledge_transfer_policy(links.agent1, links.agent2, instrument, impact)
 
 			results = [links.agent2.belieftree_policy[0][instrument][impact], agents.belieftree_policy[1 + links.agent2.unique_id][instrument][impact], \
 				links.agent2.belieftree_policy[1 + agents.unique_id][instrument][impact]]
@@ -361,12 +353,8 @@ class ActionFunctions:
 			# Checks and transfer of partial knowledge
 			# 1-1 check - new value
 			links.agent1.belieftree_policy[0][instrument][impact] = ActionFunctions.one_minus_one_check(links.agent1.belieftree_policy[0][instrument][impact])
-			# Partial knowledge 1 with 1-1 check
-			agents.belieftree_policy[1 + links.agent1.unique_id][instrument][impact] = links.agent1.belieftree_policy[0][instrument][impact] + (random.random()/5) - 0.1
-			agents.belieftree_policy[1 + links.agent1.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(agents.belieftree_policy[1 + links.agent1.unique_id][instrument][impact])
-			# Partial knowledge 2 with 1-1 check
-			links.agent1.belieftree_policy[1 + agents.unique_id][instrument][impact] = agents.belieftree_policy[0][instrument][impact] + (random.random()/5) - 0.1
-			links.agent1.belieftree_policy[1 + agents.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(links.agent1.belieftree_policy[1 + agents.unique_id][instrument][impact])
+
+			partial_knowledge = ActionFunctions.partial_knowledge_transfer_policy(links.agent2, links.agent1, instrument, impact)
 
 			results = [links.agent1.belieftree_policy[0][instrument][impact], agents.belieftree_policy[1 + links.agent1.unique_id][instrument][impact], \
 				links.agent1.belieftree_policy[1 + agents.unique_id][instrument][impact]]
@@ -405,15 +393,10 @@ class ActionFunctions:
 
 			# print('After: ', links.agent2.belieftree_instrument[0][instrument][impact])
 
-			# Checks and transfer of partial knowledge
 			# 1-1 check - new value
 			links.agent2.belieftree_instrument[0][instrument][impact] = ActionFunctions.one_minus_one_check(links.agent2.belieftree_instrument[0][instrument][impact])
-			# Partial knowledge 1 with 1-1 check
-			agents.belieftree_instrument[1 + links.agent2.unique_id][instrument][impact] = links.agent2.belieftree_instrument[0][instrument][impact] + (random.random()/5) - 0.1
-			agents.belieftree_instrument[1 + links.agent2.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(agents.belieftree_instrument[1 + links.agent2.unique_id][instrument][impact])
-			# Partial knowledge 2 with 1-1 check
-			links.agent2.belieftree_instrument[1 + agents.unique_id][instrument][impact] = agents.belieftree_instrument[0][instrument][impact] + (random.random()/5) - 0.1
-			links.agent2.belieftree_instrument[1 + agents.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(links.agent2.belieftree_instrument[1 + agents.unique_id][instrument][impact])
+
+			partial_knowledge = ActionFunctions.partial_knowledge_transfer_instrument(links.agent1, links.agent2, instrument, impact)
 
 			results = [links.agent2.belieftree_instrument[0][instrument][impact], agents.belieftree_instrument[1 + links.agent2.unique_id][instrument][impact], \
 				links.agent2.belieftree_instrument[1 + agents.unique_id][instrument][impact]]
@@ -444,15 +427,10 @@ class ActionFunctions:
 
 			# print('After: ', links.agent1.belieftree_instrument[0][instrument][impact])
 			
-			# Checks and transfer of partial knowledge
 			# 1-1 check - new value
 			links.agent1.belieftree_instrument[0][instrument][impact] = ActionFunctions.one_minus_one_check(links.agent1.belieftree_instrument[0][instrument][impact])
-			# Partial knowledge 1 with 1-1 check
-			agents.belieftree_instrument[1 + links.agent1.unique_id][instrument][impact] = links.agent1.belieftree_instrument[0][instrument][impact] + (random.random()/5) - 0.1
-			agents.belieftree_instrument[1 + links.agent1.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(agents.belieftree_instrument[1 + links.agent1.unique_id][instrument][impact])
-			# Partial knowledge 2 with 1-1 check
-			links.agent1.belieftree_instrument[1 + agents.unique_id][instrument][impact] = agents.belieftree_instrument[0][instrument][impact] + (random.random()/5) - 0.1
-			links.agent1.belieftree_instrument[1 + agents.unique_id][instrument][impact] = ActionFunctions.one_minus_one_check(links.agent1.belieftree_instrument[1 + agents.unique_id][instrument][impact])
+
+			partial_knowledge = ActionFunctions.partial_knowledge_transfer_instrument(links.agent2, links.agent1, instrument, impact)
 
 			results = [links.agent1.belieftree_instrument[0][instrument][impact], agents.belieftree_instrument[1 + links.agent1.unique_id][instrument][impact], \
 				links.agent1.belieftree_instrument[1 + agents.unique_id][instrument][impact]]
