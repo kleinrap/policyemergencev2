@@ -377,6 +377,27 @@ class PolicyEmergence(Model):
 							copy.copy(agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + causalrelations][0] + random.random() - 0.5)
 						agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0] = \
 							ActionFunctions.one_minus_one_check(agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0])
+			# Fill in the partial knowledge for the policy tree (but only for the first tick)		
+			print('*********')
+			print(self.instruments)
+			print(len(self.policies))
+			print(self.policies)		
+			if AS_theory == 2 and PF_theory == 2:
+				for agents in self.agent_action_list:
+					for who in range(len(self.agent_action_list)):
+						# For the belief tree policy
+						# Go through each of the policies defined by the modeller
+						for policy_number in range(len(self.policies)):
+							# Go through each of the PC issues
+							for issue_considered in range(self.len_PC):
+								agents.belieftree_policy[1+who][policy_number][issue_considered] = copy.copy(agents.belieftree_policy[0][policy_number][issue_considered] + random.random() - 0.5)
+						# For the belief tree instrument
+						# Go through each of the policies defined by the modeller
+						for policy_number in range(len(self.instruments)):
+							# Go through each of the PC issues
+							for issue_considered in range(self.len_S):
+								agents.belieftree_instrument[1+who][policy_number][issue_considered] = copy.copy(agents.belieftree_instrument[0][policy_number][issue_considered] + random.random() - 0.5)
+
 		
 		print('... cleared.')
 		print('   ')
