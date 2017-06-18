@@ -98,7 +98,6 @@ class PolicyEmergence(Model):
 				self.electorate_list.append(agents)
 
 		self.events = events
-		print(self.events)
 
 		self.action_agent_number = len(self.agent_action_list)
 
@@ -113,6 +112,9 @@ class PolicyEmergence(Model):
 
 
 		############################
+		#******
+		# print("Specific to the case study")
+		#******
 		# Creation of the tree cells for the model and the forest fire model
 		k= 0
 		for (contents, x, y) in self.grid.coord_iter():
@@ -146,15 +148,6 @@ class PolicyEmergence(Model):
 					# print(no_interest_states[agent.agent_id][i])
 					if self.no_interest_states[agents.agent_id][i] != 1:
 						agents.belieftree[0][i][0] = 'No'
-
-		# agents_externalparties = self.master_list[Externalparties]
-		# for agents in agents_externalparties:
-		# 	truthagent = self.master_list[Truth]
-		# 	# print('Before: '  + str(agent.belieftree[0]))
-		# 	for i in range(len(truthagent[0].belieftree_truth)):
-		# 		# print(no_interest_states[agent.agent_id][i])
-		# 		if no_interest_states[agents.agent_id][i] != 1:
-		# 			agents.belieftree[0][i][0] = 'No'
 
 		# Assigning all agent partial knowledge knowledge that these EP do not consider these states
 		for agents in self.agent_action_list:
@@ -255,32 +248,46 @@ class PolicyEmergence(Model):
 		self.tick_number +=1
 
 		# Potential external events [Backbone/Backbone+/3S/ACF (can varry)]
+
+		#******
+		# print("Specific to the case study")
+		#******
+
 		# Event 1 - reversal of all Pr-PC relations for all agents at tick 200
 		if self.events[1] == True and self.tick_number == 200:
 			for agents in self.agent_action_list:
 				for cw in range(self.len_Pr*self.len_PC):
-					agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
+					agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = \
+						- agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
 		# Event 2 - reversal of all Pr-PC relations for policy makers at tick 200
 		if self.events[2] == True and self.tick_number == 200:
 			for agents in self.agent_action_list:
 				if type(agents) == Policymakers:
 					for cw in range(self.causalrelation_number):
-						agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
+						agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = \
+							- agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
 		# Event 3 - reversal of all Pr-PC relations for externalp parties at tick 200
 		if self.events[3] == True and self.tick_number == 200:
 			for agents in self.agent_action_list:
 				if type(agents) == Externalparties:
 					for cw in range(self.causalrelation_number):
-						agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
+						agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = \
+							- agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
 		# Event 3 - reversal of all Pr-PC relations for policy entrepreneurs at tick 200
 		if self.events[4] == True and self.tick_number == 200:
 			for agents in self.agent_action_list:
 				if type(agents) == Policyentres:
 					for cw in range(self.causalrelation_number):
-						agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = - agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
+						agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = \
+							- agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
 
 
 		print('Running the technical model ...')
+
+		#******
+		# print("Specific to the case study")
+		#******
+
 		# First run the technical model - calculate the states [Backbone/Backbone+/3S/ACF]
 		master_cell = self.technical_model.cells_repository
 		self.total_cells = self.height * self.width
