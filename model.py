@@ -519,12 +519,12 @@ class PolicyEmergence(Model):
 			random.shuffle(shuffled_team_list_as)
 			for teams in shuffled_team_list_as:
 				teams.team_belief_actions_threeS_as(teams, self.causalrelation_number, self.deep_core, self.policy_core, self.secondary, self.agent_action_list, self.threeS_link_list_as, self.threeS_link_list_as_total, \
-					self.threeS_link_id_as, self.link_list, self.affiliation_weights, self.conflict_level_coef, self.resources_weight_action, self.resources_potency)
+					self.threeS_link_id_as, self.team_belief_actions_threeS_as, self.affiliation_weights, self.conflict_level_coef, self.resources_weight_action, self.resources_potency)
 		
 			print('... cleared.')
 			print('   ')
 
-		# IIa2. The team actions [ACF]
+		# IIa2. The coalition actions [ACF]
 		if AS_theory == 3:
 
 			print('Coalition actions (AS) for ACF ...')
