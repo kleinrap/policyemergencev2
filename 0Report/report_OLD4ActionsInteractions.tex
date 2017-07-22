@@ -1,0 +1,212 @@
+Now that the different concepts have been introduced, it is possible to look at how these concepts are used together within the model. The first is to look at the different actions and inter-actions that the actors can perform. These relate mostly to the beliefs in their belief trees and the policy network. Note that these interactions are loosely or directly obtained from the literature. Some actions and inter-actions are also conceptualised out of necessity for the smooth simulation of the model.
+
+The different possibilities are detailed in this chapter with the issue selection in \autoref{sec:issueSelection} and the agenda/instrument selection in \autoref{sec:agendaInstrumentSelection}. This is followed by the belief actions of the agents in \autoref{sec:actorBeliefActions} which describes all influencing actions that the different active actors can perform. The networking actions that are available to each active actor are described in \autoref{sec:actorNetworkingActions}. Then the actions related to the different policy making theories are detailed with the team actions in \autoref{sec:teamActions}, the coalition actions in \autoref{sec:coalitionActions}, the policy broker actions in \autoref{sec:policyBrokers} and the diffusion actions in \autoref{sec:diffusionActions}. The chapter is conclude with an explanation of the impact of external events on the model in \autoref{sec:externalEvents}.
+
+%
+\section{The Problem and Instrument Selection}
+\label{sec:issueSelection}
+
+Each active actor must choose a problem in the agenda setting process and an instrument in the policy formulation process. The chosen problem and instrument are the issues that the actors will advocate for throughout the policy emergence process. The actors can only choose one issue at a time because of their limited attention span. This point is outlined in multiple policy making theories \citep{zahariadis2007multiple, baumgartner2014punctuated, jenkins2014advocacy}.
+
+During the agenda setting, the problem chosen by the actors is chosen within their belief trees. The problem is selected at the policy core level. The problem with the highest preference is the one selected. For the policy formulation, an instrument is chosen within the pool of instrument specified by the modeller. The grade of each of the instrument is calculated based on the impact they have on the gap between state and aims for each of the secondary issue. The instrument that has the highest grade is the one chosen by the actor.
+
+Because of the streams approach, the three streams theory approach of the problem and instrument selection is slightly different. For both the agenda setting and the policy formulation processes, the actors must first choose either a problem from the belief tree or an instrument from the instrument pool.  The grades used to calculate the preference are obtained in the same way as before. The problem grade is based on the gap for that specific issue and the causal relation between the issue considered and the issues at a higher level in the belief tree. The policy grade is calculated as the sum of the impacts on the gaps of the associated issues in the belief tree. Whichever has the highest grade is first selected by the actor. In this way, each actor can either be a problem or a policy driven actor.
+
+After their initial selection, the actors must still choose associated policy or problems to make sure they each both select both a problem and a policy. Actors which have first chosen a problem will then select a policy that is associated to this problem based on preferences. The same occurs for actors that first chose a policy.
+
+%
+\section{The Agenda and Instrument Selection}
+\label{sec:agendaInstrumentSelection}
+
+For the process of policy emergence to occur, the policy makers must exercise their decision making powers. This is done both at the end of the agenda setting and the policy formulation processes.
+
+At the end of the agenda setting process, the issue that is the most common one amongst the policy makers can be selected to be on the agenda. This agenda will then go on to define what issues can be considered within the policy formulation process which is at a lower level of aggregation than the agenda setting process. Only issues in the belief tree related to the problem on the agenda can be selected by all actors. This set of issues might differ from actor to actor depending on their respective beliefs.
+
+A similar process happens at the end of the policy formulation process where an instrument can be selected to be implemented in the world. This however is not automatic, it only happens once a certain number of policy makers agrees on one instrument. This will vary from system to system but can be specified as a majority for example. If there are not enough policy makers agreeing on one instrument, then no instrument is implemented.
+
+Because of the fact that the actors choose both a problem and a policy within the three streams theory, the process is enhanced for this theory. The agenda for the three streams theory consists of a policy and a problem. This is obtained using the most chosen problem amongst the policy makers and the most chosen policy. The problem on the agenda leads to a restriction in the possible problems that can be selected for the policy formulation process and similarly for the policies.
+
+Despite the selection of a policy and a problem, the policy formulation process within the three streams theory is approach the same way as for all other theories. If an instrument is selected by enough policy makers depending on the threshold rule used, the instrument will be implemented.
+
+The approach chosen for the selection of the agenda and the selection of an instrument can be associated with the three streams concept of 'window of opportunity' from \cite{kingdon2003agendas}.  This window open by the creation of the agenda. The window is however not always succesful as is sometimes mentioned in the theory. The window can only be succesfull if an instrument is adopted at the end of the policy formulation. In any case, the window will close after the policy formulation regardless of the outcome of the process. The dynamics present in this conceptualisation are slightly different than what is presented in the theory. This is because despite closing the window, the same window might re-open in the following time step. This can occur until the time where the window is finally succesful and an instrument is finally adopted.
+
+%
+\section{The Policy Maker and Entrepreneur Belief Actions}
+\label{sec:actorBeliefActions}
+
+The main actions that the policy makers and policy entrepreneurs can perform are belief actions. These are actions where actors attempt to influence the beliefs of other actors based on the issue they are advocating for. These actions are performed using their resources. The amount of resources that is available to each actor is limited as was mentioned earlier on.
+
+To define which action is performed, each actor will look at all possible actions that it can perform as illustrated in \autoref{fig:Conceptualisation_V3-04}. Each of these actions will be attributed a grade which is calculated based on the impact of the acton on the beliefs of their fellow actors. After estimation of all possible actions, the actors will go through with the action that is at the top of their list grade wise. The grade that the actor assigns to the impact is based on his understanding of the other agent's beliefs. Therefore, it is possible that, due to discrepancies between the expected impact and the real impact, the action have a different impact that the actor had planned. After performing an action, the actor performing the action and the actor influenced will both gain a certain amount of knowledge one each other's beliefs.
+
+\begin{figure}
+\centering
+\includegraphics[scale = 0.33, angle = 0]{figures/Conceptualisation_V3-04}
+\caption{Illustration of one actor considering all possible actions on all other actors in the system. For each arrow, three actions are considered: framing, influence on aim and influence on states. Note that actions can only be performed on the actors in the network which the actor is aware of.}
+\label{fig:Conceptualisation_V3-04}
+\end{figure}
+
+There are three main actions that all active actors can perform: framing, influence on aim and influence on state. The action of framing can be performed by actors that wish to influence the way other actors understand the world. This is done by influencing the causal relations in the belief tree of other actors. The action of framing can be done on all actors at once (blanket framing, representing political ads for example, or any other means of addressing the entire political sphere) or on specifically chosen actors representing, for example, a meeting with an elected official, or a concreted effort to affect them specifically (for example encouraging people to call their representative's office). The efficiency of this framing action is dependent on the awareness level between the two actors, the amount of resources spent and the different in belief between the two agents.
+
+Similarly to framing, the entrepreneurs can also influence the beliefs on the issues of other actors. This is done in a similar way. However, now it is the perception of the world that can be influenced (the state of an issue) or the aim that the actor has for a specific issue. This is again dependent on the awareness that the two actors have for each other, the resources spent but also on the conflict level that these two actors perceive they have on a specific issue and their different in belief. The conflict level is calculated as the perceived difference in the aim of two actors. If this difference is high, the conflict level will be qualified as high. If it is negligible, the conflict level will be qualified as low. The influence of an actor over another will be different depending on the conflict level. As explained in \cite{jenkins2014advocacy}, high and average conflict levels will encourage actors to engage while low conflict levels will not.
+
+%
+\section{The Electorate Related Actions}
+\label{sec:electorateRelatedActions}
+
+There are different actions that are related to the electorate. These are divided in two main categories: the actions performed on the electorate and the actions performed by the electorate. This is illustrated in \autoref{fig:Conceptualisation_V3-07}.
+
+The electorate can be influenced by only one type of actors: the external parties. Through influence, the external parties can influence the aims of the different electorate. This is analogous to a partisan media influencing its audience or a think-tank educating the public. The influence is a blanket influence on all electorates at the same time. The influence is however different on each parts of the electorate as it is dependent on the affiliation relations between the external party performing the action and the electorate being acted on. The impact of the action is also dependent on the resources used by the external party. This action by the external parties is the only considered to influence the electorate within this conceptualisation.  Additional actions that would see policy makers influence the electorate are also possible but are the subject of further work.
+
+The electorate can also influence other actors, specifically, the policy makers. The electorate does not perform that action actively, instead, the policy makers' aim are slowly shifted towards the electorate with which they share an affiliation. This happens for all issues in the belief tree of each poliy makers at the same time. This shift is a very slow influence from the electorate which can be associated with the need for policy makers to maintain their beliefs in line with the beliefs of their constituents so that they can remain in office as long as possible.
+
+\begin{figure}
+\centering
+\includegraphics[scale = 0.33, angle = 0]{figures/Conceptualisation_V3-07}
+\caption{Illustration of the different electorate related actions.}
+\label{fig:Conceptualisation_V3-07}
+\end{figure}
+
+%
+\section{The External Parties Actions}
+\label{sec:EPActions}
+
+The external parties are a special actor when it comes to their actions. They share similar actions to the other actors but with some differences and some additional actions. Similarly to the other active actors, the external parties perform belief actions. Their options are however limited to framing and more specifically blanket framing. The external parties perform this framing action on all actors that are in their network at once. This is justified by example considering the actor they represent. For example, the media will tend to try to influence or educate their entire audience on how the world actually function. This can be approached as blanket framing. The same can be said from report written by think tanks or other organisations. Note that different combination of these actions could be tested in further work. For example, it might be of interest to look at blanket influence on aim and state and see what the difference is and whether such an approach is justified. Following the present approach, external parties cannot perform aim and state influence actions.
+
+The external parties also perform actions on the electorate. This was presented in the previous section. The external parties have to split their resources between these two types of actions: blanket framing and electorate influence. In the current approach, this is considered to be split with half of the resources going to each type of action. Further study could look into the impact of a different attribution of the resources for the two types of actions.
+
+The external parties also perform passive actions. They retrieve the states of the world for themselves and then redistribute them to the actors in their network. This ditribution is affected by the affiliation between the external parties and the actors concerned.  Furthermore, and this was mentioned in the previous chapter, the external parties do not necessarily gather all the states present in the technical model. They can be selective depending on their area of interest. As is shown in \autoref{fig:Conceptualisation_V3-08}, actors that are not connected to any external parties will not have any states. Such occurence should be considered impossible within the policy network.
+
+\begin{figure}
+\centering
+\includegraphics[scale = 0.33, angle = 0]{figures/Conceptualisation_V3-08}
+\caption{Illustration of the update of the states within the policy network with one external party. Note that the external party only provides state information to policy makers and policy entrepreneurs in its network.}
+\label{fig:Conceptualisation_V3-08}
+\end{figure}
+
+%
+\section{The Active Actor Networking actions}
+\label{sec:actorNetworkingActions}
+
+The active actors can perform networking actions. A small proportion of the resources of the actors assigned each step is dedicated to such actions. These actions are mostly related to the maintenance and growth of their policy network. This is because it is in the interest of the actors to have a developed network. The strength of the network links is represented as the amount of awareness actors have of other actors in the system \citep{heikkila2013building}. Actors can only communicate with other actors if their connecting link has an awareness value higher than zero. The actors can spend resources to maintain their links with other actors. They can also spend resources to grow their network with other actors which they are aware of in the network but do not have an active link with. There are two strategies which the actors can use for their networking actions. They can either aim to get the largest network possible or they can focus onto a strong but smaller network. For each actor, the strategy is specified by the modeller and remains as such throughout. It could be of interest to study under what conditions these strategy could be changed by the actors themselves but this is left for further research.
+
+The first strategy is the largest network strategy. Following this strategy, the actor will focus on links with a low level of awareness and reinforce them minimally. Then the actor will look into inactive links to activate them. Then, if the actors has resources left, the actor will strengthen the active links (s)he already has.
+
+The second strategy is the focused network strategy. Following this strategy, the actor will focus on reinforcing links with an average or lower level of awareness and reinforce them strongly. Only if all active links are strong will the actor look into extending the network with the activation of inactive links. The priority on weak links is set on the links with actors with similar beliefs. Actors will lower beliefs are lower on the priority list of the actors.
+
+
+%
+\section{The Team Actions}
+\label{sec:teamActions}
+
+When considering the three streams theory, the policy entrepreneurship model is considered for this conceptualisation. Within the model, it is assumed that actors can create teams to further their interests. Team are constituted of at least three actors as was mentioned in the previous chapter. There are two type of team actions that can be distinguished: the actions that are required to create, join or disband teams, and the belief actions performed when teams are present.
+
+%-
+\subsection{Team management actions}
+
+Before the team can perform any inter-actions with other agents, it must be created. There are several steps considered for each actor to either create or join a team. Furthermore, checks are being placed in such a way that if an actor does not feel that (s)he belongs to the team, he may leave. Another check is placed for the team disbanding if enough actors left the team. The different steps are presented below.
+
+The first important check is to see if an actor can join a team. This can only be checked if the actor does not belong to a team yet. This is done before the creation of a team because if teams are already present in the system, the actor will first need to look if (s)he fits in any of them. The actor will check whether his/her beliefs match the average beliefs of the team for the problem or policy that the team is advocating for. This is checked along two criteria. First the actor must have a gap between aim and state large enough to fill like there is a need to do something about that issue. Second, the actor will check that his belief for the team issue is within a certain threshold of the team leader. For a problem this means that the state parameter for that issue is similar. For a policy this means that the impact parameter of the policy is similar. This assumption is made based on partial knowledge. if both criteria are met, then the actor will join the team inspected.
+
+Note that it is assumed that the outsider actors can guess what issue the team is advocating for. This is a simplified way to look at the construction of a team but without this knowledge, then the actor would not be able to join a team. Furthermore, it is also assumed that the leader of a team is identifiable by outside agents.
+
+If the actor has no team and cannot join one that already exists, the (s)he can start his/her own team. The checks here are similar to the joining of a team. The actor will look at other actors within his/her network. Looking around will cost a small amount of resources to the actor. When looking the actor will perform the gap and belief checks on the other actors based on his/her partial knowledge of their belief tree. These checks are performed around the issue that the actor is advocating for may it be a policy or a problem. Once the actor has found a sufficient amount of actors, then the team can formally be started. Just before the team is created, the checks are then performed with actual beliefs. If it happens that the checks performed by the original actor were incorrect and some of the actors considered do not meet the requirements, they will be excluded. This is not all lost resources as the original actor and the rejected actor will exchange their beliefs so as not to repeat the mistake. This also happens because both actors interacted and therefore did gain knowledge on each other's belief for the issue at hand. If there are enough actors remaining (more than three), then the team is created, otherwise no team is created and the process goes on.
+
+There are two strategies that the actors can choose when creating a team. These are chosen by the modeller. The first consists of having the smallest size team possible at inception. The actor will stop looking for other actors once (s)he has found three actors. This limits the size of the team at his inception only. The second strategy consists of looking at all actors within the network of the original actor and accepting all possible actor. This leads to the largest team possible at the beginning. The two strategies could affect the behaviours within the model.
+
+If a team is created, the team network will be created instantly. This is sometimes referred as a shadow policy network within this report. The belonging level of each of the actors in the team will be calculated. This belonging level is calculated as the difference in percentage between the average state belief of the team and each actor's state belief for the issue if it is a problem, and the average impact and actor impact if it is a policy. This belonging level will set the amount of resources that each actor will provide the team with its belief actions.
+
+Every few time periods, checks are performed to see whether the actors within the team have had their belief change and if so, do they still belong in the team. The first one is the belonging level which is recalculated constantly. If this belonging level falls below a certain modeller defined threshold, then the actor will leave the team. The second check is performed at a regular interval specified by the modeller. This check consists of performing the same checks that are performed at the creation of the team (check on gap and beliefs). Each actor that does not pass these checks will have to leave the team. If the team is left with less than three actors, it will be disbanded.
+
+%-
+\subsection{Team belief actions}
+
+When being part of a team, the actors benefit from some aspects of the team. The first one is the vastly increased policy network. The team network is constituted of all links that its members have with outside actors. When two members have a link with an outside actor, then the link with the highest awareness is retained for the team network. The team also has pooled resources. This means that the team resources are a combination of the resources provided by its members. The resources can therefore be one order of magnitude higher than individual agents would if there are enough members in the team. This makes the actions of the team that much more impactful.
+
+There are two types of belief actions considered. Before these are presented, it is important to understand the approach taken here. The team are considered fragile groups that can disband at any time. It is therefore assumed that they are highly decentralised. This decentralisation leads to tensions when considering beliefs actions to be performed, may they be framing, influence on state or influence on aim actions. Within the actions, this results in having all actors within the team check all possible actions. The action selected by the team as a whole is the action that is considered to have the most impact amongst all actions considered.
+
+The first type of action relates to the intra-team actions. These actions are meant to draw the members of one team closer to one another in their beliefs for the issue being advocated for by the team. For this, the team performs actions on itself as illustrated on the right side of \autoref{fig:Conceptualisation_V3-05}. All actors within the team assess actions on the other actors within the team. These actions are influence on the states, influence on the aims and blanket framing. The actions considered use the resources of the team but do not take into account awareness levels or even conflict level. This is because all of the actors are within one team and it is therefore assumed that they are willing to interact with one another.
+
+\begin{figure}
+\centering
+\includegraphics[scale = 0.33, angle = 0]{figures/Conceptualisation_V3-05}
+\caption{Illustration of the actions considered for the inter-team and intra-team actions. Note that for the inter-team actions, only actions with actors related to the team network are performed. The leader of the team is marked with a black filled icon in its center.}
+\label{fig:Conceptualisation_V3-05}
+\end{figure}
+
+The second type of action is the inter-team action as illustrated on the left of \autoref{fig:Conceptualisation_V3-05}. This represent the actions of the team on outsider actors. These actions are framing, influence on aim and influence on state. These actions use the resources of the team and exploit the overall policy network of the team. The actions' impacts are calculated based on the partial knowledge of each actor on the outsider actor. There is no sharing of partial knowledge within the context of the team. There is however a partial knowledge share when an action is implemented. This knowledge sharing is between the actor whose action was chosen and the actor who was impacted by that action.
+
+
+%
+\section{The Coalition Actions}
+\label{sec:coalitionActions}
+
+The coalitions are similar to the teams in several aspects. They are group that perform actions on the actors present in the system. Their resources are defined on the belonging level of their members. 
+
+Coalitions are however very different than the teams in the way they are created. As mentioned in the previous chapter, coalitions are not created by actors. They are groups to which actors are assigned based on their normative beliefs. The approach taken here is to create coalitions at the beginning of each policy cycle and to disband these coalitions at the end of the cycle. The requirements for the coalitions are the same for every cycle which leads to stable members within the coalitions recreated evety time period. Contrarily to teams, there is no need to consider an actor leaving the coalition or the coalition disbanding. This is done naturally at the end of each cycle. If an actor does not belong to a certain coalition anymore, (s)he will be assigned to a different one during the inception of the new coalitions in the next cycle. Note that this approach is unconventional when looking at the literature which assumes that coalitions are long stable entities that vary very little. Although in this approach coalition are inherently unstable, they do vary very little because of the stability of the requirement each time they are re-created.
+
+To create a coalition, the actor with the largest amount of awareness in his/her network is selected. That actor will create the first coalition and be the leader of that said coalition. The actor will look through his/her network and integrate the actors that have similar normative beliefs. This means similar principle beliefs as chosen by the modeller for the agenda setting and similar policy core beliefs as chosen by the agenda for the policy formulation. This was explained in the previous chapter. Once the actor has found all possible actor within a certain threshold, the next most connected actor that is still coalition-less is selected. The same process occurs over and over until the number of actors left out of coalition is below an acceptable thresholds according to the modeller. This meand that there can sometimes be a few agents left coalition-less.
+
+The issue that is advocated by a coalition is the one that has been selected by the coalition leader. Furthermore, the belonging level is calculated as the difference between the leader belief and the actor's beliefs. The average is not considered anymore. This means that any coalition leader will have a 100\% belonging level. Note that because the actors are assigned by force, their belonging level within certain coalitions can be low. This leads to these actors only provided a limited amount of resources to the coalition. Coalition which are filled with actors with similar beliefs will therefore be stronger coalitions. This is the main reason why coalitions need intra-coalition belief actions to increase their coherence.
+
+Similarly to the teams, the coalitions can perform belief actions on the different actors in the system. This is illustrated in \autoref{fig:Conceptualisation_V3-06}. The actions are the same as for the teams and are therefore not repeated. There is one major difference however. Coalition are considered to be centralised entities from which actors can not remove themselves. The actions are therfore not graded by all actors in the team but instead, they are only graded by the leader of the coalition. It is therefore the leader that will choose which action are performed based on his/her partial knowledge, the resources of the coalition and the network of the coalition.
+
+\begin{figure}
+\centering
+\includegraphics[scale = 0.33, angle = 0]{figures/Conceptualisation_V3-06}
+\caption{Illustration of the actions considered for the inter-coalition and intra-coalition actions. Note that for the inter-coalition actions, only actions with actors related to the coalition network are performed. The leader of each coalition is marked with a black filled icon in its center.}
+\label{fig:Conceptualisation_V3-06}
+\end{figure}
+
+%%
+\section{The Policy Brokers}
+\label{sec:policyBrokers}
+
+As mentioned earlier, the policy broker is an active agent that has been upgraded to become a broker. This means that this agent has had its number of actions increased. The actor is provided with additional resources to perform his/her broker task of connecting actors together as illustrated in \autoref{fig:Conceptualisation_V3-09}. The amount of additional resources will define the number of time the policy broker can connect two actors. The amount of resources assigned to the broker is dependent on the total awareness level of the broker compared with the entire system awareness amount.
+
+\begin{figure}
+\centering
+\includegraphics[scale = 0.33, angle = 0]{figures/Conceptualisation_V3-09}
+\caption{Illustration of the actions of a policy broker connecting two actors within his/her network. In this case, the connection is between two actors that are not aware of each other.}
+\label{fig:Conceptualisation_V3-09}
+\end{figure}
+
+It is assumed in this approach that there can only be one policy broker. This policy broker is chosen based on his/her total awareness level across all his/her network. This broker will therefore coincide with one of the coalition leader when the ACF is concerned. A policy broker is chosen every cycle.
+
+There are three types of actions which the broker can perform. (S)he can either connect actors that are unaware of each other, connect actors which have a zero awareness value or actors with low awareness value. Which action the broker chooses will depend on the type of broker considered. Note that after the connection of two actors that were unaware of each other, the actors will become aware of each other but with an awareness value of zero. They will be able to increase that value through networking actions. For the other two cases, the connection of the actors will lead to an increase in the awareness value for the link between the two actors. This increase, similarly to network upkeep actions, will depend on the resources spent by the policy broker. It will also depend on the awareness value of the policy broker with the two actors. The raise of awareness cannot exceed the awareness level that the actors has with both actors.
+
+If the policy broker is a neutral facilitator, the broker will start by connecting all actors that are unware of each other's presence in the policy network. The broker will then move onto actors with the lowest awareness value of each other and move upwards.
+
+If the policy broker is playing an advocacy role, then the broker will connect actors that have similar beliefs with the broker. The actors with the lowest awareness value in their connection will be chosen first in the list of actors that meet the belief criteria. If there are no actors within that list, then the actor will have to automatically lower that threshold until two actors are considered. Note that the broker cannot increase the awareness level in a link where the two actors have higher awareness level than the broker has with both actors.
+
+%
+\section{The Diffusion Actions}
+\label{sec:diffusionActions}
+
+There are different actions that are performed by the actors within the context of the diffusion theory and through the super-policy network. The resources used for all actions in the super-policy network are different than the resources used within one system through the policy network. They are assigned separately when the inter-system actions are considered. The resources assigned depend on the status of the system and are relative between the different actors across the super-policy network. There are a number of actions that can be performed by the actors. These actions are chosen entirely depending on the link type linking the two actors. Because this link is directed, the actions are also specific depending on which actor is performing the action. All actions are graded based on the partial knowledge of the actors, the perceived conflict level and the amount of resources available. The action that is chosen amongst all actions chosen is the one that is expected to have the most impact (as shown in \autoref{fig:Conceptualisation_V3-10}). Similarly to the previously outlined actions, after an inter-action between two actors, partial knowledge of the two actors is updated based on the beliefs of these actors.
+
+\begin{figure}
+\centering
+\includegraphics[scale = 0.33, angle = 0]{figures/Conceptualisation_V3-10}
+\caption{Illustration of one actor considering all possible actions on all other actors in a different system. The actions considered are dependent on the type of super-policy link linking the two actors.}
+\label{fig:Conceptualisation_V3-10}
+\end{figure}
+
+If the link between two actors is a friendly like, then the actions considered will be similar to the system belief actions. The actions considered are framing, aim influence and state influence. The aim here is policy learning. The results of such an action are similar to what is seen in a single system.
+
+If the link is a dominant or coercive link, then the actor will impose his/her aim parameter on the other agent. This means that the agent will literally change the value of the aim of the actor (s)he is linked to. The change will be much stronger than for a simple friendly link action. It is still dependent on the same parameters as before but to a less extent.
+
+If the link is a competitive link, then the actor will seek to change his/her own beliefs according to what (s)he sees in another actor in a different system. The actor in system 1 will inspect the states of the actor in system 2. The action will consists ofthe first actor adjusting his/her aims to match the states of the second actor. The amount of adjustment will be dependent on the aforementioned parameters. This action is meant to display a need for the first actor to reach the same state as the one present in the second system. It is a competitive relationship.
+
+%
+\section{Validation of the Approach}
+\label{sec:validationApproach}
+ 
+One of the topic addressed during the validation is the approach taken with the model. This is related to two main assumptions: it is possible to combine the different policy making theories and the policy cycle can be approximated as a 3-step process within the context of the present work.
+ 
+As expected, there was pushback from each of the researchers on these two assumptions. Prof. Cairney argued strongly against the use of a policy cycle at all and noted that even Sabatier mentioned that the use of a policy cycle to explain policy emergence is hopeless. However, there was an understanding that for modelling purposes and specifically for an agent based model, reverting to a more linear approach of the policy cycle was required. Prof. Weible also argued about the use of this form of the policy cycle, no objections were raised on using only two steps: agenda setting and policy formulation.
+ 
+Prof. Cairney also pushed back on the combination of the policy making theories. At the time of the interview, it was proposed that the model could combine the three streams theory approach for the agenda setting process and the advocacy coalition framework for the policy formulation process or vice versa. The reasoning behind such an approach was mainly that because some of the theories' concepts had been merged (consider the use of a belief tree within the three streams theory), this was technically feasible. Prof. Cairney argued that using both of these theories together within one model was ill advised as the two theories were contradictory as presented in the literature. Prof. Weible also noted that the combination of these two theories would disregard the difference in time scales that is inherently present in the two theories. In the literature, the ACF is considered to be a long term process with policy learning occurring over decades and coalitions that can last just as long. The three streams theory, on the other hand, works on a shorter time scale.
+ 
+As a result from these discussions, some changes were performed on the approach taken for the model. The 3-step policy cycle approach was kept intact. Although there can be arguments made against the policy cycle approach, and with the fact that the policy emergence process is messy and non-linear, these descriptions are not constructive enough to provide details on alternative methods to approach the policy emergence process. This is especially striking as when using an agent based approach, there is a need for a structured approach to the system that needs to be modelled. Finally, it is important to note that, as Dr Ingold mentioned, \cite{herweg2015straightening} suggests that using the agenda setting and policy formulation fit well with a more formalised version of the three streams theory.
+ 
+Changes were however made on the combination of the three streams theory with the advocacy coalition within one simulation. It was decided that it would make no sense to simulate both theories at the same time in different parts of the policy cycle. Although it is still technically possible to combine both theories, all experiments performed in the model will not combine both theories but will be constituted only of one theory at a time. This does not apply to the diffusion and feedback theories which can still be combined with both the three streams theory or the advocacy coalition framework.

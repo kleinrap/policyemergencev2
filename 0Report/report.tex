@@ -1,0 +1,173 @@
+\documentclass[whitelogo]{tudelft-report}
+\usepackage{natbib}
+%\bibliographystyle{abbrvnat}
+\setcitestyle{authoryear,round,citesep={;},aysep={,},yysep={;}}
+\usepackage{changes}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{longtable}
+\usepackage{amssymb}
+\usepackage{pifont}
+\usepackage[titletoc]{appendix}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\lstset{language=python, breaklines=true}
+\setlist{nolistsep}
+
+\renewcommand*{\sectionautorefname}{Section} % Rename the section hyperlink
+\renewcommand*{\chapterautorefname}{Chapter} % Rename the section hyperlink
+
+\begin{document}
+
+
+%% Use Roman numerals for the page numbers of the title pages and table of
+%% contents.
+\frontmatter
+
+% Uncomment following 19 lines for a cover with a picture on the lower half only
+\title[tudelft-white]{Policy \\Emergence}
+\subtitle[tudelft-cyan]{An agent-based approach - C\&F Update}
+\author[tudelft-white]{R.\ Klein}
+\affiliation{Technische Universiteit Delft}
+\coverimage{newcover-01.png}
+%\titleoffsetx{10cm}
+%\titleoffsety{10cm}
+\titleoffsetx{2cm}
+\titleoffsety{23cm}
+\afiloffsetx{1cm}
+\afiloffsety{18cm}
+\covertext[tudelft-white]{
+    \textbf{Cover Text} \\
+    possibly \\
+    spanning 
+    multiple 
+    lines
+    \vfill
+    ISBN 000-00-0000-000-0
+}
+\makecover
+
+%% Uncomment following 16 lines for a cover with a picture on the lower half only
+%\title[tudelft-white]{Emergence of \\Policies}
+%\subtitle[tudelft-black]{An agent-based \\approach}
+%\author[tudelft-white]{R.\ Klein}
+%\affiliation{Technische Universiteit Delft}
+%%\coverimage{tank.jpg}
+%\covertext[tudelft-white]{
+%   % \textbf{Cover Text} \\
+%   % possibly \\
+%   % spanning 
+%   % multiple 
+%  %  lines
+%   % \vfill
+%    %ISBN 000-00-0000-000-0
+%}
+%\setpagecolor{tudelft-orange}
+%\makecover[split]
+
+\renewcommand*{\sectionautorefname}{Section} % Rename the section hyperlink
+\renewcommand*{\chapterautorefname}{Chapter} % Rename the section hyperlink
+
+%% Include an optional title page.
+\input{title}
+
+\setcounter{tocdepth}{1}
+\tableofcontents
+
+%% Use Arabic numerals for the page numbers of the chapters.
+\mainmatter
+
+\renewcommand*{\sectionautorefname}{Section} % Rename the section hyperlink
+\renewcommand*{\chapterautorefname}{Chapter} % Rename the section hyperlink
+
+% This corresponds to the file with the old explanations on the template of this report.
+%\input{chapter-1}
+
+%====== Revised conceptualisation
+\chapter{The Conceptualisation}
+\label{cha:conceptualisationRevised}
+\input{report_A1Conceptualisation}
+
+%====== Revised formalisation
+\chapter{The Formalisation}
+\label{cha:formalisationRevised}
+%\input{report_A2FormalisationShort}
+\input{report_A2FormalisationLong}
+
+%====== Forest-fire formalisation
+\chapter{Technical Model Formalisation}
+\label{cha:FFformalisation}
+\input{report_A3FFFormalisation}
+
+%====== Model Parameters
+\chapter{The Model Parameters}
+\label{cha:modelParameters}
+\input{report_A4Parameters}
+
+%====== Verification
+\chapter{Verification}
+\label{cha:verification}
+\input{report_A5Verification}
+
+%====== Further Work
+\chapter{Further Work}
+\label{cha:furtherWork}
+\input{report_A6FurtherWork}
+
+%====== Theories concepts versus model concepts
+\chapter{Policy Making Theories Concepts}
+\label{cha:theoriesVModel}
+\input{report_A7theoriesVModel}
+
+
+\bibliography{MyBib}
+
+
+
+%\end{appendices}
+
+
+%\chapter{}
+%\input{report_OLD4ActionsInteractions}
+%
+%\chapter{}
+%\input{report_OLD5Formalisation}
+
+%%====== Reference index
+%\chapter{Reference index}
+%
+%Papers groups with their typical general topic:
+%
+%\begin{itemize}
+%\item Policy reviews papers \citep{skocpol1999bringing, geyer2015handbook, room2015complexity, adrian2015complexity, heclo1972review, klijn2008complexity, richardson2000government, mccool1998subsystem, lindblom1959science, jordan1981iron, cairney2016politics, cairney2012complexity, bovaird2008emergent, walker2000policy}
+%\item Complex systems papers \citep{ehrenfeld2000industrial}
+%\item LSSTS papers \citep{castells2000rise, herder2008designing, luhmann1995social, watts1998collective}
+%\item ABM papers \citep{axelrod2006evolution, bak1988self, bednar2007can, castelfranchi1998simulating, cohen2001role, epstein2006generative, mika2004social, naveh2006cognitively, epstein1996growing, miller2009complex, holland1995hidden}
+%\item Policy entrepeneur papers \citep{brouwer2011towards, mintrom1996advocacy, mintrom1998policy, mintrom2009policy}
+%\item Media impact papers \citep{waldherr2014emergence, birkland2004world, van2000new, mccombs1972agenda, cook1983media, kosicki1993problems, van1993domestic}
+%\item Policy brokers papers \citep{ingold2011treating, ingold2011network}
+%\item Learning papers (individual and for organisations) \citep{kim1998link, liao2008relationships, levitt1988organizational, fiol1985organizational, fazey2005learning, dunlop2013systematising, moran2008oxford, freeman2006learning, borgatti2003relational, crossan1999organizational, crossan1995organizational, dyck2005learning, levinthal1993myopia, nonaka1994dynamic, ohlsson2011deep, holcomb2009architecture, nicholson2009politics, mantzavinos2004learning, williams2009exogenous, contu2003re, meijerink2008explaining, hoberg1996putting, grin1996implementation, grin1996technology, hajer2003policy, howlett2002policy, hall1993policy, radaelli1999harmful}
+%\item Learning and structures papers \citep{newig2010synapses, cashore2007punctuating, schneider1988systematically, may1992policy, huber1991organizational}
+%\item Learning and collective change of behaviour papers \citep{knight2002network, henry2009challenge, argyris2003life}
+%\item Conceptualisation of the learning process papers \citep{heikkila2013building}
+%\item Crisis papers \citep{boin2003public, dekker2004learning, dudley2007individuals, alink2001institutional}
+%\item Belief papers \citep{stern2000new, henry2012understanding, henry2011belief, mcpherson2001birds, lord1979biased, munro2002biased, henry2012understanding}
+%\item ACF papers \citep{nohrstedt2005external, nohrstedt2010logic, zohlnhofer2009politics, howlett2009dependent}
+%\item Rules papers (ADICO) \cite{crawford1995grammar}
+%\item Policy papers \cite{grin200615}
+%\item Diffusion papers \citep{rapaport2009puzzle, boehmke2009approaches, braun2006taking, gray1973innovation, walker1969diffusion}
+%\item Election papers \citep{fowler2005dynamic}
+%\item Model papers \citep{barreteau2010framework}
+%\item Conceptualisation media papers \citep{krassa1988social, neuman1990threshold, elmelund2008s, nisbet2006attention, vasterman2005media, djerf2013green}
+%\item Causal maps and everything related to the belief system \citep{huff1990mapping, axelrod2015structure, chaib1998relational}
+%\item DANA stuff: \citep{bots2000designing, bots2000automatic, bots2007analysis, bots2008benchmarking, rahmatian1989toward}
+%\item Cairney Skype: \citep{howlett2015streams, bendor1995model}
+%\end{itemize}
+
+%\input{appendix-a}
+
+%\bibliographystyle{ieetr}
+
+
+\end{document}
+

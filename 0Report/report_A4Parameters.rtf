@@ -1,0 +1,82 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf820
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh14580\viewkind0
+\deftab720
+\pard\pardeftab720\sl280\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+This chapter presents the different parameters that are present within the model.\uc0\u8232 \
+%-\
+\\section\{For the technical model\}\
+\
+These are all the parameters that are related to the forest-fire model. These parameters are case study specific and will change when the case study is changed. The initial values used in the model for the experiments is shown in brackets.\
+\
+\\begin\{enumerate\}\
+\\item The initial thin forest burning probability (0.2\\%): This defines the probability that a thin forest will combust for any tick.\
+\\item The initial firefighter force (10\\%): This defines the probability that firefighters will intervene in a burning patch leading to a thin forest.\
+\\item The multiplier coefficient between the thin forest burning probability and the thick forest burning probability (10): This relates to the probability that a thick forest will burn compared to the probability that a thin forest will burn.\
+\\item Time for the growth from thin to thick forests (3): This relates to the number of ticks required for a forest to go from thin to thick.\
+\\item Time between burnt patch and thin forest/empty patch (3): This is the number of ticks that it takes for a patch to go from burnt back to empty or thin forest.\
+\\item The percentage between empty patch and thin forest when a patch is past burnt (50\\%): This is the probability that a burnt patch will go back to being empty versus being a thin forest.\
+\\end\{enumerate\}\
+\
+%-\
+\\section\{For the technical-emergence bridge\}\
+\
+The parameters mentioned here are the ones that are related to the calculation of the states and how the technical model is coupled to the emergence model. Changes in these parameters will affect the sensitivity of the emergence model to the initial conditions of the agent's belief trees. It also has an effect on the ultimate control that the agents will have on the overall technical model.\uc0\u8232 \
+\\begin\{enumerate\}\
+\\item Maximum percentage of camp sites allowed (20\\%): This is used for the calculation of the states of S1.\
+\\item Maximum percentage of thin forests allowed (60\\%): This is use for the calculation of the states of S2.\
+\\item Maximum thin forest burning probability allowed (10\\%): This is used for the calculation of the states of S3.\
+\\item Maximum firefighter force allowed (50\\%): This is used for the calculation of the states of S4\
+\\item Maximum percentage of empty patches allowed (100\\%): This is used for the calculation of the states of S5.\
+\\item Maximum percentage of thick forests allows (100\\%): This is used for the calculation of the states of PC3.\
+\\end\{enumerate\}\
+\
+%-\
+\\section\{For the policy emergence model\}\
+\uc0\u8232 This section presents all the parameters related to the policy emergence model. In square brackets there is a mention of when these parameters appear in the four different models (backbone, backbone+, three streams (3S) and ACF). In brackets are the values currently being used when they are needed. Explanations are provided when required.\
+\
+\\begin\{enumerate\}\
+% [all]\
+\\item Theory choice [all]: The modeller can choose which model to simulate which will select the appropriate cycle. The choice is between backbone, backbone+, 3S or ACF. All these models are mutually exclusive. However the backbone+ builds on the backbone, the three streams and ACF build on the backbone+.\
+\
+% [backbone]\
+\\item The belief tree aims [backbone]: These are all the inputs required for the belief hierarchy of the agents per affiliation type.\
+\\item Number of policy makers [backbone] (6).\
+\\item Number of affiliations [backbone] (3): Note that this code is made to only work for three affiliations. More or less affiliation would require significant changes to the infrastructure of the code throughout all of the code.\
+\\item The affiliation weights [backbone] (0.75, 0.85, 0.95): This defines the influence of agents from different affiliations in the following order: affiliation 1 - affiliation 2, affiliation 1 - affiliation 3, affiliation  2 - affiliation 3.\
+\\item The policy instrument set [backbone]: This relates to the overall instrument set defines by the modeller providing policy instruments and their impact ton the different secondary issues.\
+\\item The distribution of affiliation [backbone] (33,33,34): This defines the amount of resources each affiliation will have. It relates to the electorate representation. It needs to add up to 100\\%.\
+\\item The electorate influence coefficient [backbone] (0.001).\
+\
+% [backbone+]\
+\\item Ratio of policy entrepreneurs per policy makers [backbone+] (3): This defines the number of policy entrepreneurs for every one policy maker agent added to the model.\
+\\item Policy network strategy 1 maintenance and upkeep threshold [backbone+] (30\\%): This is the thresholds that defines what is the amount of awareness is needed for the links of every agent for the upkeep and maintenance actions.\
+\\item Allowed resources for the policy network maintenance and upkeep actions [backbone+] (4\\%).\
+\\item The different strategies for the maintenance of the agents networks [backbone+]: This parameter is agent dependent but is currently the same for all agents for simplicity and to have more consistent results.\
+\\item The conflict level coefficients [backbone+] (0.75, 0.85, 0.95): This defines the coefficient used when the conflict is low, mild and high.\
+\\item Partial knowledge sharing randomness coefficient [backbone+] (0.1): This is the coefficient use to set the randomness of the partial knowledge shared. For this value, a number between -0.1 and 0.1 is added to the actual value of the belief when the beliefs are shared after an action has been performed.\
+\\item Action potency coefficient [backbone+] (1): This coefficient is used to make actions more potent. It is a tuning parameters that can be changed by the modeller to adjust the policy learning speed.\
+\\item Resource spent per action coefficient [backbone+] (10\\%): This defines the amount of resources from the total resources used for actions that can be used for each action. In this case, it would allow every agent to perform 10 actions. This parameter can be used for tuning but also computational efficiency.\
+\\item The awareness decay level coefficient [backbone+] (0.05): This defines by how much the awareness of any link will go down for every tick.\
+\
+% [3S]\
+\\item Minimum belonging level allowed [3S] (30\\%): Coefficient defining the threshold below which an agent will have to leave the team. \
+\\item Inter-tick checks [3S] (5): This is the interval between which the agents teams are not checked on whether they still match the team creation criteria.\
+\\item Agent team creation strategy [3S] (strategy 1): This is an agent related input. The strategies are defined in the formalisation. Currently, all agents have the same strategy for simplicity.\
+\\item The number of agents required to start a team for strategy 1 [3S] (3).\
+\\item The gap requirement for the creation of teams [3S] (0.8).\
+\\item The state requirement for the creation of teams [3S] (0.5).\
+\\item Resources used to contact agents for team creation [3S] (2\\%).\
+\\item Resources used when being contacted for team creation [3S] (1\\%).\
+\\item Resource spent per action coefficient for teams [3S] (10\\%): Similar to the backbone but for teams.\
+\
+% [ACF]\
+\\item Principle issue selection for coalition [ACF] (P1): This is decided by the modeller and defines the coalition issue for the agenda setting process in the ACF.\
+\\item The choice of threshold for the constitution of the coalitions [ACF] (0.35): This defines the interval within which a belief is considered similar for the creation of coalitions: [-0.35, 0,35] of the agent creating the coalition.\
+\uc0\u8232 \
+\\end\{enumerate\}\
+}

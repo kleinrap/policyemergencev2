@@ -1,0 +1,412 @@
+
+
+%
+\section{The model file}
+
+\textcolor{red}{I am not sure where to put this but: When an agent has no opinion on a specific issu, his opinion will always be 0. This is because to set the value to None has too great an impact on the rest of the code. I am not sure what the consequences will be on the results other than making all results tend to 0 by default.}
+
+%-
+\subsection{The functions}
+
+This section describes the main model file.
+
+\paragraph{\texttt{def run\_model}}
+
+The \texttt{def run\_model} function helps run the model for a certain amount of steps. The number of steps is set to 1 by default but can be changed through an input.
+
+\begin{lstlisting}
+def run_model(self, step_count=1):
+		for i in range(step_count):
+			self.step()
+\end{lstlisting}
+
+
+%
+\section{The agent creation file}
+
+Throughout the agent creation file a difference is made between two categories of agents: the passive agents and the active agents. The passive agents are the truth agent and the electorate that do not perform any direct actions, they therefore do not require any knowledge about the other agents. The active agents are the external parties, the policy makers and the policy entrepreneurs. These agents perform actions on other agents actively and must therefore have knowledge of their beliefs. This explains why the belief trees of the truth agent and the electorate possess different trees structures as the belief trees for the other agents. This is also the reason why a \texttt{unique\_id} is only used for the active agents.
+
+%-
+\subsection{The truth agent}
+
+\paragraph{\_\_init\_\_ function} This defines the main attributes of the truth agent object. Note that the belief tree of the truth agent is a different tree than the other belief tree of the actors. It only contains the states of the issues (deep core, policy core and secondary) without other information.
+
+\begin{lstlisting}
+def __init__(self, model, pos, belieftree_truth):
+	self.pos = pos
+	self.model = model
+	self.belieftree_truth = belieftree_truth
+\end{lstlisting}
+
+\paragraph{\_\_str\_\_ function} This function is used to display the attributes of the truth agent object when performing a \texttt{print} action in the main model.
+
+\begin{lstlisting}
+def __str__(self):
+	return 'Position: [' + str(self.pos[0]) + ',' + str(self.pos[1]) + '], Belief tree: ' + str(self.belieftree_truth)
+\end{lstlisting}
+
+%-
+\subsection{The electorate}
+
+\paragraph{\_\_init\_\_ function} This defines the main attributes of the electorate object. Note that the belief tree of the electorate is a different tree than the other belief tree of the actors. It only contains the states of the issues (deep core, policy core and secondary) without other information. This is the same structure as the tree of the truth agent.
+
+%-
+\subsection{The external parties}
+
+\paragraph{Creation of the total belief tree structure}
+
+The complex belief tree for the active agent is build in two main parts. The first entry of the belief entry is the own agent belief tree which is composed of all issues with state, aim and preference and succeeded by the values for each of the causal relations. The second part of the tree is composed of the perception of the knowledge of all other active actors in the model. Each consists of a list with a total number of items equal to the sum of all issues and all causal relations.
+
+\begin{lstlisting}
+
+# Belief tree:
+# Creation of the total belief tree (number of agents + 1)
+belieftree = [[None] for p in range(self.total_agent_number + 1)]
+# Creation of the first part of the own belief tree containing the issues
+belieftree_empty_issues = [[None, None, None] for f in range(len(self.deep_core) + len(self.policy_core) + len(self.secondary))]
+belieftree_full = belieftree_empty_issues
+# Addition at the end of the own belief tree for the causal relation beliefs
+for p in range(self.causalrelation_number):
+	belieftree_full.append([None])
+# Placement of the own belief tree in the total belief tree as the first spot.
+belieftree[0] = belieftree_full
+# Creation of the simplified agent tree for other agents (partial knowledge part)
+belieftree_empty_agents = [[None] for p in range(len(self.deep_core) + len(self.policy_core) + len(self.secondary) + self.causalrelation_number)]
+# Addition of the simplified agent tree after the first spot in the total belief tree
+for r in range(self.total_agent_number):
+	belieftree[r+1] = belieftree_empty_agents
+\end{lstlisting}
+
+\paragraph{Initial values used for the belief tree}
+
+The addition of the initial values is done in two parts. First values are added manually for the aim of all issues and the causal relations. Then each of these values is randomised with 0.01 from their initial value. Note that the set of inserted value is different for each affiliation which justifies the initial if statement. For each new affiliation, all values must be newly inserted.
+
+\begin{lstlisting}
+if affiliation == 0:
+	belieftree[0][0][1] = 0 		# DC1 - Economy
+	belieftree[0][1][1] = 1 		# DC2 - Environment
+	...
+	belieftree[0][10][0] = 0.5		# DC1 - PC1
+	belieftree[0][11][0] = 0.9		# DC1 - PC2
+	...
+	belieftree[0][30][0] = -0.4	# PC3 - S5
+	# Randomising the issues
+	for j in range(len(self.deep_core) + len(self.policy_core) + len(self.secondary)):
+		belieftree[0][j][1] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
+		if belieftree[0][j][1] > 1:
+			belieftree[0][j][1] = 1
+		if belieftree[0][j][1] < -1:
+			belieftree[0][j][1]  = -1
+	# Randomising the causal relations
+	for q in range(self.causalrelation_number):
+		belieftree[0][q + len(self.deep_core) + len(self.policy_core) + len(self.secondary)][0] = round(belieftree[0][j][1] + (random.random()/10) - 0.05, 5)
+		if belieftree[0][q + len(self.deep_core) + len(self.policy_core) + len(self.secondary)][0] > 1:
+			belieftree[0][q + len(self.deep_core) + len(self.policy_core) + len(self.secondary)][0] = 1
+		if belieftree[0][q + len(self.deep_core) + len(self.policy_core) + len(self.secondary)][0] < -1:
+			belieftree[0][q + len(self.deep_core) + len(self.policy_core) + len(self.secondary)][0]  = -1	
+\end{lstlisting}
+
+\paragraph{Initial partial knowledge values set to 0}
+
+For this strategy of the initial partial knowledge, all values are simply assumed to be 0.
+
+\begin{lstlisting}
+for l in range(self.total_agent_number):
+	for q in range(len(self.deep_core) + len(self.policy_core) + len(self.secondary) + self.causalrelation_number):
+		belieftree[l+1][q][0] = 0
+\end{lstlisting}
+
+\paragraph{Preference calculation for the deep core issues}
+
+This follows the equation provided in the formalisation.
+
+\begin{lstlisting}
+DC_denominator = 0
+for h in range(len_DC):
+	DC_denominator = DC_denominator + abs(agent.belieftree[0][h][1] - agent.belieftree[0][h][0])
+	for i in range(len_DC):
+		# There are rare occasions where the denominator could be 0
+		if DC_denominator != 0:
+			agent.belieftree[0][i][2] = abs(agent.belieftree[0][i][1] - agent.belieftree[0][i][0]) / DC_denominator
+		else:
+			agent.belieftree[0][i][2] = 0
+\end{lstlisting}
+
+\paragraph{Preference calculation for the policy core issues}
+
+This follows the equation provided in the formalisation. The code is split in three main parts: the calculation of the denominator, the calculation of the numerator and the final calculation of the preference. A check is also added in case the denominator is 0.
+
+\begin{lstlisting}
+# Calculating the denominator:
+PC_denominator = 0
+f = 0
+# Select one by one the DC
+for j in range(len_DC):
+	# Selecting the causal relations starting from DC
+	for k in range(len_PC):
+		# Check if causal relation and gap are both positive of both negative
+		if (agent.belieftree[0][len_DC+len_PC+len_S+(j+k+f)][0] < 0 and (agent.belieftree[0][j][1] - agent.belieftree[0][j][0]) < 0) or (agent.belieftree[0][len_DC+len_PC+len_S+(j+k+f)][0] > 0 and (agent.belieftree[0][j][1] - agent.belieftree[0][j][0]) > 0):
+			PC_denominator = PC_denominator + abs(agent.belieftree[0][len_DC+len_PC+len_S+(j+k+f)][0] * (agent.belieftree[0][j][1] - agent.belieftree[0][j][0]))
+		else:
+			PC_denominator = PC_denominator
+		# Then adding the gap of the policy core:
+	f = 1 # This is placed because of adding 0 problem with indices j+k in the causal relation
+for i in range(len_PC):
+	PC_denominator = PC_denominator + abs(agent.belieftree[0][len_DC + i][1] - agent.belieftree[0][len_DC + i][0])
+
+# Calculating the numerator and the preference of all policy core issues:
+# Select one by one the DC
+for j in range(len_PC):
+	PC_numerator = 0
+	# Selecting the causal relations starting from DC
+	for k in range(len_DC):
+		# Check if causal relation and gap are both positive of both negative
+		if (agent.belieftree[0][len_DC+len_PC+len_S+(j+(k*2))][0] < 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) < 0) or (agent.belieftree[0][len_DC+len_PC+len_S+(j+(k*2))][0] > 0 and (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]) > 0):
+			PC_numerator = PC_numerator + abs(agent.belieftree[0][len_DC+len_PC+len_S+(j+(k*2))][0] * (agent.belieftree[0][k][1] - agent.belieftree[0][k][0]))
+		else:
+			PC_numerator = PC_numerator
+# Then adding the gap of the policy core:
+	PC_numerator = PC_numerator + abs(agent.belieftree[0][len_DC + j][1] - agent.belieftree[0][len_DC + j][0])
+# Combination of denominator and numerator with check for if the denominator is equal to 0
+	if PC_denominator != 0:
+		agent.belieftree[0][len_DC+j][2] = PC_numerator/PC_denominator 
+	else:
+		agent.belieftree[0][len_DC+j][2] = 0
+\end{lstlisting}
+
+\paragraph{Preference calculation for the secondary issues}
+
+This is the same algorithm as the one presented for the policy core preferences. It is therefore not repeated here.
+
+%-
+\subsection{The policy makers}
+
+%-
+\subsection{The policy entrepreneurs}
+
+%
+\section{The agent file}
+
+This is the file that is the parent of the agent creation file. In hierarchy, the class contained in this file is the parent class of all agents in the model. This file is used to place functions that are used for all agents in the model. This is the case for the network upkeep actions and the actions of the agents.
+
+%-
+\subsection{The functions}
+
+%-
+\subsubsection{The network upkeep function}
+
+\paragraph{Strategy 1 - Check for links with less than 30\% trust}
+
+The check is made on all links related to the agent and with less than 30\% trust. The upgrade is given to the link with the lower trust. 
+
+\begin{lstlisting}
+low_link_list = []
+low_link_list_trust = []
+low_link = True
+# Check if there are resources left or if there still low level links
+while agents.resources_network > 0.0001 and low_link == True:
+	for links in self.link_list:
+		# Finding all links related to this agent and with trust higher than 0 and lower than 0.3
+		if (links.agent1 == agents or links.agent2 == agents) and links.trust > 0 and links.trust < 0.3:
+			low_link_list.append(links)
+			low_link_list_trust.append(links.trust)
+	# Make sure that the list is not 0
+	if len(low_link_list) > 0:
+		index_min_trust = low_link_list_trust.index(min(low_link_list_trust))
+		# Calculating the change in trust depending on resources and affiliation weight
+		# Same affiliation
+		if links.agent1.affiliation == links.agent2.affiliation:
+			low_link_list[index_min_trust].trust += 0.04*agents.resources
+		# Affiliation 1 and 2
+		if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+			low_link_list[index_min_trust].trust += 0.04*agents.resources*self.affiliation_weights[0]
+		# Affiliation 1 and 3
+		if (links.agent1.affiliation == 1 and links.agent2.affiliation == 3) or (links.agent1.affiliation == 3 and links.agent2.affiliation == 1):
+			low_link_list[index_min_trust].trust += 0.04*agents.resources*self.affiliation_weights[1]
+		# Affiliation 2 and 3
+		if (links.agent1.affiliation == 2 and links.agent2.affiliation == 3) or (links.agent1.affiliation == 3 and links.agent2.affiliation == 2):
+			low_link_list[index_min_trust].trust += 0.04*agents.resources*self.affiliation_weights[2]
+		agents.resources_network -= 0.04*agents.resources
+		low_link_list = []
+		low_link_list_trust = []
+	# if it is, stop the loop
+	else:
+		low_link = False
+\end{lstlisting}
+
+\paragraph{Strategy 1 - Addition of new links}
+
+The check is made on all links with 0 trust. A link is then randomly chosen and upgraded. This only happens if all links already active have more than 30\% trust and the agent still has network resources left.
+
+\begin{lstlisting}
+new_link_list = []
+new_link = True
+while agents.resources_network > 0.0001 and new_link == True:
+	# The list is shuffled such that it is not always the links with the smallest ID that are selected:
+	shuffled_list_links = self.link_list
+	random.shuffle(shuffled_list_links)
+	for links in shuffled_list_links:
+		if (links.agent1 == agents or links.agent2 == agents) and links.trust == 0:
+			new_link_list.append(links)
+	if len(new_link_list) > 0:
+		if links.agent1.affiliation == links.agent2.affiliation:
+			random.choice(new_link_list).trust += 0.04*agents.resources
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+			random.choice(new_link_list).trust += 0.04*agents.resources*self.affiliation_weights[0]
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+			random.choice(new_link_list).trust += 0.04*agents.resources*self.affiliation_weights[1]
+		if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+			random.choice(new_link_list).trust += 0.04*agents.resources*self.affiliation_weights[2]
+		agents.resources_network -= 0.04*agents.resources
+		new_link_list = []
+	else:
+		new_link = False
+\end{lstlisting}
+
+\paragraph{Strategy 1 - Raise trust}
+
+This just consists of raising trust of all links making sure that they don't go over 1. This does not apply to links with trust of -1.
+
+\begin{lstlisting}
+normal_link_list = []
+normal_link = True
+while agents.resources_network > 0.0001 and normal_link == True:
+	for links in self.link_list:
+		if (links.agent1 == agents or links.agent2 == agents) and links.trust <= 1 and links.trust != -1:
+			normal_link_list.append(links)
+	if len(normal_link_list) > 0:
+		normal_link_to_change = random.choice(normal_link_list)
+		if links.agent1.affiliation == links.agent2.affiliation:
+			normal_link_to_change.trust += 0.04*agents.resources
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):							
+			normal_link_to_change.trust += 0.04*agents.resources*self.affiliation_weights[0]
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+			normal_link_to_change.trust += 0.04*agents.resources*self.affiliation_weights[1]
+		if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+			normal_link_to_change.trust += 0.04*agents.resources*self.affiliation_weights[2]
+		# Make sure that no link will have a trust level higher than 1
+		if normal_link_to_change.trust > 1:
+			normal_link_to_change.trust = 1
+		agents.resources_network -= 0.04*agents.resources
+		normal_link_list = []
+	else:
+		new_link = False
+\end{lstlisting}
+
+\paragraph{Strategy 2 - Raise 70\% trust}
+
+Raise the trust of the links with 70\% and for which the two actors have similar beliefs. This is defined as having their selected problem within 0.2 of each other. One of the problem is sufficient.
+
+\begin{lstlisting}
+high_link_list = []
+high_link_list_trust = []
+high_link = True
+while agents.resources_network > 0.0001 and high_link == True:
+	for links in self.link_list:
+		if (links.agent1 == agents or links.agent2 == agents) and links.trust > 0.7 and links.trust <= 1 and (abs(links.agent1.belieftree[0][links.agent1.select_problem][1] - links.agent1.belieftree[0][links.agent2.select_problem][1]) < 0.2 or abs(links.agent2.belieftree[0][links.agent1.select_problem][1] - links.agent2.belieftree[0][links.agent2.select_problem][1]) < 0.2):
+			high_link_list.append(links)
+			high_link_list_trust.append(links.trust)
+	if len(high_link_list) > 0:
+		index_min_trust = high_link_list_trust.index(min(high_link_list_trust))
+		if links.agent1.affiliation == links.agent2.affiliation:
+			high_link_list[index_min_trust].trust += 0.04*agents.resources
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+			high_link_list[index_min_trust].trust += 0.04*agents.resources*self.affiliation_weights[0]
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+			high_link_list[index_min_trust].trust += 0.04*agents.resources*self.affiliation_weights[1]
+		if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+			high_link_list[index_min_trust].trust += 0.04*agents.resources*self.affiliation_weights[2]
+		if high_link_list[index_min_trust].trust > 1:
+			high_link_list[index_min_trust].trust = 1
+		agents.resources_network -= 0.04*agents.resources
+		high_link_list = []
+		high_link_list_trust = []
+	else:
+		high_link = False
+\end{lstlisting}
+
+\paragraph{Strategy 2 - New links for similar beliefs}
+
+Creation of new links for links linking agents with similar beliefs.
+
+\begin{lstlisting}
+new_link_list = []
+new_link = True
+while agents.resources_network > 0.0001 and new_link == True:
+	shuffled_list_links = self.link_list
+	random.shuffle(shuffled_list_links)
+	for links in shuffled_list_links:
+		if (links.agent1 == agents or links.agent2 == agents) and links.trust == 0 and (abs(links.agent1.belieftree[0][links.agent1.select_problem][1] - links.agent1.belieftree[0][links.agent2.select_problem][1]) < 0.2 or abs(links.agent2.belieftree[0][links.agent1.select_problem][1] - links.agent2.belieftree[0][links.agent2.select_problem][1]) < 0.2):
+			new_link_list.append(links)
+	if len(new_link_list) > 0:
+		if links.agent1.affiliation == links.agent2.affiliation:
+			random.choice(new_link_list).trust += 0.04*agents.resources
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+			random.choice(new_link_list).trust += 0.04*agents.resources*self.affiliation_weights[0]
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+			random.choice(new_link_list).trust += 0.04*agents.resources*self.affiliation_weights[1]
+		if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+			random.choice(new_link_list).trust += 0.04*agents.resources*self.affiliation_weights[2]
+		agents.resources_network -= 0.04*agents.resources
+		new_link_list = []
+	else:
+		new_link = False
+\end{lstlisting}
+
+\paragraph{Strategy 2 - Raise agents with low trust}
+
+Here the links with low trust are raised regardless of the beliefs.
+
+\begin{lstlisting}
+medium_link_list = []
+medium_link_list_trust = []
+medium_link = True
+while agents.resources_network > 0.0001 and medium_link == True:
+	for links in self.link_list:
+		if (links.agent1 == agents or links.agent2 == agents) and links.trust < 0.7 and links.trust > 0:
+			medium_link_list.append(links)
+			medium_link_list_trust.append(links.trust)
+	if len(medium_link_list) > 0:
+		index_min_trust = medium_link_list_trust.index(min(medium_link_list_trust))
+		if links.agent1.affiliation == links.agent2.affiliation:
+			medium_link_list[index_min_trust].trust += 0.04*agents.resources
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+			medium_link_list[index_min_trust].trust += 0.04*agents.resources*self.affiliation_weights[0]
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+			medium_link_list[index_min_trust].trust += 0.04*agents.resources*self.affiliation_weights[1]
+		if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+			medium_link_list[index_min_trust].trust += 0.04*agents.resources*self.affiliation_weights[2]
+		agents.resources_network -= 0.04*agents.resources
+		medium_link_list = []
+		medium_link_list_trust = []
+	else:
+		medium_link = False
+\end{lstlisting}
+
+\paragraph{Strategy 2 - New links regardless of beliefs}
+
+Here new links are created regardless of the beliefs of the agents linked.
+
+\begin{lstlisting}
+new2_link_list = []
+new2_link = True
+while agents.resources_network > 0.0001 and new2_link == True:
+	shuffled_list_links = self.link_list
+	random.shuffle(shuffled_list_links)
+	for links in shuffled_list_links:
+		if (links.agent1 == agents or links.agent2 == agents) and links.trust == 0:
+			new2_link_list.append(links)
+	if len(new2_link_list) > 0:
+		if links.agent1.affiliation == links.agent2.affiliation:
+			random.choice(new2_link_list).trust += 0.04*agents.resources
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 1) or (links.agent1.affiliation == 1 and links.agent2.affiliation == 0):
+			random.choice(new2_link_list).trust += 0.04*agents.resources*self.affiliation_weights[0]
+		if (links.agent1.affiliation == 0 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 0):
+			random.choice(new2_link_list).trust += 0.04*agents.resources*self.affiliation_weights[1]
+		if (links.agent1.affiliation == 1 and links.agent2.affiliation == 2) or (links.agent1.affiliation == 2 and links.agent2.affiliation == 1):
+			random.choice(new2_link_list).trust += 0.04*agents.resources*self.affiliation_weights[2]
+		agents.resources_network -= 0.04*agents.resources
+		new2_link_list = []
+	else:
+		new2_link = False
+\end{lstlisting}

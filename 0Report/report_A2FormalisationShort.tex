@@ -1,0 +1,165 @@
+Due to the iterative process and after a reflection period, several parts of the formalisation was modified. This was done after the code had been implemented, it is therefore not mentioned in the main body of this report. The changes considered are presented here.
+
+Most of the changes considered are related to the way the actions are assessed by the actors and how their likelihood and impact are calculated. In the formalisation presented earlier on, the actions are graded based on their impact on the preferences of the agents being influenced. This is considered to be a stretch when considering real life actions. Instead, it was decided thereafter to use the likelihood of performing an action. This is determined by the agent based on conflict level, awareness of other agents or type of agents. The modified actions and equations are presented below.
+
+Furthermore, as it was mentioned several times within the report, the actions of the external parties are harmonised with the other active actors. They can therefore perform four types of actions but all under a blanket form. The equations for these actions are also provided below.
+
+%0
+\paragraph{Individual framing}
+
+The agents can attempt to influence the causal relation belief of other agents. This is an individual framing action. For this action, all causal relations related to the issue selected by the agent are considered. The likelihood to perform such an action depends on several parameters which are outlined below:
+
+\begin{equation}\label{eq:likelihoodFraming2}
+G_{CW, n_m} = conflictLevel_{CW, n, m} \cdot affiCoef_{Aff_n,Aff_m} \cdot awareness_{n,m} \cdot actionWeight_{n,m}
+\end{equation}
+
+where $G$ stands for the grade, $n$ is the influencing agent, $m$ is the influenced agent. $n_m$ is the perfection of the beliefs of the influenced agent by the influencing agent and $CW$ is the causal weight of the causal relation
+
+If this action is selected, as it has the highest grade, then the impact of the action on the beliefs of the influenced agents is given by:
+
+\begin{equation}\label{eq:impactFraming2}
+CW_{m} := CW_{m} + \left(CW_{n} - CW_{m} \right) \cdot resources \cdot affiCoef_{Aff_n,Aff_m}
+\end{equation}
+
+%0
+\paragraph{Individual action - Aim change}
+
+The agents can also attempt to influence the aim beliefs on the different issues of the hierarchy of other agents. The likelihood that such action be performed is obtained in a similar way as shown below:
+
+\begin{equation}\label{eq:likelihoodAimChange2}
+G_{A, n_m} = conflictLevel_{A, n, m} \cdot affiCoef_{Aff_n,Aff_m} \cdot awareness_{n,m} \cdot actionWeight_{n,m}
+\end{equation}
+
+The impact of such action is then calculated with:
+
+\begin{equation}\label{eq:impactAimChange2}
+A_{m} := A_{m} + \left(A_{n} - A_{m} \right) \cdot resources \cdot affiCoef_{Aff_n,Aff_m}
+\end{equation}
+
+%0
+\paragraph{Individual action - State change}
+
+Similarly to the influence on the aims of an agent, the states can also be influenced. The likelihood of such an action being performed is given as follows:
+
+\begin{equation}\label{eq:likelihoodStateChange2}
+G_{S, n_m} = conflictLevel_{S, n,m} \cdot affiCoef_{Aff_n,Aff_m} \cdot awareness_{n,m} \cdot actionWeight_{n,m}
+\end{equation}
+
+And the impact is calculated as follows:
+
+\begin{equation}\label{eq:impactStateChange2}
+S_{m} := S_{m} + \left(S_{n} - S_{m} \right) \cdot resources \cdot affiCoef_{Aff_n,Aff_m}
+\end{equation}
+
+%0
+\paragraph{Blanket framing of the external parties}
+
+The actions of the external parties are all blanket actions. The likelihood of performing a blanket framing action is calculated as follows:
+
+\begin{equation}\label{eq:likelihoodBlanketFraming2}\begin{split}
+G_{CW, n_m} &= conflictLevel_{CW, n, m} \cdot affiCoef_{Aff_n,Aff_m} \cdot awareness_{n,m} \cdot actionWeight_{n,m}\\
+G_{CW, n} &= \sum_{m = 1}^{nagents-1} G_{CW, n_m}
+\end{split}\end{equation}
+
+where $CW$ is the causal weight selected, $n$ the external party performing the framing, $m$ the affected agents considered and $nagents$ the total number of agents.
+
+And the impact is calculated as follows:
+
+\begin{equation}\label{eq:impactBlanketFraming2}
+CW_{m} := CW_{m} + \left( CW_{n} - CW_{m} \right) \cdot resources \cdot affiCoef_{Aff_n,Aff_m} \cdot \frac{1}{nagents}
+\end{equation}
+
+%0
+\paragraph{Blanket aim change of the external parties}
+
+Similarly to the blanket framing, the aims can also be influenced. The likelihood of such an action being performed is given as follows:
+
+\begin{equation}\label{eq:likelihoodBlanketFraming2}\begin{split}
+G_{A, n_m} &= conflictLevel_{A, n, m} \cdot affiCoef_{Aff_n,Aff_m} \cdot awareness_{n,m} \cdot actionWeight_{n,m}\\
+G_{A, n} &= \sum_{m = 1}^{nagents-1} G_{A, n_m}
+\end{split}\end{equation}
+
+And the impact is calculated as follows:
+
+\begin{equation}\label{eq:impactBlanketFraming2}
+A_{m} := A_{m} + \left( A_{n} - A_{m} \right) \cdot resources \cdot affiCoef_{Aff_n,Aff_m} \cdot \frac{1}{nagents}
+\end{equation}
+
+%0
+\paragraph{Blanket state change of the external parties}
+
+Similarly to the blanket aim change, the states can also be influenced. The likelihood of such an action being performed is given as follows:
+
+\begin{equation}\label{eq:likelihoodBlanketFraming2}\begin{split}
+G_{S, n_m} &= conflictLevel_{S, n, m} \cdot affiCoef_{Aff_n,Aff_m} \cdot awareness_{n,m} \cdot actionWeight_{n,m}\\
+G_{S, n} &= \sum_{m = 1}^{nagents-1} G_{S, n_m}
+\end{split}\end{equation}
+
+And the impact is calculated as follows:
+
+\begin{equation}\label{eq:impactBlanketFraming2}
+S_{m} := S_{m} + \left( S_{n} - S_{m} \right) \cdot resources \cdot affiCoef_{Aff_n,Aff_m} \cdot \frac{1}{nagents}
+\end{equation}
+
+%-
+\paragraph{The actions (active agents) - three streams theory}
+
+For the agents that have selected a policy, an additional action is added. This action is an action that influences the impact beliefs of the policy instrument selected by the agent. For all agent, this action replaces the framing or blanket framing action. The aim and state influence actions remain the same. The likelihood of performing each action is calculated. Whichever action is most likely to be performed is implemented with a certain calculated impact.
+
+The likelihood of performing a policy action is given as follows:
+
+\begin{equation}\label{eq:likelihoodImpact2}
+G_{I_{issue}, n_m} = conflictLevel_{I_{issue}, n, m} \cdot affiCoef_{Aff_n,Aff_m} \cdot awareness_{n,m} \cdot actionWeight_{n,m}
+\end{equation}
+
+where $n$ is the agent performing the action, $m$ is the agent on which the action is performed, $I$ stands for the impact that the action has on the mentioned issue. Note that if the instrument has an impact on four separate issues, then the agent will assess the likelihood of influencing each of the four impacts contained in that policy instrument.
+
+The impact of the action is then given as follows:
+
+\begin{equation}\label{eq:impactImpact2}
+I_{m, issue} := I_{m, issue} + \left( I_{n, issue} - I_{m, issue} \right) \cdot resources \cdot affiCoef_{Aff_n,Aff_m}
+\end{equation}
+
+where $n$ is the agent performing the action, $m$ is the agent on which the action is performed.
+
+%-
+\paragraph{Intra-team belief actions - Three streams theory}
+
+The blanket framing action on causal relation is used in the case where the team has selected a problem as the issue it is advocating for. The likelihood and impact of such actions are the same as the ones presented in \autoref{eq:likelihoodBlanketFraming2} and \autoref{eq:impactBlanketFraming2} respectively.
+
+The blanket framing action on the policy impact is used in the case where the team has selected a policy as their issue. The likelihood of performing such action is calculated as follows:
+
+\begin{equation}\label{eq:likelihoodBlanketFraming2}\begin{split}
+G_{I, n_m} &= conflictLevel_{I, n, m} \cdot affiCoef_{Aff_n,Aff_m} \cdot awareness_{n,m} \cdot actionWeight_{n,m}\\
+G_{I, n} &= \sum_{m = 1}^{nagents-1} G_{I, n_m}
+\end{split}\end{equation}
+
+where $I$ is the impact selected, $n$ the agent considering the action, $m$ the affected agents considered and $nagents$ the total number of agents in the team.
+
+The blanket framing action on the problem is used in the case where the team has selected a problem as their issue. The likelihood of performing this action on the states is given by the following equation:
+
+\begin{equation} \begin{split}
+G_{S, n_m} &=  conflictLevel_{I, n, m} \cdot affiCoef_{Aff_n,Aff_m} \cdot awareness_{n,m} \cdot actionWeight_{n,m}\\
+G_{S, n} &= \sum_{m = 1}^{nagents-1} G_{S, n_m}
+\end{split} \end{equation}
+
+The likelihood for the influence of the aims of the problem is calculated the same way but through substitution of the conflict level from the states to the conflict level of the aims.
+
+For each of these actions, the grade is the sum for all agents of the action. The total grades for each action is compared and the action with the highest impact is selected to be implemented.
+
+The impact of all these actions is then given, in order, as:
+
+\begin{equation} \begin{split}
+CW_{m} &:= CW_{m} + \left( CW_{n} - CW_{m} \right) \cdot resources \cdot affiCoef_{Aff_n,Aff_m} \cdot \frac{1}{nagents} \\
+I_{m} &:= I_{m} +  \left(I_{n} - I_{m} \right)  \cdot resources \cdot affiCoef_{Aff_n,Aff_m} \cdot \frac{1}{nagents} \\
+S_{m} &:= S_{m} + \left(S_{n} - S_{m} \right) \cdot resources \cdot affiCoef_{Aff_n,Aff_m} \cdot \frac{1}{nagents} \\
+A_{m} &:= A_{m} + \left(A_{n} - A_{m} \right) \cdot resources \cdot affiCoef_{Aff_n,Aff_m} \cdot \frac{1}{nagents} \\
+\end{split}\end{equation}
+
+%-
+\paragraph{Inter-team belief actions - Three streams theory}
+
+The framing on causal relation likelihood grade is obtained using \autoref{eq:likelihoodFraming2}, the state influence likelihood using \autoref{eq:likelihoodStateChange2}, the aim influence likelihood using \autoref{eq:likelihoodAimChange2} and the impact influence likelihood using \autoref{eq:likelihoodImpact2}
+
+All of the actions are graded and the action with the highest likelihood to occur is the action that will be performed. The impact of each of these actions is then given by \autoref{eq:impactFraming2}, \autoref{eq:impactStateChange}, \autoref{eq:impactAimChange2} and \autoref{eq:impactImpact2}.
+

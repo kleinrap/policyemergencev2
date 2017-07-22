@@ -1,0 +1,659 @@
+% This file was created with JabRef 2.11.1.
+% Encoding: MacRoman
+
+
+@Article{zahariadis2007multiple,
+  Title                    = {The multiple streams framework: Structure, limitations, prospects},
+  Author                   = {Zahariadis, Nikolaos},
+  Journal                  = {Theories of the policy process},
+  Year                     = {2007},
+  Pages                    = {65--92},
+  Volume                   = {2},
+  Publisher                = {Westview Press Boulder}
+}
+
+@Article{zahariadis2014ambiguity,
+  Title                    = {Ambiguity and multiple streams},
+  Author                   = {Zahariadis, Nikolaos},
+  Journal                  = {Theories of the policy process},
+  Year                     = {2014},
+  Pages                    = {25--58}
+}
+
+@Article{witting2012role,
+  Title                    = {The role of expertise in policy development: Towards a De-carbonized British road transport Infrastructure},
+  Author                   = {Witting, Antje},
+  Year                     = {2012}
+}
+
+@Article{weible2009themes,
+  Title                    = {Themes and variations: Taking stock of the advocacy coalition framework},
+  Author                   = {Weible, Christopher M and Sabatier, Paul A and McQueen, Kelly},
+  Journal                  = {Policy Studies Journal},
+  Year                     = {2009},
+  Number                   = {1},
+  Pages                    = {121--140},
+  Volume                   = {37},
+  Publisher                = {Wiley Online Library}
+}
+
+@Article{waldherr2014emergence,
+  Title                    = {Emergence of news waves: A social simulation approach},
+  Author                   = {Waldherr, Annie},
+  Journal                  = {Journal of Communication},
+  Year                     = {2014},
+  Number                   = {5},
+  Pages                    = {852--873},
+  Volume                   = {64},
+  Publisher                = {Wiley Online Library}
+}
+
+@Book{van2009capturing,
+  Title                    = {Capturing socio-technical systems with agent-based modelling},
+  Author                   = {Van Dam, Koen Hazi{\"e}l},
+  Publisher                = {TU Delft, Delft University of Technology},
+  Year                     = {2009}
+}
+
+@Article{van2000new,
+  Title                    = {New York Times and network TV news coverage of foreign disasters: The significance of the insignificant variables},
+  Author                   = {Van Belle, Douglas A},
+  Journal                  = {Journalism \& Mass Communication Quarterly},
+  Year                     = {2000},
+  Number                   = {1},
+  Pages                    = {50--70},
+  Volume                   = {77},
+  Publisher                = {SAGE Publications}
+}
+
+@Article{van1993domestic,
+  Title                    = {Domestic imperatives and rational models of foreign policy decision making},
+  Author                   = {Van Belle, Douglas},
+  Journal                  = {The limits of state autonomy: Societal groups and foreign policy formulation},
+  Year                     = {1993},
+  Pages                    = {151--183}
+}
+
+@Article{berry1999innovation,
+  Title                    = {Innovation and diffusion models in policy research},
+  Author                   = {Stokes Berry, Frances and Berry, William D},
+  Journal                  = {Theories of the policy process},
+  Year                     = {1999},
+  Volume                   = {169},
+  Publisher                = {Westview Press Boulder, CO}
+}
+
+@Article{sotirov2012advocacy,
+  Title                    = {The Advocacy Coalition Framework in natural resource policy studies - Recent experiences and further prospects},
+  Author                   = {Sotirov, Metodi and Memmler, Michael},
+  Journal                  = {Forest policy and economics},
+  Year                     = {2012},
+  Pages                    = {51--64},
+  Volume                   = {16},
+  Publisher                = {Elsevier}
+}
+
+@Article{siebers2010discrete,
+  Title                    = {Discrete-event simulation is dead, long live agent-based simulation!},
+  Author                   = {Siebers, Peer-Olaf and Macal, Charles M and Garnett, Jeremy and Buxton, D and Pidd, Michael},
+  Journal                  = {Journal of Simulation},
+  Year                     = {2010},
+  Number                   = {3},
+  Pages                    = {204--210},
+  Volume                   = {4},
+  Publisher                = {Springer}
+}
+
+@InProceedings{sanchez2002exploring,
+  Title                    = {Exploring the world of agent-based simulations: simple models, complex analyses: exploring the world of agent-based simulations: simple models, complex analyses},
+  Author                   = {Sanchez, Susan M and Lucas, Thomas W},
+  Booktitle                = {Proceedings of the 34th conference on Winter simulation: exploring new frontiers},
+  Year                     = {2002},
+  Organization             = {Winter Simulation Conference},
+  Pages                    = {116--126}
+}
+
+@Book{sabatier2014theories,
+  Title                    = {Theories of the policy process},
+  Author                   = {Sabatier, Paul A and Weible, Christopher},
+  Publisher                = {Westview Press},
+  Year                     = {2014}
+}
+
+@Book{sabatier1993policy,
+  Title                    = {Policy change and learning: An advocacy coalition approach},
+  Author                   = {Sabatier, Paul A and Jenkins-Smith, Hank C},
+  Publisher                = {Westview Pr},
+  Year                     = {1993}
+}
+
+@Article{ross1973economic,
+  Title                    = {The economic theory of agency: The principal's problem},
+  Author                   = {Ross, Stephen A},
+  Journal                  = {The American Economic Review},
+  Year                     = {1973},
+  Number                   = {2},
+  Pages                    = {134--139},
+  Volume                   = {63},
+  Publisher                = {JSTOR}
+}
+
+@Article{rapaport2009puzzle,
+  Title                    = {The Puzzle of the Diffusion of Central-Bank Independence Reforms: Insights from an Agent-Based Simulation},
+  Author                   = {Rapaport, Orit and Levi-Faur, David and Miodownik, Dan},
+  Journal                  = {Policy Studies Journal},
+  Year                     = {2009},
+  Number                   = {4},
+  Pages                    = {695--716},
+  Volume                   = {37},
+  Publisher                = {Wiley Online Library}
+}
+
+@Article{pierson1993effect,
+  Title                    = {When effect becomes cause: Policy feedback and political change},
+  Author                   = {Pierson, Paul},
+  Journal                  = {World politics},
+  Year                     = {1993},
+  Number                   = {04},
+  Pages                    = {595--628},
+  Volume                   = {45},
+  Publisher                = {Cambridge Univ Press}
+}
+
+@Article{nohrstedt2005external,
+  Title                    = {External shocks and policy change: Three Mile Island and Swedish nuclear energy policy},
+  Author                   = {Nohrstedt, Daniel},
+  Journal                  = {Journal of European Public Policy},
+  Year                     = {2005},
+  Number                   = {6},
+  Pages                    = {1041--1059},
+  Volume                   = {12},
+  Publisher                = {Taylor \& Francis}
+}
+
+@Article{mucciaroni1992garbage,
+  Title                    = {The garbage can model \& the study of policy making: A critique},
+  Author                   = {Mucciaroni, Gary},
+  Journal                  = {Polity},
+  Year                     = {1992},
+  Pages                    = {459--482},
+  Publisher                = {JSTOR}
+}
+
+@Article{moyson2014individuals,
+  Title                    = {The individuals in policy change: Policy learning in the liberalization of network industries in Belgium},
+  Author                   = {Moyson, St{\'e}phane and others},
+  Journal                  = {Louvain--la--Neuve: Universit{\'e} catholique de Louvain--la--Neuve},
+  Year                     = {2014}
+}
+
+@Article{mintrom1996advocacy,
+  Title                    = {Advocacy coalitions, policy entrepreneurs, and policy change},
+  Author                   = {Mintrom, Michael and Vergari, Sandra},
+  Journal                  = {Policy studies journal},
+  Year                     = {1996},
+  Number                   = {3},
+  Pages                    = {420--434},
+  Volume                   = {24},
+  Publisher                = {Wiley Online Library}
+}
+
+@Article{mintrom1998policy,
+  Title                    = {Policy networks and innovation diffusion: The case of state education reforms},
+  Author                   = {Mintrom, Michael and Vergari, Sandra},
+  Journal                  = {The Journal of Politics},
+  Year                     = {1998},
+  Number                   = {01},
+  Pages                    = {126--148},
+  Volume                   = {60},
+  Publisher                = {Cambridge Univ Press}
+}
+
+@Article{mintrom2009policy,
+  Title                    = {Policy entrepreneurship and policy change},
+  Author                   = {Mintrom, Michael and Norman, Phillipa},
+  Journal                  = {Policy Studies Journal},
+  Year                     = {2009},
+  Number                   = {4},
+  Pages                    = {649--667},
+  Volume                   = {37},
+  Publisher                = {Wiley Online Library}
+}
+
+@Article{mettler2004consequences,
+  Title                    = {The consequences of public policy for democratic citizenship: Bridging policy studies and mass politics},
+  Author                   = {Mettler, Suzanne and Soss, Joe},
+  Journal                  = {Perspectives on politics},
+  Year                     = {2004},
+  Number                   = {01},
+  Pages                    = {55--73},
+  Volume                   = {2},
+  Publisher                = {Cambridge Univ Press}
+}
+
+@Article{mettler2014policy,
+  Title                    = {Policy feedback theory},
+  Author                   = {Mettler, Suzanne and SoRelle, Mallory},
+  Journal                  = {Theories of the policy process},
+  Year                     = {2014},
+  Pages                    = {151--181}
+}
+
+@Article{mettler2002bringing,
+  Title                    = {Bringing the state back in to civic engagement: Policy feedback effects of the GI Bill for World War II veterans},
+  Author                   = {Mettler, Suzanne},
+  Journal                  = {American Political Science Review},
+  Year                     = {2002},
+  Number                   = {02},
+  Pages                    = {351--365},
+  Volume                   = {96},
+  Publisher                = {Cambridge Univ Press}
+}
+
+@Article{mccombs1972agenda,
+  Title                    = {The agenda-setting function of mass media},
+  Author                   = {McCombs, Maxwell E and Shaw, Donald L},
+  Journal                  = {Public opinion quarterly},
+  Year                     = {1972},
+  Number                   = {2},
+  Pages                    = {176--187},
+  Volume                   = {36},
+  Publisher                = {AAPOR}
+}
+
+@Article{macy2002factors,
+  Title                    = {From factors to actors: Computational sociology and agent-based modeling},
+  Author                   = {Macy, Michael W and Willer, Robert},
+  Journal                  = {Annual review of sociology},
+  Year                     = {2002},
+  Pages                    = {143--166},
+  Publisher                = {JSTOR}
+}
+
+@Article{leifeld2013reconceptualizing,
+  Title                    = {Reconceptualizing major policy change in the advocacy coalition framework: a discourse network analysis of German pension politics},
+  Author                   = {Leifeld, Philip},
+  Journal                  = {Policy Studies Journal},
+  Year                     = {2013},
+  Number                   = {1},
+  Pages                    = {169--198},
+  Volume                   = {41},
+  Publisher                = {Wiley Online Library}
+}
+
+@Article{kosicki1993problems,
+  Title                    = {Problems and opportunities in agenda-setting research},
+  Author                   = {Kosicki, Gerald M},
+  Journal                  = {Journal of communication},
+  Year                     = {1993},
+  Number                   = {2},
+  Pages                    = {100--127},
+  Volume                   = {43},
+  Publisher                = {Wiley Online Library}
+}
+
+@Book{kingdon2003agendas,
+  Title                    = {Agendas, alternatives, and public policies},
+  Author                   = {Kingdon, John W},
+  Publisher                = {Longman Pub Group},
+  Year                     = {2003}
+}
+
+@Article{jordan2013policy,
+  Title                    = {Policy feedback and support for the welfare state},
+  Author                   = {Jordan, Jason},
+  Journal                  = {Journal of European Social Policy},
+  Year                     = {2013},
+  Number                   = {2},
+  Pages                    = {134--148},
+  Volume                   = {23},
+  Publisher                = {SAGE Publications}
+}
+
+@Article{jenkins2014advocacy,
+  Title                    = {The advocacy coalition framework: Foundations, evolution, and ongoing research},
+  Author                   = {Jenkins-Smith, Hank C and Nohrstedt, Daniel and Weible, Christopher M and Sabatier, Paul A},
+  Journal                  = {Theories of the policy process},
+  Year                     = {2014},
+  Volume                   = {3},
+  Publisher                = {Westview Press Boulder}
+}
+
+@Article{ingold2011network,
+  Title                    = {Network structures within policy processes: Coalitions, power, and brokerage in Swiss climate policy},
+  Author                   = {Ingold, Karin},
+  Journal                  = {Policy Studies Journal},
+  Year                     = {2011},
+  Number                   = {3},
+  Pages                    = {435--459},
+  Volume                   = {39},
+  Publisher                = {Wiley Online Library}
+}
+
+@InCollection{helbing2012agent,
+  Title                    = {Agent-based modeling},
+  Author                   = {Helbing, Dirk},
+  Booktitle                = {Social self-organization},
+  Publisher                = {Springer},
+  Year                     = {2012},
+  Pages                    = {25--70}
+}
+
+@Article{heath2009survey,
+  Title                    = {A survey of agent-based modeling practices (January 1998 to July 2008)},
+  Author                   = {Heath, Brian and Hill, Raymond and Ciarallo, Frank},
+  Journal                  = {Journal of Artificial Societies and Social Simulation},
+  Year                     = {2009},
+  Number                   = {4},
+  Pages                    = {9},
+  Volume                   = {12}
+}
+
+@Article{gupta2012comparative,
+  Title                    = {Comparative public policy: Using the comparative method to advance our understanding of the policy process},
+  Author                   = {Gupta, Kuhika},
+  Journal                  = {Policy Studies Journal},
+  Year                     = {2012},
+  Number                   = {s1},
+  Pages                    = {11--26},
+  Volume                   = {40},
+  Publisher                = {Wiley Online Library}
+}
+
+@Article{gruber1993translation,
+  Title                    = {A translation approach to portable ontology specifications},
+  Author                   = {Gruber, Thomas R and others},
+  Journal                  = {Knowledge acquisition},
+  Year                     = {1993},
+  Number                   = {2},
+  Pages                    = {199--220},
+  Volume                   = {5},
+  Publisher                = {Citeseer}
+}
+
+@Article{gruber1991role,
+  Title                    = {The role of common ontology in achieving sharable, reusable knowledge bases},
+  Author                   = {Gruber, Thomas R},
+  Journal                  = {KR},
+  Year                     = {1991},
+  Pages                    = {601--602},
+  Volume                   = {91}
+}
+
+@Article{gruber1995toward,
+  Title                    = {Toward principles for the design of ontologies used for knowledge sharing?},
+  Author                   = {Gruber, Thomas R},
+  Journal                  = {International journal of human-computer studies},
+  Year                     = {1995},
+  Number                   = {5},
+  Pages                    = {907--928},
+  Volume                   = {43},
+  Publisher                = {Elsevier}
+}
+
+@Article{green2004advocacy,
+  Title                    = {Advocacy coalitions and elite sport policy change in Canada and the United Kingdom},
+  Author                   = {Green, Mick and Houlihan, Barrie},
+  Journal                  = {International review for the sociology of sport},
+  Year                     = {2004},
+  Number                   = {4},
+  Pages                    = {387--403},
+  Volume                   = {39},
+  Publisher                = {Sage Publications}
+}
+
+@Article{ghorbani2013maia,
+  Title                    = {MAIA: a framework for developing agent-based social simulations},
+  Author                   = {Ghorbani, Amineh and Bots, Pieter and Dignum, Virginia and Dijkema, Gerard},
+  Journal                  = {Journal of Artificial Societies and Social Simulation},
+  Year                     = {2013},
+  Number                   = {2},
+  Pages                    = {9},
+  Volume                   = {16}
+}
+
+@Book{geyer2015handbook,
+  Title                    = {Handbook on complexity and public policy},
+  Author                   = {Geyer, Robert and Cairney, Paul},
+  Publisher                = {Edward Elgar Publishing},
+  Year                     = {2015}
+}
+
+@Article{gennari2003evolution,
+  Title                    = {The evolution of Prot{\'e}g{\'e}: an environment for knowledge-based systems development},
+  Author                   = {Gennari, John H and Musen, Mark A and Fergerson, Ray W and Grosso, William E and Crub{\'e}zy, Monica and Eriksson, Henrik and Noy, Natalya F and Tu, Samson W},
+  Journal                  = {International Journal of Human-computer studies},
+  Year                     = {2003},
+  Number                   = {1},
+  Pages                    = {89--123},
+  Volume                   = {58},
+  Publisher                = {Elsevier}
+}
+
+@Article{fowler2005dynamic,
+  Title                    = {Dynamic Parties and Social Turnout: An Agent-Based Model1},
+  Author                   = {Fowler, James H and Smirnov, Oleg},
+  Journal                  = {American Journal of Sociology},
+  Year                     = {2005},
+  Number                   = {4},
+  Pages                    = {1070--1094},
+  Volume                   = {110},
+  Publisher                = {JSTOR}
+}
+
+@Article{fenselontologies,
+  Title                    = {Ontologies: A silver bullet for knowledge management and electronic-commerce},
+  Author                   = {Fensel, Dieter},
+  Journal                  = {Berlin: Spring-Verlag},
+  Year                     = {2000}
+}
+
+@Book{martha1979policymaking,
+  Title                    = {Policymaking for social security},
+  Author                   = {Martha Derthick},
+  Publisher                = {Brookings Institution Press},
+  Year                     = {1979}
+}
+
+@Book{van2012agent,
+  Title                    = {Agent-based modelling of socio-technical systems},
+  Author                   = {van Dam, Koen H and Nikolic, Igor and Lukszo, Zofia},
+  Publisher                = {Springer Science \& Business Media},
+  Year                     = {2012},
+  Volume                   = {9}
+}
+
+@Article{cook1983media,
+  Title                    = {Media and agenda setting: Effects on the public, interest group leaders, policy makers, and policy},
+  Author                   = {Cook, Fay Lomax and Tyler, Tom R and Goetz, Edward G and Gordon, Margaret T and Protess, David and Leff, Donna R and Molotch, Harvey L},
+  Journal                  = {Public Opinion Quarterly},
+  Year                     = {1983},
+  Number                   = {1},
+  Pages                    = {16--35},
+  Volume                   = {47},
+  Publisher                = {AAPOR}
+}
+
+@Article{cohen1972garbage,
+  Title                    = {A garbage can model of organizational choice},
+  Author                   = {Cohen, Michael D and March, James G and Olsen, Johan P},
+  Journal                  = {Administrative science quarterly},
+  Year                     = {1972},
+  Pages                    = {1--25},
+  Publisher                = {JSTOR}
+}
+
+@Article{cioffi2009simplicity,
+  Title                    = {Simplicity and reality in computational modeling of politics},
+  Author                   = {Cioffi-Revilla, Claudio},
+  Journal                  = {Computational and Mathematical Organization Theory},
+  Year                     = {2009},
+  Number                   = {1},
+  Pages                    = {26--46},
+  Volume                   = {15},
+  Publisher                = {Springer}
+}
+
+@Article{caudill1995discrete,
+  Title                    = {A discrete-time hazard model of lottery adoption},
+  Author                   = {Caudill, Steven B and Ford, Jon M and Mixon Jr, Franklin G and Peng, Ter Choa},
+  Journal                  = {Applied Economics},
+  Year                     = {1995},
+  Number                   = {6},
+  Pages                    = {555--561},
+  Volume                   = {27},
+  Publisher                = {Taylor \& Francis}
+}
+
+@Article{cairney2009role,
+  Title                    = {The role of ideas in policy transfer: the case of UK smoking bans since devolution},
+  Author                   = {Cairney, Paul},
+  Journal                  = {Journal of European public policy},
+  Year                     = {2009},
+  Number                   = {3},
+  Pages                    = {471--488},
+  Volume                   = {16},
+  Publisher                = {Taylor \& Francis}
+}
+
+@Article{bussell2010get,
+  Title                    = {Why get technical? Corruption and the politics of public service reform in the Indian states},
+  Author                   = {Bussell, Jennifer L},
+  Journal                  = {Comparative Political Studies},
+  Year                     = {2010},
+  Publisher                = {Sage Publications}
+}
+
+@Article{brunner2008understanding,
+  Title                    = {Understanding policy change: Multiple streams and emissions trading in Germany},
+  Author                   = {Brunner, Steffen},
+  Journal                  = {Global Environmental Change},
+  Year                     = {2008},
+  Number                   = {3},
+  Pages                    = {501--507},
+  Volume                   = {18},
+  Publisher                = {Elsevier}
+}
+
+@Article{brouwer2011towards,
+  Title                    = {Towards adaptive management: examining the strategies of policy entrepreneurs in Dutch water management},
+  Author                   = {Brouwer, Stijn and Biermann, Frank and others},
+  Journal                  = {Ecology and Society},
+  Year                     = {2011},
+  Number                   = {4},
+  Pages                    = {5},
+  Volume                   = {16}
+}
+
+@Article{brailsford2014discrete,
+  Title                    = {Discrete-event simulation is alive and kicking!},
+  Author                   = {Brailsford, Sally},
+  Journal                  = {Journal of Simulation},
+  Year                     = {2014},
+  Number                   = {1},
+  Pages                    = {1--8},
+  Volume                   = {8},
+  Publisher                = {Springer}
+}
+
+@Book{borst1997construction,
+  Title                    = {Construction of engineering ontologies for knowledge sharing and reuse},
+  Author                   = {Borst, Willem Nico},
+  Publisher                = {Universiteit Twente},
+  Year                     = {1997}
+}
+
+@Article{borst1997engineering,
+  Title                    = {Engineering ontologies},
+  Author                   = {Borst, Pim and Akkermans, Hans and Top, Jan},
+  Journal                  = {International Journal of Human-Computer Studies},
+  Year                     = {1997},
+  Number                   = {2},
+  Pages                    = {365--406},
+  Volume                   = {46},
+  Publisher                = {Elsevier}
+}
+
+@Article{bonabeau2002agent,
+  Title                    = {Agent-based modeling: Methods and techniques for simulating human systems},
+  Author                   = {Bonabeau, Eric},
+  Journal                  = {Proceedings of the National Academy of Sciences},
+  Year                     = {2002},
+  Number                   = {suppl 3},
+  Pages                    = {7280--7287},
+  Volume                   = {99},
+  Publisher                = {National Acad Sciences}
+}
+
+@Article{birkland2004world,
+  Title                    = {“The World Changed Today”: Agenda-Setting and Policy Change in the Wake of the September 11 Terrorist Attacks},
+  Author                   = {Birkland, Thomas A},
+  Journal                  = {Review of Policy Research},
+  Year                     = {2004},
+  Number                   = {2},
+  Pages                    = {179--200},
+  Volume                   = {21},
+  Publisher                = {Wiley Online Library}
+}
+
+@Article{berry2005using,
+  Title                    = {Using geographic information systems to study interstate competition},
+  Author                   = {Berry, William D and Baybeck, Brady},
+  Journal                  = {American Political Science Review},
+  Year                     = {2005},
+  Number                   = {04},
+  Pages                    = {505--519},
+  Volume                   = {99},
+  Publisher                = {Cambridge Univ Press}
+}
+
+@InProceedings{bendor2001recycling,
+  Title                    = {Recycling the garbage can: An assessment of the research program},
+  Author                   = {Bendor, Jonathan},
+  Booktitle                = {American Political Science Association},
+  Year                     = {2001},
+  Number                   = {01},
+  Organization             = {Cambridge Univ Press},
+  Pages                    = {169--190},
+  Volume                   = {95}
+}
+
+@InProceedings{bechhofer2001oiled,
+  Title                    = {OilEd: a reason-able ontology editor for the semantic web},
+  Author                   = {Bechhofer, Sean and Horrocks, Ian and Goble, Carole and Stevens, Robert},
+  Booktitle                = {Annual Conference on Artificial Intelligence},
+  Year                     = {2001},
+  Organization             = {Springer},
+  Pages                    = {396--408}
+}
+
+@Article{bandura2011social,
+  Title                    = {Social cognitive theory},
+  Author                   = {Bandura, Albert},
+  Journal                  = {Handbook of social psychological theories},
+  Year                     = {2011},
+  Pages                    = {349--373}
+}
+
+@Article{aldea2004scope,
+  Title                    = {The scope of application of multi-agent systems in the process industry: three case studies},
+  Author                   = {Aldea, Arantza and Ba{\~n}ares-Alc{\'a}ntara, Ren{\'e} and Jim{\'e}nez, Laureano and Moreno, Antonio and Mart{\i}nez, J and Ria{\~n}o, David},
+  Journal                  = {Expert Systems with Applications},
+  Year                     = {2004},
+  Number                   = {1},
+  Pages                    = {39--47},
+  Volume                   = {26},
+  Publisher                = {Elsevier}
+}
+
+@Article{ackrill2011multiple,
+  Title                    = {Multiple streams in EU policy-making: the case of the 2005 sugar reform},
+  Author                   = {Ackrill, Robert and Kay, Adrian},
+  Journal                  = {Journal of European Public Policy},
+  Year                     = {2011},
+  Number                   = {1},
+  Pages                    = {72--89},
+  Volume                   = {18},
+  Publisher                = {Taylor \& Francis}
+}
+
