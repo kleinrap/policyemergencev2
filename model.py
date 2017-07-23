@@ -411,9 +411,21 @@ class PolicyEmergence(Model):
 		print('   ')
 		print('--- Agenda setting ---')
 		print('   ')
+		
+		# Structure of the agenda setting
+		# I. Agent issue classification
+		# II. The actions
+		# 	IIa. The group actions
+		#		IIa1. The team actions
+		#		IIa2. The coalition actions
+		#	IIb. The agent actions
+		#		IIb1. Distribution of the resources
+		#		IIb2. Upkeep of the network
+		#		IIb3. Actions themselves
+		# III.  The creation of the agenda
+
 		####################################################################################################
 
-		
 		# I. Agent issues classification and selection [Backbone/Intermediate]
 		print('Issue selection ...')
 
@@ -490,6 +502,13 @@ class PolicyEmergence(Model):
 		print('   ')
 		
 		# IIa1. The team actions [3S]
+
+		# Strucure of the team actions [3S]
+		# 1. Assigning resources
+		# 2. Team actions (creation of teams)
+		# 3. Belief actions of the teams
+
+
 		if AS_theory == 2:
 
 			print('Team actions (AS) for three streams ...')
@@ -506,20 +525,18 @@ class PolicyEmergence(Model):
 				agents.agent_team_threeS_as(agents, self.agent_action_list, self.team_list_as, self.team_list_as_total, self.link_list, self.team_number_as, \
 					self.tick_number, self.threeS_link_list_as, self.deep_core, self.policy_core, self.secondary, self.team_gap_threshold, self.team_belief_problem_threshold, self.team_belief_policy_threshold)
 
-
 			print(' ')
 			print('AS')
 			for teams_test in self.team_list_as:
 				print(teams_test.members_id)
 			print(' ')
 
-
 			# 3. Belief actions in a team
 			shuffled_team_list_as = self.team_list_as
 			random.shuffle(shuffled_team_list_as)
 			for teams in shuffled_team_list_as:
 				teams.team_belief_actions_threeS_as(teams, self.causalrelation_number, self.deep_core, self.policy_core, self.secondary, self.agent_action_list, self.threeS_link_list_as, self.threeS_link_list_as_total, \
-					self.threeS_link_id_as, self.team_belief_actions_threeS_as, self.affiliation_weights, self.conflict_level_coef, self.resources_weight_action, self.resources_potency)
+					self.threeS_link_id_as, self.link_list, self.affiliation_weights, self.conflict_level_coef, self.resources_weight_action, self.resources_potency)
 		
 			print('... cleared.')
 			print('   ')
@@ -560,7 +577,7 @@ class PolicyEmergence(Model):
 		# IIb. The actions of the actors [Backbone+/3S/ACF]
 		if AS_theory == 1 or AS_theory == 2 or AS_theory == 3:
 
-			# 1. Distribution of the resources
+			# IIb1. Distribution of the resources
 			# For the [Backbone+]
 			if AS_theory == 1:
 				for agents in self.agent_action_list:
@@ -589,7 +606,7 @@ class PolicyEmergence(Model):
 					agents.resources_network = 0.2 * agents.resources[0]
 					agents.resources_actions = 0.8 * agents.resources[0]
 			
-			# 2. Upkeep of the network
+			# IIb2. Upkeep of the network
 			print('Running network upkeep actions (AS) ...')
 			# Making a shuffled list of agents to have a random selection order
 			# For now strategy is set here, ultimately, it should come in the agent attributes somewhere
@@ -607,7 +624,7 @@ class PolicyEmergence(Model):
 			print('... cleared.')
 			print('   ')
 
-			# 3. Actions themselves
+			# IIb3. Actions themselves
 			print('Performing individual agent actions (AS) ...')
 
 			# Everything but three streams
