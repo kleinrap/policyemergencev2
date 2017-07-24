@@ -1,8 +1,8 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf820
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf830
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\froman\fcharset0 Times-Roman;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;}
 {\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c100000\c100000\c100000;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww10520\viewh14580\viewkind0
+\paperw11900\paperh16840\margl1440\margr1440\vieww20080\viewh36000\viewkind0
 \deftab720
 \pard\pardeftab720\partightenfactor0
 
@@ -654,7 +654,7 @@ A_\{m\} &:= A_\{m\} + \\left(A_\{n\} - A_\{m\} \\right) \\cdot resources \\cdot 
 \\item Inter-team actions\
 \
 There are also four inter-team actions: framing on causal relations, framing on policy impact, direct influence on aim and direct influence on state beliefs. The aim for these action is to influence the belief of individual agents present outside of the team. These actions are graded by each of the agents present in the team and the action that has the most merit from all actions of all the agents is the one selected by the team as a whole. To benefit better from the team, the agents can count on the overall team policy network and the team resources. The framing on causal relation is performed if the team has chosen a problem as its issue while the framing on policy impact is for when the team has chosen a policy as its issue.\uc0\u8232 \
-To better benefit from the team network, a shadow network is established between the team and all agents outside of the team. The awareness for the established links is equal to the highest awareness found between one of the agents in the team and the outsider agent. Furthermore, the conflict level between the team and this agent is calculated for the issue of the team based on the average beliefs of the team and the outsider agent's beliefs. The links behave similarly to the normal links between the agents.\uc0\u8232 \
+To better benefit from the team network, a shadow network is established between the team and all agents outside of the team. The awareness for the established links is equal to the highest awareness found between one of the agents in the team and the outsider agent. The conflict level can then be calculated following two options: full knowledge assumption and partial knowledge assumption. The first option assumes that the team has full knowledge of the beliefs of outsider agents. The second option assumes that the team does not have full knowledge and therefore uses the partial knowledge of the agent with the higher awareness with the outsider agent. The conflict level are then calculated based on the difference between the outsider agent\'92s belief (based on full or partial knowledge) and the average beliefs of the team for the issue selected. The links behave similarly to the normal links between the agents.\uc0\u8232 \
 Each of the actions are performed using 10\\% of the resources of the team and using the partial knowledge of the agents within the team. As mentioned before, the awareness and conflict levels are obtained through the team-outside agent links.\
 \uc0\u8232 \
 The framing on causal relation likelihood grade is obtained using \\autoref\{eq:likelihoodFraming\}, the state influence likelihood using \\autoref\{eq:likelihoodStateChange\}, the aim influence likelihood using \\autoref\{eq:likelihoodAimChange\} and the impact influence likelihood using \\autoref\{eq:likelihoodImpact\}\uc0\u8232 \
@@ -667,10 +667,10 @@ All of the actions are graded and the action with the highest likelihood to occu
 \
 The agents which are part of a team can also perform actions as simple individuals similar to the actions performed in the backbone+ model. The resources used to this effect are the resources left depending on the belonging parameter. If the agent is team-less, then all his resources will go to performing individual actions.\
 \uc0\u8232 \
-The actions that the agent can perform are dependent on whether he has first chosen a policy or a problem similarly to the inter-team actions. In both cases, the agent can perform a state and aim influence action on other agents. Furthermore, if the agent has first chosen a problem, he will be able to perform a framing on causal relation action on causal relations related to the problem (s)he has chosen. If the agent has first chosen a policy, he will be able to perform a framing on impact action on all the impacts of the chosen policy. The likelihood and impact equations used are the same as the ones presented in the inter-team actions section. \cf2 \cb3 For the external parties, all these actions are blanket actions acting on all agents. 
+The actions that the agent can perform are dependent on whether he has first chosen a policy or a problem similarly to the inter-team actions. In both cases, the agent can perform a state and aim influence action on other agents. Furthermore, if the agent has first chosen a problem, he will be able to perform a framing on causal relation action on causal relations related to the problem (s)he has chosen. If the agent has first chosen a policy, he will be able to perform a framing on impact action on all the impacts of the chosen policy. The likelihood and impact equations used are the same as the ones presented in the inter-team actions section. \cb3 For the external parties, all these actions are blanket actions acting on all agents. 
 \f1 \cb1 \
 
-\f0 \cf2 \uc0\u8232 \
+\f0 \uc0\u8232 \
 %0\
 \\subsection\{The model cycle\}\
 \

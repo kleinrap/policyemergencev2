@@ -23,7 +23,7 @@ class Team():
 	# 	return 'Team - ' + str(self.unique_id)
 
 	def team_belief_actions_threeS_as(self, teams, causalrelation_number, deep_core, policy_core, secondary, agent_action_list, threeS_link_list_as, \
-		threeS_link_list_as_total, threeS_link_id_as, link_list, affiliation_weights, conflict_level_coef, resources_weight_action, resources_potency):
+		threeS_link_list_as_total, threeS_link_id_as, link_list, affiliation_weights, conflict_level_coef, resources_weight_action, resources_potency, conflict_level_option):
 
 		"""
 		Team actions - three streams(agenda setting)
@@ -958,7 +958,7 @@ class Team():
 						break
 
 	def team_belief_actions_threeS_pf(self, teams, causalrelation_number, deep_core, policy_core, secondary, agent_action_list, threeS_link_list_pf, \
-		threeS_link_list_pf_total, threeS_link_id_pf, link_list, affiliation_weights, agenda_prob_3S_as, conflict_level_coef, resources_weight_action, resources_potency):
+		threeS_link_list_pf_total, threeS_link_id_pf, link_list, affiliation_weights, agenda_prob_3S_as, conflict_level_coef, resources_weight_action, resources_potency, conflict_level_option):
 
 		"""
 		Team actions - three streams(policy formulation)
