@@ -354,7 +354,7 @@ class Team():
 					if agent_network.belieftree[0][teams.issue][0] != 'No':
 						# print(' ')
 						# print('Added 1 - ' + str(agent_network))
-						self.new_link_threeS_as(link_list, agent_network, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_Pr, len_PC, len_S, conflict_level_coef)
+						self.new_link_threeS_as(link_list, agent_network, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_Pr, len_PC, len_S, conflict_level_coef, conflict_level_option)
 
 			# If the shadow network exists then update the aware, conflict level, aware_decay
 			if network_existence_check == True:
@@ -400,7 +400,7 @@ class Team():
 						if new_team_agent.belieftree[0][teams.issue][0] != 'No':
 							# print(' ')
 							# print('Added 2: ' + str(new_team_agent))
-							self.new_link_threeS_as(link_list, new_team_agent, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_Pr, len_PC, len_S, conflict_level_coef)
+							self.new_link_threeS_as(link_list, new_team_agent, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_Pr, len_PC, len_S, conflict_level_coef, conflict_level_option)
 
 				# For updates:
 				# Go through all the links
@@ -410,11 +410,10 @@ class Team():
 						# Make sure to select an existing link
 						if links.aware != -1:
 							# Update of the awareness level
-							team_aware, agent_with_highest_awareness = self.awareness_level_selection(link_list, teams, links.agent2)
+							team_aware, agent_with_highest_awareness = PolicyNetworkLinks.awareness_level_selection(link_list, teams, links.agent2)
 
 							# Update of the conflict level
-							conflict_level_option = 1;
-							conflict_level = self.conflict_level_calculation(teams, links.agent2, conflict_level_coef, conflict_level_option, agent_with_highest_awareness, len_Pr, len_PC, len_S)
+							conflict_level = PolicyNetworkLinks.conflict_level_calculation(teams, links.agent2, conflict_level_coef, conflict_level_option, agent_with_highest_awareness, len_Pr, len_PC, len_S)
 
 							# Placing the new conflict level in the link itself
 							links.conflict_level = conflict_level
@@ -1286,7 +1285,7 @@ class Team():
 					if agent_network.belieftree[0][teams.issue][0] != 'No':
 						# print(' ')
 						# print('Added 1 - ' + str(agent_network))
-						self.new_link_threeS_pf(link_list, agent_network, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_Pr, len_PC, len_S, conflict_level_coef)
+						self.new_link_threeS_pf(link_list, agent_network, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_Pr, len_PC, len_S, conflict_level_coef, conflict_level_option)
 
 			# If the shadow network exists then update the aware, conflict level, aware_decay
 			if network_existence_check == True:
@@ -1332,7 +1331,7 @@ class Team():
 						if new_team_agent.belieftree[0][teams.issue][0] != 'No':
 							# print(' ')
 							# print('Added 2: ' + str(new_team_agent))
-							self.new_link_threeS_pf(link_list, new_team_agent, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_Pr, len_PC, len_S, conflict_level_coef)
+							self.new_link_threeS_pf(link_list, new_team_agent, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_Pr, len_PC, len_S, conflict_level_coef, conflict_level_option)
 
 				# For updates:
 				# Go through all the links
@@ -1342,11 +1341,10 @@ class Team():
 						# Make sure to select an existing link
 						if links.aware != -1:
 							# Update of the awareness level
-							team_aware, agent_with_highest_awareness = self.awareness_level_selection(link_list, teams, links.agent2)
+							team_aware, agent_with_highest_awareness = PolicyNetworkLinks.awareness_level_selection(link_list, teams, links.agent2)
 
 							# Update of the conflict level
-							conflict_level_option = 1;
-							conflict_level = self.conflict_level_calculation(teams, links.agent2, conflict_level_coef, conflict_level_option, agent_with_highest_awareness, len_Pr, len_PC, len_S)
+							conflict_level = PolicyNetworkLinks.conflict_level_calculation(teams, links.agent2, conflict_level_coef, conflict_level_option, agent_with_highest_awareness, len_Pr, len_PC, len_S)
 
 							# Placing the new conflict level in the link itself
 							links.conflict_level = conflict_level
@@ -1890,119 +1888,8 @@ class Team():
 					if teams.resources[1] <= 0 * teams.resources[0]:
 						break
 
-	
-	def awareness_level_selection(self, link_list, teams, outsider_agent):
 
-		"""
-		The awareness level selection function - three streams shadow network
-		===========================
-
-		This function is used to select the agent with the highest awareness level
-		and his awareness level with the outsider agent.
-
-		"""
-
-		team_aware = 0
-		agent_with_highest_awareness = 0 # uses for the partial knowledge later on
-
-		for agent_check_aware in teams.members:
-			for links_check in link_list:
-				if outsider_agent == links_check.agent1 and agent_check_aware == links_check.agent2:
-					if links_check.aware >= team_aware:
-						team_aware = links_check.aware
-						agent_with_highest_awareness = links_check.agent2
-				if outsider_agent == links_check.agent2 and agent_check_aware == links_check.agent1:
-					if links_check.aware >= team_aware:
-						team_aware = links_check.aware
-						agent_with_highest_awareness = links_check.agent1
-
-		return team_aware, agent_with_highest_awareness
-
-
-	def conflict_level_calculation(self, teams, outsider_agent, conflict_level_coef, conflict_level_option, agent_with_highest_awareness, len_Pr, len_PC, len_S):
-		"""
-		The conflict level calculation function - three streams shadow network
-		===========================
-
-		Lorem Ipsum
-
-		"""
-
-		# 0. Array initialisation
-		# The conflict level is calculated based on the average of the beliefs of the whole team on the issue for state and aim
-		# Set by default to the medium value 
-		# (i.e.: [0.75, 0.75 , 0.75, ..., 0.75 ])
-		# 	     [Aim , State, Causal relations]
-		# First for the aim and the state of the selected issue and then appending all possible causal relations in the belief tree
-		conflict_level = [conflict_level_coef[1], conflict_level_coef[1]]
-		for p in range(len_Pr*len_PC + len_PC*len_S):
-			conflict_level.append(conflict_level_coef[1])
-
-		# 1. Aim and state conflict level calculations
-		state_cf_team_list = []
-		aim_cf_team_list = []
-
-		# Calculating the average belief (based on the actual, and not partial, knowledge)
-		for agent_cf in teams.members:
-			state_cf_team_list.append(agent_cf.belieftree[0][teams.issue][0])
-			aim_cf_team_list.append(agent_cf.belieftree[0][teams.issue][1])
-		state_cf_team = sum(state_cf_team_list)/len(state_cf_team_list)
-		aim_cf_team = sum(aim_cf_team_list)/len(aim_cf_team_list)
-
-		# If the first option has been selected (full knowledge):
-		if conflict_level_option == 0:
-			# The team as a whole does not have partial knowledge of the other agent's beliefs, therefore the actual belief of 
-			# the outsider agent is considered
-			state_cf_difference = abs(outsider_agent.belieftree[0][teams.issue][0] - state_cf_team)
-			aim_cf_difference = abs(outsider_agent.belieftree[0][teams.issue][1] - aim_cf_team)
-
-		# If the second option has been selected (partial knowledge):
-		if conflict_level_option == 1:
-			# It is considered that the partial knowledge of the agent with the highest awareness is the most accurate one. It is therefore selected
-			# to calculate the difference for the conflict level.
-			state_cf_difference = abs(agent_with_highest_awareness.belieftree[1 + outsider_agent.unique_id][teams.issue][0] - state_cf_team)
-			aim_cf_difference = abs(agent_with_highest_awareness.belieftree[1 + outsider_agent.unique_id][teams.issue][1] - state_cf_team)
-
-		# Value of the conflict level
-		self.conflict_level_value_calculation(0, conflict_level, conflict_level_coef, state_cf_difference)
-		self.conflict_level_value_calculation(1, conflict_level, conflict_level_coef, aim_cf_difference)
-
-		# 2. Causal relations conflict level calculations
-		cw_average = []
-		for p in range(len_Pr*len_PC + len_PC*len_S):
-			cw_list = []
-			for agent_cf in teams.members:
-				cw_list.append(agent_cf.belieftree[0][len_Pr+len_PC+len_S+p][0])
-			cw_average.append(sum(cw_list)/len(cw_list))
-
-		for p in range(len_Pr*len_PC + len_PC*len_S):
-			if conflict_level_option == 0:
-				cw_difference = abs(outsider_agent.belieftree[0][len_Pr + len_PC + len_S + p][0] - cw_average[p])
-			if conflict_level_option == 1:
-				cw_difference = abs(agent_with_highest_awareness.belieftree[1 + outsider_agent.unique_id][len_Pr + len_PC + len_S + p][0] - cw_average[p])
-			self.conflict_level_value_calculation(2 + p, conflict_level, conflict_level_coef, cw_difference)
-
-		return conflict_level
-
-
-	def conflict_level_value_calculation(self, issue, conflict_level, conflict_level_coef, checked_value):
-		"""
-		The conflict level value calculation function - three streams shadow network
-		===========================
-
-		This function is standardised to find the value of the conflict level (one of three values specified as code input)
-
-		"""
-
-		if checked_value <= 0.25:
-			conflict_level[issue] = conflict_level_coef[0]
-		if checked_value > 0.25 and checked_value <= 1.75:
-			conflict_level[issue] = conflict_level_coef[2]
-		if checked_value > 1.75:
-			conflict_level[issue] = conflict_level_coef[1]
-
-
-	def new_link_threeS(self, conflict_level_coef, link_list, outsider_agent, teams, len_Pr, len_PC, len_S):
+	def new_link_threeS(self, conflict_level_coef, link_list, outsider_agent, teams, conflict_level_option, len_Pr, len_PC, len_S):
 
 		"""
 		The new link function - three streams shadow network
@@ -2018,7 +1905,7 @@ class Team():
 		"""
 
 		# 1. We look for the highest awareness level
-		team_aware, agent_with_highest_awareness = self.awareness_level_selection(link_list, teams, outsider_agent)
+		team_aware, agent_with_highest_awareness = PolicyNetworkLinks.awareness_level_selection(link_list, teams, outsider_agent)
 
 		# 2. We calculate the conflict level
 		# Note that the conflict level is only of interest for the issue advocated by the team (simplifying things)
@@ -2028,9 +1915,7 @@ class Team():
 		#	0. Uses full knowledge for the calculation
 		#	1. Uses the partial knowledge of the agent with the highest amount of awareness for the calculation
 
-		conflict_level_option = 1;
-
-		conflict_level = self.conflict_level_calculation(teams, outsider_agent, conflict_level_coef, conflict_level_option, agent_with_highest_awareness, len_Pr, len_PC, len_S)
+		conflict_level = PolicyNetworkLinks.conflict_level_calculation(teams, outsider_agent, conflict_level_coef, conflict_level_option, agent_with_highest_awareness, len_Pr, len_PC, len_S)
 
 		# 3. We set the aware decay
 		aware_decay = 0
@@ -2038,7 +1923,7 @@ class Team():
 		return conflict_level, aware_decay, team_aware
 
 
-	def new_link_threeS_as(self, link_list, outsider_agent, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_Pr, len_PC, len_S, conflict_level_coef):
+	def new_link_threeS_as(self, link_list, outsider_agent, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_Pr, len_PC, len_S, conflict_level_coef, conflict_level_option):
 
 		"""
 		The new link function - three streams shadow network (agenda setting)
@@ -2054,7 +1939,7 @@ class Team():
 		"""
 
 		# 1/2/3. Initial part of the new link creation (common to AS and PF)
-		conflict_level, aware_decay, team_aware = self.new_link_threeS(conflict_level_coef, link_list, outsider_agent, teams, len_Pr, len_PC, len_S)
+		conflict_level, aware_decay, team_aware = self.new_link_threeS(conflict_level_coef, link_list, outsider_agent, teams, conflict_level_option, len_Pr, len_PC, len_S)
 
 		# 4. We create the link
 		team_link = PolicyNetworkLinks(threeS_link_id_as[0], teams, outsider_agent, team_aware, aware_decay, conflict_level)
@@ -2062,7 +1947,7 @@ class Team():
 		threeS_link_list_as_total.append(team_link)
 		threeS_link_id_as[0] += 1
 
-	def new_link_threeS_pf(self, link_list, outsider_agent, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_Pr, len_PC, len_S, conflict_level_coef):
+	def new_link_threeS_pf(self, link_list, outsider_agent, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_Pr, len_PC, len_S, conflict_level_coef, conflict_level_option):
 
 		"""
 		The new link function - three streams shadow network (policy formulation)
@@ -2078,7 +1963,7 @@ class Team():
 		"""
 
 		# 1/2/3. Initial part of the new link creation (common to AS and PF)
-		conflict_level, aware_decay, team_aware = self.new_link_threeS(conflict_level_coef, link_list, outsider_agent, teams, len_Pr, len_PC, len_S)
+		conflict_level, aware_decay, team_aware = self.new_link_threeS(conflict_level_coef, link_list, outsider_agent, teams, conflict_level_option, len_Pr, len_PC, len_S)
 
 		# 4. We create the link
 		team_link = PolicyNetworkLinks(threeS_link_id_pf[0], teams, outsider_agent, team_aware, aware_decay, conflict_level)
