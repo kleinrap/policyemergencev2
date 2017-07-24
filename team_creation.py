@@ -410,46 +410,12 @@ class Team():
 						# Make sure to select an existing link
 						if links.aware != -1:
 							# Update of the awareness level
-							### THIS NEEDS TO BE CHANGED WITH THE NEW FUNCTION:
-							for agent_check_aware in teams.members:
-								for links_check in link_list:
-									if links.agent2 == links_check.agent1 and agent_check_aware == links_check.agent2:
-										if links_check.aware > links.aware:
-											links.aware = links_check.aware
-									if links.agent2 == links_check.agent2 and agent_check_aware == links_check.agent1:
-										if links_check.aware > links.aware:
-											links.aware = links_check.aware
-							##### AND THE NEW CONFLICT LEVEL CALCULATION
+							team_aware, agent_with_highest_awareness = self.awareness_level_selection(link_list, teams, links.agent2)
 
 							# Update of the conflict level
-							conflict_level = [conflict_level_coef[1], conflict_level_coef[1]]
-							for p in range(len_Pr*len_PC + len_PC*len_S):
-								conflict_level.append(conflict_level_coef[1])
+							conflict_level_option = 1;
+							conflict_level = self.conflict_level_calculation(teams, links.agent2, conflict_level_coef, conflict_level_option, agent_with_highest_awareness, len_Pr, len_PC, len_S)
 
-							state_cf_team_list = []
-							aim_cf_team_list = []
-							for agent_cf in teams.members:
-								state_cf_team_list.append(agent_cf.belieftree[0][teams.issue][0])
-								aim_cf_team_list.append(agent_cf.belieftree[0][teams.issue][1])
-							state_cf_team = sum(state_cf_team_list)/len(state_cf_team_list)
-							aim_cf_team = sum(aim_cf_team_list)/len(aim_cf_team_list)
-							cw_average = []
-							for p in range(len_Pr*len_PC + len_PC*len_S):
-								cw_list = []
-								for agent_cf in teams.members:
-									cw_list.append(agent_cf.belieftree[0][len_Pr+len_PC+len_S+p][0])
-								cw_average.append(sum(cw_list)/len(cw_list))
-							# Looking at the state
-							state_cf_difference = abs(links.agent2.belieftree[0][teams.issue][0] - state_cf_team)
-							aim_cf_difference = abs(links.agent2.belieftree[0][teams.issue][0] - state_cf_team)
-							# State conflict level
-							self.conflict_level_value_calculation(0, conflict_level, conflict_level_coef, state_cf_difference)
-							# Aim conflict level
-							self.conflict_level_value_calculation(1, conflict_level, conflict_level_coef, aim_cf_difference)
-							# Causal relations conflict level
-							for p in range(len_Pr*len_PC + len_PC*len_S):
-								cw_difference = abs(links.agent2.belieftree[0][len_Pr + len_PC + len_S + p][0] - cw_average[p])
-								self.conflict_level_value_calculation(2+p, conflict_level, conflict_level_coef, cw_difference)
 							# Placing the new conflict level in the link itself
 							links.conflict_level = conflict_level
 
@@ -1368,7 +1334,6 @@ class Team():
 							# print('Added 2: ' + str(new_team_agent))
 							self.new_link_threeS_pf(link_list, new_team_agent, teams, threeS_link_list_pf, threeS_link_list_pf_total, threeS_link_id_pf, len_Pr, len_PC, len_S, conflict_level_coef)
 
-
 				# For updates:
 				# Go through all the links
 				for links in threeS_link_list_pf:
@@ -1376,44 +1341,13 @@ class Team():
 					if links.agent1 == teams:
 						# Make sure to select an existing link
 						if links.aware != -1:
-							# Update of the aware level
-							for agent_check_aware in teams.members:
-								for links_check in link_list:
-									if links.agent2 == links_check.agent1 and agent_check_aware == links_check.agent2:
-										if links_check.aware > links.aware:
-											links.aware = links_check.aware
-									if links.agent2 == links_check.agent2 and agent_check_aware == links_check.agent1:
-										if links_check.aware > links.aware:
-											links.aware = links_check.aware
+							# Update of the awareness level
+							team_aware, agent_with_highest_awareness = self.awareness_level_selection(link_list, teams, links.agent2)
 
 							# Update of the conflict level
-							conflict_level = [conflict_level_coef[1], conflict_level_coef[1]]
-							for p in range(len_Pr*len_PC + len_PC*len_S):
-								conflict_level.append(conflict_level_coef[1])
-							state_cf_team_list = []
-							aim_cf_team_list = []
-							for agent_cf in teams.members:
-								state_cf_team_list.append(agent_cf.belieftree[0][teams.issue][0])
-								aim_cf_team_list.append(agent_cf.belieftree[0][teams.issue][1])
-							state_cf_team = sum(state_cf_team_list)/len(state_cf_team_list)
-							aim_cf_team = sum(aim_cf_team_list)/len(aim_cf_team_list)
-							cw_average = []
-							for p in range(len_Pr*len_PC + len_PC*len_S):
-								cw_list = []
-								for agent_cf in teams.members:
-									cw_list.append(agent_cf.belieftree[0][len_Pr+len_PC+len_S+p][0])
-								cw_average.append(sum(cw_list)/len(cw_list))
-							# Looking at the state
-							state_cf_difference = abs(links.agent2.belieftree[0][teams.issue][0] - state_cf_team)
-							aim_cf_difference = abs(links.agent2.belieftree[0][teams.issue][0] - state_cf_team)
-							# State conflict level
-							self.conflict_level_value_calculation(0, conflict_level, conflict_level_coef, state_cf_difference)
-							# Aim conflict level
-							self.conflict_level_value_calculation(1, conflict_level, conflict_level_coef, aim_cf_difference)
-							# Causal relations conflict level
-							for p in range(len_Pr*len_PC + len_PC*len_S):
-								cw_difference = abs(links.agent2.belieftree[0][len_Pr + len_PC + len_S + p][0] - cw_average[p])
-								self.conflict_level_value_calculation(2+p, conflict_level, conflict_level_coef, cw_difference)
+							conflict_level_option = 1;
+							conflict_level = self.conflict_level_calculation(teams, links.agent2, conflict_level_coef, conflict_level_option, agent_with_highest_awareness, len_Pr, len_PC, len_S)
+
 							# Placing the new conflict level in the link itself
 							links.conflict_level = conflict_level
 
@@ -1981,7 +1915,6 @@ class Team():
 					if links_check.aware >= team_aware:
 						team_aware = links_check.aware
 						agent_with_highest_awareness = links_check.agent1
-		# print(self.team_aware)
 
 		return team_aware, agent_with_highest_awareness
 
