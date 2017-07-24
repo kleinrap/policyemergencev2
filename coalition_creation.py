@@ -952,73 +952,22 @@ class Coalition():
 
 		"""
 
-		# First we look for the highest aware level
-		team_aware = 0
-		for agent_check_aware in coalitions.members:
-			for links_check in link_list:
-				if outsider_agent == links_check.agent1 and agent_check_aware == links_check.agent2:
-					if links_check.aware > team_aware:
-						team_aware = links_check.aware
-				if outsider_agent == links_check.agent2 and agent_check_aware == links_check.agent1:
-					if links_check.aware > team_aware:
-						team_aware = links_check.aware
-						# print(team_aware)
+		# 1. We look for the highest awareness level
+		coalition_aware, agent_with_highest_awareness = PolicyNetworkLinks.awareness_level_selection(link_list, coalitions, outsider_agent)
 
-		# Second we calculate the conflict level
-		# Note that the conflict level is only of interest for the issue advocated by the coalition leader (simplifying things)
-		# The conflict level is calculated based on the beliefs of the whole coalition leader on the issue for state and aim
-		conflict_level = [conflict_level_coef[1], conflict_level_coef[1]]
-		for p in range(len_Pr*len_PC + len_PC*len_S):
-			conflict_level.append(conflict_level_coef[1])
+		# 2. We calculate the conflict level (options 2 is for coalitions)
+		# Note that the conflict level is only of interest for the issue advocated by the team (simplifying things)
+		# All causal relations are considered as any might be called up during the belief influence actions
+		conflict_level_option = 2
+		agent_with_highest_awareness = coalitions.lead
 
-		# Looking at the state and aim to calculate the conflict level
-		check_none0 = 0
-		if coalitions.lead.belieftree[1 + outsider_agent.unique_id][coalitions.issue][0] == None:
-			coalitions.lead.belieftree[1 + outsider_agent.unique_id][coalitions.issue][0] = 0
-			check_none0 = 1
-		check_none1 = 0
-		if coalitions.lead.belieftree[1 + outsider_agent.unique_id][coalitions.issue][1] == None:
-			coalitions.lead.belieftree[1 + outsider_agent.unique_id][coalitions.issue][1] = 0
-			check_none1 = 1
-		
-		state_cf_difference = abs(coalitions.lead.belieftree[1 + outsider_agent.unique_id][coalitions.issue][0] - coalitions.lead.belieftree[0][coalitions.issue][0])
-		aim_cf_difference = abs(coalitions.lead.belieftree[1 + outsider_agent.unique_id][coalitions.issue][1] - coalitions.lead.belieftree[0][coalitions.issue][1])
-		if check_none0 == 1:
-			coalitions.lead.belieftree[1 + outsider_agent.unique_id][coalitions.issue][0] = None
-		if check_none1 == 1:
-			coalitions.lead.belieftree[1 + outsider_agent.unique_id][coalitions.issue][1] = None
+		conflict_level = PolicyNetworkLinks.conflict_level_calculation(coalitions, outsider_agent, conflict_level_coef, conflict_level_option, agent_with_highest_awareness, len_Pr, len_PC, len_S)
 
-		# State conflict level
-		if state_cf_difference <= 0.25:
-			conflict_level[0] = conflict_level_coef[0]
-		if state_cf_difference > 0.25 and state_cf_difference <=1.75:
-			conflict_level[0] = conflict_level_coef[2]
-		if state_cf_difference > 1.75:
-			conflict_level[0] = conflict_level_coef[1]
-		
-		# Aim conflict level
-		if aim_cf_difference <= 0.25:
-			conflict_level[1] = conflict_level_coef[0]
-		if aim_cf_difference > 0.25 and aim_cf_difference <=1.75:
-			conflict_level[1] = conflict_level_coef[2]
-		if aim_cf_difference > 1.75:
-			conflict_level[1] = conflict_level_coef[1]
-
-		# Conflict level for the causal relations
-		for p in range(len_Pr*len_PC + len_PC*len_S):
-			cw_difference = abs(coalitions.lead.belieftree[1 + outsider_agent.unique_id][len_Pr + len_PC + len_S + p][0] - coalitions.lead.belieftree[0][len_Pr + len_PC + len_S + p][0])
-			if cw_difference <= 0.25:
-				conflict_level[2+p] = conflict_level_coef[0]
-			if cw_difference > 0.25 and cw_difference <=1.75:
-				conflict_level[2+p] = conflict_level_coef[2]
-			if cw_difference > 1.75:
-				conflict_level[2+p] = conflict_level_coef[1]
-
-		# Third we set the aware decay
+		# 3. We set the aware decay
 		aware_decay = 0
 
-		# Fifth we create the link
-		coalition_link = PolicyNetworkLinks(ACF_link_id_as[0], coalitions, outsider_agent, team_aware, aware_decay, conflict_level)
+		# 4. We create the link
+		coalition_link = PolicyNetworkLinks(ACF_link_id_as[0], coalitions, outsider_agent, coalition_aware, aware_decay, conflict_level)
 		ACF_link_list_as.append(coalition_link)
 		ACF_link_list_as_total.append(coalition_link)
 		ACF_link_id_as[0] += 1
@@ -1038,19 +987,10 @@ class Coalition():
 
 		"""
 
-		# First we look for the highest aware level
-		team_aware = 0
-		for agent_check_aware in coalitions.members:
-			for links_check in link_list:
-				if outsider_agent == links_check.agent1 and agent_check_aware == links_check.agent2:
-					if links_check.aware > team_aware:
-						team_aware = links_check.aware
-				if outsider_agent == links_check.agent2 and agent_check_aware == links_check.agent1:
-					if links_check.aware > team_aware:
-						team_aware = links_check.aware
-						# print(team_aware)
+		# 1. We look for the highest awareness level
+		coalition_aware, agent_with_highest_awareness = PolicyNetworkLinks.awareness_level_selection(link_list, coalitions, outsider_agent)
 
-		# Second we calculate the conflict level
+		# 2. We calculate the conflict level
 		# Note that the conflict level is only of interest for the issue advocated by the coalition leader (simplifying things)
 		# The conflict level is calculated based on the beliefs of the whole coalition leader on the issue for state and aim
 		conflict_level = []
@@ -1098,17 +1038,17 @@ class Coalition():
 		for p in range(len_Pr*len_PC + len_PC*len_S):
 			cw_difference = abs(coalitions.lead.belieftree[1 + outsider_agent.unique_id][len_Pr + len_PC + len_S + p][0] - coalitions.lead.belieftree[0][len_Pr + len_PC + len_S + p][0])
 			if cw_difference <= 0.25:
-				conflict_level[len_S+p] = conflict_level_coef[0]
+				conflict_level[len_S + p] = conflict_level_coef[0]
 			if cw_difference > 0.25 and cw_difference <=1.75:
-				conflict_level[len_S+p] = conflict_level_coef[2]
+				conflict_level[len_S + p] = conflict_level_coef[2]
 			if cw_difference > 1.75:
-				conflict_level[len_S+p] = conflict_level_coef[1]
+				conflict_level[len_S + p] = conflict_level_coef[1]
 
-		# Third we set the aware decay
+		# 3. We set the aware decay
 		aware_decay = 0
 
-		# Fifth we create the link
-		coalition_link = PolicyNetworkLinks(ACF_link_id_pf[0], coalitions, outsider_agent, team_aware, aware_decay, conflict_level)
+		# 4. We create the link
+		coalition_link = PolicyNetworkLinks(ACF_link_id_pf[0], coalitions, outsider_agent, coalition_aware, aware_decay, conflict_level)
 		ACF_link_list_pf.append(coalition_link)
 		ACF_link_list_pf_total.append(coalition_link)
 		ACF_link_id_pf[0] += 1
