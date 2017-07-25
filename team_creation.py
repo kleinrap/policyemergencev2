@@ -671,6 +671,14 @@ class Team():
 						# Checks and transfer of partial knowledge
 						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 1)
 
+					# Adjusting the awareness decay of the team members
+					for links_to_change in link_list:
+						for agents_in_team in teams.members:
+							if links_to_change.agent1 == agents_in_team and links_to_change.agent2.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
+							if links_to_change.agent2 == agents_in_team and links_to_change.agent1.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
+
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
 
@@ -948,6 +956,14 @@ class Team():
 
 						# Checks and transfer of partial knowledge
 						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 1)
+
+					# Adjusting the awareness decay of the team members
+					for links_to_change in link_list:
+						for agents_in_team in teams.members:
+							if links_to_change.agent1 == agents_in_team and links_to_change.agent2.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
+							if links_to_change.agent2 == agents_in_team and links_to_change.agent1.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
 
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
@@ -1607,6 +1623,14 @@ class Team():
 						# Checks and transfer of partial knowledge
 						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 1)
 
+					# Adjusting the awareness decay of the team members
+					for links_to_change in link_list:
+						for agents_in_team in teams.members:
+							if links_to_change.agent1 == agents_in_team and links_to_change.agent2.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
+							if links_to_change.agent2 == agents_in_team and links_to_change.agent1.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
+
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
 
@@ -1881,13 +1905,20 @@ class Team():
 						# Checks and transfer of partial knowledge
 						partial_knowledge = ActionFunctions.partial_knowledge_transfer(teams.members[acting_agent], list_links_teams[acted_upon_agent].agent2, teams.issue, 1)
 
+					# Adjusting the awareness decay of the team members
+					for links_to_change in link_list:
+						for agents_in_team in teams.members:
+							if links_to_change.agent1 == agents_in_team and links_to_change.agent2.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
+							if links_to_change.agent2 == agents_in_team and links_to_change.agent1.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
+
 					# Updating the resources of the team
 					teams.resources[1] -= teams.resources[0]*0.1
 
 					# Resources check
 					if teams.resources[1] <= 0 * teams.resources[0]:
 						break
-
 
 	def new_link_threeS(self, conflict_level_coef, link_list, outsider_agent, teams, conflict_level_option, len_Pr, len_PC, len_S):
 
@@ -1921,7 +1952,6 @@ class Team():
 		aware_decay = 0
 
 		return conflict_level, aware_decay, team_aware
-
 
 	def new_link_threeS_as(self, link_list, outsider_agent, teams, threeS_link_list_as, threeS_link_list_as_total, threeS_link_id_as, len_Pr, len_PC, len_S, conflict_level_coef, conflict_level_option):
 

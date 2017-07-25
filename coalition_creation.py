@@ -457,6 +457,14 @@ class Coalition():
 						# Checks and transfer of partial knowledge
 						partial_knowledge = ActionFunctions.partial_knowledge_transfer(coalitions.lead, list_links_coalitions[acted_upon_agent].agent2, coalitions.issue, 1)
 
+					# Adjusting the awareness decay of the coalition members
+					for links_to_change in link_list:
+						for agents_in_coalition in coalitions.members:
+							if links_to_change.agent1 == agents_in_coalition and links_to_change.agent2.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
+							if links_to_change.agent2 == agents_in_coalition and links_to_change.agent1.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
+
 					# Updating the resources of the team
 					coalitions.resources[1] -= coalitions.resources[0]*0.1
 
@@ -635,7 +643,7 @@ class Coalition():
 
 									implemented_action = ActionFunctions.action_implementor(links, of_interest[1][best_action_index - len(cw_of_interest) - len(cw_of_interest)], 1, coalitions.lead, coalitions, \
 										affiliation_weights, resources_weight_action, resources_potency, True, len(coalitions.members))
-				
+
 					# Updating the resources of the team
 					coalitions.resources[1] -= coalitions.resources[0]*0.1
 
@@ -929,6 +937,14 @@ class Coalition():
 
 						# Checks and transfer of partial knowledge
 						partial_knowledge = ActionFunctions.partial_knowledge_transfer(coalitions.lead, list_links_coalitions[acted_upon_agent].agent2, of_interest[1][best_action - len(cw_of_interest) - len(cw_of_interest)], 2)
+
+					# Adjusting the awareness decay of the coalition members
+					for links_to_change in link_list:
+						for agents_in_coalition in coalitions.members:
+							if links_to_change.agent1 == agents_in_coalition and links_to_change.agent2.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
+							if links_to_change.agent2 == agents_in_coalition and links_to_change.agent1.unique_id == acted_upon_agent:
+								links_to_change.aware_decay = 5
 
 					# Updating the resources of the team
 					coalitions.resources[1] -= coalitions.resources[0]*0.1
