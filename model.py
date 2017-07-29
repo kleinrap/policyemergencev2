@@ -284,10 +284,6 @@ class PolicyEmergence(Model):
 
 		print('Running the technical model ...')
 
-		#******
-		# print("Specific to the case study")
-		#******
-
 		# First run the technical model - calculate the states [Backbone/Backbone+/3S/ACF]
 		master_cell = self.technical_model.cells_repository
 		self.total_cells = self.height * self.width
@@ -356,7 +352,7 @@ class PolicyEmergence(Model):
 				if type(agents) == Policyentres:
 					agents.policyentres_states_update(agents, self.master_list, self.affiliation_weights)
 
-		# Share of the aim state and beliefs for the deep core issues
+		# Share of the aim state and beliefs for the principal issues
 		for agents1 in self.agent_action_list:
 			for agents2 in self.agent_action_list:
 				for exchange in range(self.len_Pr):
