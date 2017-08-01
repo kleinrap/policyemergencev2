@@ -1,15 +1,19 @@
+# 0. Import the appropriate files
+
+# Importing functions from python
 import random
 import doctest
 import math
-# import numpy
 import copy
 import os
-
-from mesa import Model
-from mesa.space import MultiGrid
-from datacollection import DataCollector
 from collections import defaultdict, Counter
 
+# Importing functions from mesa
+from mesa import Model
+from mesa.space import MultiGrid
+
+# Importing functions from other PMT files
+from datacollection import DataCollector
 from technical_model import Technical_Model
 from tree_cell import TreeCell
 from agent import Policymakers, Electorate, Externalparties, Truth, Policyentres
@@ -20,11 +24,13 @@ from functions_actions import ActionFunctions
 
 # When running from this file (no visualisation)
 
-# This is the model part
+# 1. PolicyEmergence class
 class PolicyEmergence(Model):
 
+	# 1.1 Initialisation function __init__
 	def __init__(self, Pr_ACF_interest=0, datacollector=0, run_number=0, inputs_dict=dict(), events=0):
-
+		
+		# 1.1.1 Extracting the inputs from the input dictionnary
 		# From inputs:
 		self.height = inputs_dict["height"]
 		self.width = inputs_dict["width"]
@@ -58,33 +64,30 @@ class PolicyEmergence(Model):
 		self.policies = inputs_dict["Policies"]
 		self.aware_decay_coefficient = inputs_dict["Trust_decay_coefficient"]
 		self.conflict_level_coef = inputs_dict["conflict_level_coef"]
-
 		self.coalition_threshold = inputs_dict["coalition_threshold"]
-
 		self.team_gap_threshold  = inputs_dict["team_gap_threshold"]
 		self.team_belief_problem_threshold = inputs_dict["team_belief_problem_threshold"]
 		self.team_belief_policy_threshold = inputs_dict["team_belief_policy_threshold"]
-
 		self.no_interest_states = inputs_dict["No_interest_states"]
-
 		self.electorate_influence_coefficient = inputs_dict["electorate_influence_coefficient"]
 		self.electorate_number = self.affiliation_number
-
 		self.Pr_ACF_interest = Pr_ACF_interest
 		self.datacollector = datacollector
 		self.run_number = inputs_dict["Run_number"]
 		self.representation = inputs_dict["representation"]
+		self.resources_weight_action = inputs_dict["resources_weight_action"]
+		self.resources_potency = inputs_dict["resources_potency"]
 
-		# Parameters inputs:
+		# 1.1.2 Technical model parameter inputs
 		self.grid = MultiGrid(self.height, self.width, torus=True)
 		self.technical_model = Technical_Model(self.len_Pr, self.len_PC, self.len_S)
 
-		# Derived inputs:
+		# 1.1.3 Derived inputs:
 		self.total_agent_number = self.externalparties_number + self.policymaker_number + self.policyentre_number
 		self.issues_number = self.len_Pr + self.len_PC + self.len_S
 		self.causalrelation_number = self.len_Pr*self.len_PC + self.len_PC*self.len_S
 
-		# Creation of the master and agent action lists
+		# 1.1.4 Creation of the master and agent action lists
 		self.master_list = []
 		self.agent_action_list = []
 		self.electorate_list = []
@@ -98,13 +101,7 @@ class PolicyEmergence(Model):
 				self.electorate_list.append(agents)
 
 		self.events = events
-
 		self.action_agent_number = len(self.agent_action_list)
-
-		# Resources potency coefficients
-		self.resources_weight_action = inputs_dict["resources_weight_action"]
-		self.resources_potency = inputs_dict["resources_potency"]
-
 		self.belieftree_truth = [None for i in range(self.len_Pr + self.len_PC + self.len_S)]
 
 		print("This is the list of active agents: " + str(self.agent_action_list))
