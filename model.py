@@ -664,9 +664,6 @@ class PolicyEmergence(Model):
 		print('--- Policy formulation ---')
 		print('   ')
 		####################################################################################################
-	
-		# Policy instrument selection (systemwide)
-		# THIS IS IRRELEVANT FOR NOW - SEE REPORT NOTES
 
 		# 0. Initial actions
 		# Conflict level update
