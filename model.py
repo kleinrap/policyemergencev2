@@ -77,6 +77,7 @@ class PolicyEmergence(Model):
 		self.representation = inputs_dict["representation"]
 		self.resources_weight_action = inputs_dict["resources_weight_action"]
 		self.resources_potency = inputs_dict["resources_potency"]
+		self.events = events
 
 		# 1.1.2 Technical model parameter inputs
 		self.grid = MultiGrid(self.height, self.width, torus=True)
@@ -99,26 +100,14 @@ class PolicyEmergence(Model):
 				self.truthagent = agents
 			if type(agents) == Electorate:
 				self.electorate_list.append(agents)
-
-		self.events = events
 		self.action_agent_number = len(self.agent_action_list)
-		self.belieftree_truth = [None for i in range(self.len_Pr + self.len_PC + self.len_S)]
-
 		print("This is the list of active agents: " + str(self.agent_action_list))
 		print(' ')
 
-
-		############################
-		#******
-		# print("Specific to the case study")
-		#******
-		# Creation of the tree cells for the model and the forest fire model
+		# 1.1.5 Creation of the tree cells for the technical forest fire model
 		k= 0
 		for (contents, x, y) in self.grid.coord_iter():
-			# print('This is the x number: ' + str(x))
-			# print('This is the y number: ' + str(y))
 			p = random.random()
-			# print(p)
 			k = k+1
 			# Create a tree
 			new_tree = TreeCell((x, y), self)
@@ -134,9 +123,10 @@ class PolicyEmergence(Model):
 				new_tree.condition = "Empty"
 			self.grid._place_agent((x, y), new_tree)
 			self.technical_model.add(new_tree)
-			# print('Test: ' + str(new_tree))
 
-		############################
+		# 1.1.6 None interests and partial knowledge initialisation
+		# Creation of the truth belieftree (containing the real states of the world)
+		self.belieftree_truth = [None for i in range(self.len_Pr + self.len_PC + self.len_S)]
 		# Informing the agents about the none interest of the EP
 		# External parties belief update and preference recalculation
 		for agents in self.master_list:
@@ -155,9 +145,10 @@ class PolicyEmergence(Model):
 						if agents_ep.belieftree[0][i][0] == 'No':
 							agents.belieftree[1 + agents_ep.unique_id][i][0] = 'No'
 
-		############################
-		# Network related inputs
+		# 1.1.7 Creation of the list of all links
 		self.link_list = inputs_dict["Link_list"]
+
+		# 1.1.8 Initial update of the conflict levels
 		self.conflict_level_update(self.link_list, self.deep_core, self.policy_core, self.secondary, self.conflict_level_coef)
 		
 		############################
