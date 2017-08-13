@@ -55,6 +55,7 @@
     <li>0. import appropriate files</li>
     <li>1. PolicyEmergence class - child of the Model class
       <ul class="collapsibleList">
+
         <li>1. Initialisation function __init__
           <ul class="collapsibleList">
             <li>1. Extracting the inputs from the input dictionnary</li>
@@ -65,54 +66,96 @@
             <li>6. None interests and partial knowledge initialisation</li>
             <li>7. Creation of the list of all links</li>
             <li>8. Initial update of the conflict levels</li>
+            <li>9. Initialisation of the 3S-related parameters</li>
+            <li>10. Initialisation of the ACF-related parameters</li>
+          </ul>
+        </li>
+
+        <li>2. Step function
+          <ul class="collapsibleList">
+            <li>1. TICK INITIALISATION</li>
+            <li>2. Iterate the tick number</li>
+            <li>3. Event selection parameters</li>
+            <li>4. Technical model simulation (technical_model.py)
+              <ul class="collapsibleList">
+                <li>1. Technical model simulation</li>
+                <li>2. Update of the truth belieftree</li>
+                <li>3. Implementing the policy instruments on the technical model</li>
+                <li>4. Update of the truth belieftree</li>
+              </ul>
+            </li>
+            <li>5. Electorate actions on policy makers</li>
+            <li>6. Update of the agents' states (agents.py)
+              <ul class="collapsibleList">
+                <li>1. Truth agent update</li>
+                <li>2. External parties update</li>
+                <li>3. Electorate update</li>
+                <li>4. Policy makers update</li>
+                <li>5. Policy entrepreneurs update</li>
+              </ul>
+            <li>7. Principle core partial knowledge share</li>
+            <li>8. Initialisation of all partial knowledge values (first tick only)
+             <ul class="collapsibleList">
+                <li>1. For the belief tree of all agents</li>
+                <li>2. For the policy and instrument tree of all agents [3S]</li>
+              </ul>
+            </li>
+            <li>9. AGENDA SETTING</li>
+            <li>10. Agent issue classification
+              <ul class="collapsibleList">
+                <li>1. Preference update for all agents</li>
+                <li>2. Conflict level update for all links</li>
+                <li>3. Issue seection</li>
+              </ul>
+            </li>
+            <li>11. The actions
+              <ul class="collapsibleList">
+                <li>1. Group actions [3S/ACF]
+                  <ul class="collapsibleList">
+                    <li>1. The team actions [3S]
+                      <ul class="collapsibleList">
+                        <li>1. Assigning the total resources</li>
+                        <li>2. Agent-team actions</li>
+                        <li>3. Belief actions in a team</li>
+                      </ul>
+                    </li>
+                    <li>2. The coalition actions [ACF]
+                      <ul class="collapsibleList">
+                        <li>1. Assigning the total resources</li>
+                        <li>2. Agent-coalition actions
+                          <ul class="collapsibleList">
+                            <li>1. Reset of the coalition assignment</li>
+                            <li>2. Creation of the coalitions</li>
+                          </ul>
+                        </li>
+                        <li>3. Belief actions in a team</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li>2. The agent actions
+                  <ul class="collapsibleList">
+                    <li>1. Distribution of the resources</li>
+                    <li>2. Upkeep of the network</li>
+                    <li>3. Belief actions of the agents</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li>12. Creation of the agenda
+              <ul class="collapsibleList">
+                <li>1. Agent issue selection</li>
+                <li>2. Agenda creation</li>
+              </ul>
+            </li>
+            <li>13. POLICY FORMULATION</li>
           </ul>
         </li>
 
 
 
-
-        <li> Setting global variables depending on the input dictionnary </li>
-        <li>Creation of the different lists (all agents, action agents, electorate)</li>
-        <li>[TM] Creation of the tree cells for the forest fires</li>
-        <li>[Input] Creation of the selective interests in the belief trees</li>
-        <li>[3S] Creation of the streams lists (AS, PF, teams, shadow network)</li>
-        <li>[ACF] Creation of the coalitions lists (AS, PF, coalitions, shadow network)</li>
         <li>Step function
           <ul class="collapsibleList">
-            <li>1. TICK INITIALISATION</li>
-            <li>Iterate the tick number</li>
-            <li>Event selection tab</li>
-            <li>[TM] Run the technical model forest fires (technical_model.py)</li>
-            <li>[TM] Implementation of the selected policies</li>
-            <li>[TM] Update the values of the true belief tree</li>
-            <li>Actions of the electorate on the policy makers</li>
-            <li>Update of the states of all actor based on the true belief tree</li>
-            <li>Principle issues partial knowledge share for all agents (optional)</li>
-            <li>Set up of all partial knowledge (only in the first tick) for all agents</li>
-            <li>2. AGENDA SETTING</li>
-            <li>Agent issue selection</li>
-            <li>[3S] Team actions
-              <ul class="collapsibleList">
-                <li>Assigning resources to teams</li>
-                <li>Agent-team actions (creation of teams, update of teams sizes) (agent.py)</li>
-                <li>Belief actions for teams (team_creation.py)</li>
-              </ul>
-            </li>
-            <li>[ACF] Coalition actions
-              <ul class="collapsibleList">
-                <li>Assigning resources to teams</li>
-                <li>Agent-team actions (creation of teams, update of teams sizes) (agent.py)</li>
-                <li>Belief actions for teams (coalition_creation.py)</li>
-              </ul>
-            </li>
-            <li>Belief actions of the agents (agent.py)
-              <ul class="collapsibleList">
-                <li>Assigning resources to agents</li>
-                <li>Network upkeep actions</li>
-                <li>Belief influencing actions for each agent (different functions called for Backbone/Backbone+/3S/ACF)</li>
-              </ul>
-            <li>Policy maker issue selection</li>
-            <li>Agenda setting (call agenda setting functions below)</li>
             <li>3. POLICY FORMULATION</li>
             <li>4. END OF TICK PROCEDURES</li>
           </ul>

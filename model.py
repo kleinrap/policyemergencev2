@@ -151,7 +151,7 @@ class PolicyEmergence(Model):
 		# 1.1.8 Initial update of the conflict levels
 		self.conflict_level_update(self.link_list, self.deep_core, self.policy_core, self.secondary, self.conflict_level_coef)
 		
-		############################
+		# 1.1 9 Initialisation of 3S-related parameters
 		# For the three streams theory, creation of the team lists:
 		# This is the list of active teams (agenda setting)
 		self.team_list_as = []
@@ -165,9 +165,6 @@ class PolicyEmergence(Model):
 		self.team_number_pf = [0]
 		# Tick check for disbanding time requirements:
 		self.tick_number = 0
-
-
-		############################
 		# # Creation of the network for the 3S shadow network
 		# This is the list of active links (agenda setting)
 		self.threeS_link_list_as = []
@@ -180,8 +177,7 @@ class PolicyEmergence(Model):
 		self.threeS_link_list_pf_total = []
 		self.threeS_link_id_pf =[0]
 
-
-		############################
+		# 1.1 10 Initialisation of 3S-related parameters
 		# For the ACF theory, creation of the coalitions lists:
 		self.coalitions_list_as = []
 		self.coalitions_list_as_total = []
@@ -189,8 +185,6 @@ class PolicyEmergence(Model):
 		self.coalitions_list_pf = []
 		self.coalitions_list_pf_total = []
 		self.coalitions_number_pf = [0]
-
-		############################
 		# # Creation of the network for the ACF shadow network
 		# This is the list of active links (agenda setting)
 		self.ACF_link_list_as = []
@@ -208,7 +202,7 @@ class PolicyEmergence(Model):
 		print('Cleared initialisation.')
 		print('   ')
 
-
+	# 1.2 Step function
 	def step(self, AS_theory, PF_theory):	
 
 		"""
@@ -218,21 +212,23 @@ class PolicyEmergence(Model):
 		This function is the function that runs the whole cycle. One run of this function
 		represents one tick in the agent based model. It is composed of four main parts:
 
-		1/ Tick initialisation
-		2/ Agenda setting
-		3/ Policy formulation
-		4/ End of tick procedures
+		1.2.1/ Tick initialisation
+		1.2.2/ Agenda setting
+		1.2.3/ Policy formulation
+		1.2.4/ End of tick procedures
 
 		"""	
 
 		####################################################################################################
-		# PHASE 1 - Tick initialisation
+		# 1.2.1 - Tick initialisation
 		print('   ')
 		print('--- Tick initialisation ---')
 		print('   ')
 		####################################################################################################
 
-		# Iterating of the tick number [Backbone/Backbone+/3S/ACF]
+
+		# 1.2.2 Iterating of the tick number
+		# [Backbone/Backbone+/3S/ACF]
 		self.tick_number +=1
 
 		# Potential external events [Backbone/Backbone+/3S/ACF (can varry)]
@@ -241,6 +237,7 @@ class PolicyEmergence(Model):
 		# print("Specific to the case study")
 		#******
 
+		# 1.2.3 Event selection parameters
 		# Event 1 - reversal of all Pr-PC relations for all agents at tick 200
 		if self.events[1] == True and self.tick_number == 200:
 			for agents in self.agent_action_list:
@@ -269,78 +266,77 @@ class PolicyEmergence(Model):
 						agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0] = \
 							- agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + cw][0]
 
-
+		# 1.2.4 Technical model simulation (technical_model.py)
+		# [Backbone/Backbone+/3S/ACF]
 		print('Running the technical model ...')
 
-		# First run the technical model - calculate the states [Backbone/Backbone+/3S/ACF]
+		# 1.2.4.1 Technical model simulation - calculate the states 
 		master_cell = self.technical_model.cells_repository
 		self.total_cells = self.height * self.width
-		# Perform the step of the tree cells
+		# Perform the step for each tree cell
 		for agents in master_cell:
 			agents.step(self.thin_burning_probability, self.firefighter_force)
-			
-		# Update the values for the truth belief tree
+
+		# 1.2.4.2 Update of the truth belieftree
 		self.technical_model.states_update(self.height, self.width, self.belieftree_truth, \
 		 self.thin_burning_probability, self.firefighter_force)
 		print('... cleared.')
 		print('   ')
 
-		# Implementing the measures on the technical model [Backbone/Backbone+/3S/ACF]
-		print('Implementing the policies ....')
+		# 1.2.4.3 Implementing the policy instruments on the technical model
 		prob_update = self.technical_model.measures_implementation(self.agenda_instrument, self.instruments, \
 			self.instrument_campSites, self.instrument_planting, self.thin_burning_probability, \
 			self.firefighter_force, self.instrument_prevention)
 		self.thin_burning_probability = prob_update[0]
 		self.firefighter_force = prob_update[1]
 
-		# Update the values for the truth belief tree [Backbone/Backbone+/3S/ACF]
+		# 1.2.4.4 Update the truth belieftree
 		self.technical_model.states_update(self.height, self.width, self.belieftree_truth, \
 		 self.thin_burning_probability, self.firefighter_force)
 		print('... cleared.')
 		print('   ')
 
-		# Electorate actions on the policy makers [Backbone/Backbone+/3S/ACF]
+		# 1.2.5 Electorate actions on policy makers
+		# [Backbone/Backbone+/3S/ACF]
 		print('Performing electorate actions on the policy makers ...')
-
-		# agents_electorate = self.master_list[Electorate]
 		for agents in self.master_list:
 			if type(agents) == Electorate:
 				agents.electorate_influence(agents, self.master_list, self.affiliation_number, self.electorate_influence_coefficient)
 		print('... cleared.')
 		print('   ')
 
+		# 1.2.6 Updating of agents' states
 		print('Updating states ...')
-		# Update the beliefs of the truth agent
+		# 1.2.6.1 Update the beliefs of the truth agent
 		self.truthagent.belieftree_truth = self.belieftree_truth
 
-		# External parties belief update [Backbone/Backbone+/3S/ACF]
-		# agents_externalparties = self.master_list[Externalparties]
+		# 1.2.6.2 External parties belief update
+		# [Backbone/Backbone+/3S/ACF]
 		for agents in self.master_list:
 			if type(agents) == Externalparties:
 				agents.external_parties_states_update(agents, self.master_list, self.no_interest_states)
 
-		# Electorate belief update [Backbone/Backbone+/3S/ACF]
-		# agents_electorate = self.master_list[Electorate]
+		# 1.2.6.3 Electorate belief update
+		# [Backbone/Backbone+/3S/ACF]
 		for agents in self.master_list:
 			if type(agents) == Electorate:
-				# print(' ')
-				# print(agents.belieftree_electorate)
 				agents.electorate_states_update(agents, self.master_list, self.affiliation_weights)
 
-		# Policy makers belief update [Backbone/Backbone+/3S/ACF]
+		# 1.2.6.4 Policy makers belief update
+		# [Backbone/Backbone+/3S/ACF]
 		for agents in self.master_list:
 			if type(agents) == Policymakers:
 				agents.policymakers_states_update(agents, self.master_list, self.affiliation_weights)
 
-		# Policy entrepreneurs belief update [Backbone+/3S/ACF]
+		# 1.2.6.5 Policy entrepreneurs belief update
+		# [Backbone+/3S/ACF]
 		if AS_theory == 1 or PF_theory == 1 or AS_theory == 2 or PF_theory == 2 \
 			or AS_theory == 3 or PF_theory == 3:
-			# agents_policyentres = self.master_list[Policyentres]
 			for agents in self.master_list:
 				if type(agents) == Policyentres:
 					agents.policyentres_states_update(agents, self.master_list, self.affiliation_weights)
 
-		# Share of the aim state and beliefs for the principal issues
+		# 1.2.7 Principle core partial knowledge share
 		for agents1 in self.agent_action_list:
 			for agents2 in self.agent_action_list:
 				for exchange in range(self.len_Pr):
@@ -350,11 +346,10 @@ class PolicyEmergence(Model):
 					agents1.belieftree[1 + agents2.unique_id][exchange][1] = agents2.belieftree[0][exchange][1] + (random.random()/10) - 0.05
 					agents1.belieftree[1 + agents2.unique_id][exchange][1] = \
 						ActionFunctions.one_minus_one_check(agents1.belieftree[1 + agents2.unique_id][exchange][1])
-			# print(' ')
-			# print(agents1.belieftree)
 
-		# Fill in the partial knowledge (but only for the first tick)
+		# 1.2.8 Initialisation of all partial knowledge values (first tick only)
 		if self.tick_number == 1:
+			# 1.2.8.1 For the belief tree of all agents
 			for agents in self.agent_action_list:
 				# For the partial knowledge too
 				for who in range(len(self.agent_action_list)):
@@ -368,7 +363,7 @@ class PolicyEmergence(Model):
 							copy.copy(agents.belieftree[0][self.len_Pr + self.len_PC + self.len_S + causalrelations][0] + random.random() - 0.5)
 						agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0] = \
 							ActionFunctions.one_minus_one_check(agents.belieftree[1+who][self.len_Pr + self.len_PC + self.len_S + causalrelations][0])
-			# Fill in the partial knowledge for the policy tree (but only for the first tick)	
+			# 1.2.8.2 For the policy and instrument trees of all agents [3S]
 			if AS_theory == 2 and PF_theory == 2:
 				for agents in self.agent_action_list:
 					for who in range(len(self.agent_action_list)):
@@ -384,125 +379,90 @@ class PolicyEmergence(Model):
 							# Go through each of the PC issues
 							for issue_considered in range(self.len_S):
 								agents.belieftree_instrument[1+who][policy_number][issue_considered] = copy.copy(agents.belieftree_instrument[0][policy_number][issue_considered] + random.random() - 0.5)
-
 		
 		print('... cleared.')
 		print('   ')
 
 
 		####################################################################################################
-		# PHASE 2 - Agenda setting
+		# 1.2.9 - Agenda setting
 		print('   ')
 		print('--- Agenda setting ---')
 		print('   ')
 		
 		# Structure of the agenda setting
-		# I. Agent issue classification
-		# II. The actions
-		# 	IIa. The group actions
-		#		IIa1. The team actions
-		#		IIa2. The coalition actions
-		#	IIb. The agent actions
-		#		IIb1. Distribution of the resources
-		#		IIb2. Upkeep of the network
-		#		IIb3. Actions themselves
-		# III.  The creation of the agenda
+		# 1.2.10. Agent issue classification
+		# 1.2.11. The actions
+		# 	1.2.11.1. The group actions
+		#		1.2.11.1.1. The team actions
+		#		1.2.11.1.2. The coalition actions
+		#	1.2.11.21. The agent actions
+		#		1.2.11.2.1. Distribution of the resources
+		#		1.2.11.2.2. Upkeep of the network
+		#		1.2.11.2.3. Belief actions of the agents
+		# 1.2.12.  The creation of the agenda
 
 		####################################################################################################
 
-		# I. Agent issues classification and selection [Backbone/Intermediate]
+		# 1.2.10. Agent issues classification and selection [Backbone/Backbone+]
 		print('Issue selection ...')
 
-		# 0. Preference updates for the deep and policy core issues [Backbone/Backbone+/3S/ACF]
-		# Electorate preference recalculation [Backbone/Backbone+/3S/ACF]
-		# agents_electorate = self.master_list[Electorate]
+		# 1.2.10.1 Preference updates for all agents
+		# [Backbone/Backbone+/3S/ACF]
+		# This update is onlw performed on the principle core and policy core issues. It includes the 
+		# partial knowledge parts of the belief tree.
 		for agents in self.master_list:
 			if type(agents) == Electorate:
 				self.preference_udapte_electorate(agents)
-		# External parties preference recalculation [Backbone/Backbone+/3S/ACF]
-		# agents_externalparties = self.master_list[Externalparties]
-		for agents in self.master_list:
-			if type(agents) == Externalparties:
-				# For the partial knowledge too
+		for agents in self.agent_action_list:
+			if type(agents) != Policyentres:
 				for who in range(len(self.agent_action_list) + 1):
 					self.preference_udapte(agents, who)
-		# Policy makers preference recalculation [Backbone/Backbone+/3S/ACF]
-		# agents_policymakers = self.master_list[Policymakers]
-		for agents in self.master_list:
-			if type(agents) == Policymakers:
-				# For the partial knowledge too
-				for who in range(len(self.agent_action_list) + 1):
-					self.preference_udapte(agents, who)
-		# Policy entrepreneurs preference recalculations [Backbone+/3S/ACF]
-		if AS_theory == 1 or PF_theory == 1 or AS_theory == 2 or PF_theory == 2 \
-		  or AS_theory == 3 or PF_theory == 3:
-			# agents_policyentres = self.master_list[Policyentres]
-			for agents in self.master_list:
+
+		# [Backbone+/3S/ACF]
+		if AS_theory != 0 or PF_theory != 0:
+			for agents in self.agent_action_list:
 				if type(agents) == Policyentres:
-					# For the partial knowledge too
 					for who in range(len(self.agent_action_list) + 1):
 						self.preference_udapte(agents, who)
 
-		# Conflict level update for the entire network [Backbone/Backbone+/3S/ACF]
+		# 1.2.10.2. Conflict level update for all links
+		# [Backbone/Backbone+/3S/ACF]
 		self.conflict_level_update(self.link_list, self.deep_core, self.policy_core, self.secondary, self.conflict_level_coef)
 
-		# Issue selection step - Bacbkone, Backbone+ and ACF
+		# 1.2.10.3. Issue selection
 		if AS_theory != 2:
-			# 1. Considering the policy makers [Backbone/Backbone+/ACF]
-			# agents_policymakers = self.master_list[Policymakers]
+			# [Bacbkone/Backbone+/ACF]
 			for agents in self.agent_action_list:
-				if type(agents) == Policymakers:
+				if type(agents) != Policyentres:
 					self.issue_selection(agents)
-			# 2. Considering the external parties [Backbone/Backbone+/ACF]
-			# agents_externalparties = self.master_list[Externalparties]
-			for agents in self.agent_action_list:
-				if type(agents) == Externalparties:
-					self.issue_selection(agents)
-			# 3. Considering the policy entrepreneurs [Backbone+/ACF]
+			# [Backbone+/ACF]
 			if AS_theory == 1 or AS_theory == 3:
-				# agents_policyentres = self.master_list[Policyentres]
 				for agents in self.agent_action_list:
 					if type(agents) == Policyentres:
 						self.issue_selection(agents)
-
-		# Issue selection step - 3S
-		if AS_theory == 2:
-			# 1. Considering the policy makers [3S]
-			# agents_policymakers = self.master_list[Policymakers]
+		else:
+			# [3S]
 			for agents in self.agent_action_list:
-				if type(agents) == Policymakers:
-					self.issue_selection_as_3S(agents)
-			# 2. Considering the external parties [3S]
-			for agents in self.agent_action_list:
-				if type(agents) == Externalparties:
-					self.issue_selection_as_3S(agents)
-			# 3. Considering the policy entrepreneurs [3S]
-			for agents in self.agent_action_list:
-				if type(agents) == Policyentres:
-					self.issue_selection_as_3S(agents)
-
+				self.issue_selection_as_3S(agents)
 
 		print('... cleared.')
 		print('   ')
 		
-		# IIa1. The team actions [3S]
+		# 1.2.11. The actions
 
-		# Strucure of the team actions [3S]
-		# 1. Assigning resources
-		# 2. Team actions (creation of teams)
-		# 3. Belief actions of the teams
+		# 1.2.11.1. The group actions [3S/ACF]
 
-
+		# 1.2.11.1.1. The team actions [3S]
 		if AS_theory == 2:
-
 			print('Team actions (AS) for three streams ...')
 
-			# 1. Assigning the total resources
+			# 1.2.11.1.1.1. Assigning the total resources
 			for agents in self.agent_action_list:
 				agents.resources[0] = 0.5 + self.representation[agents.affiliation]/2
 				agents.resources[1] = agents.resources[0]
 
-			# 2. Agent-Team actions
+			# 1.2.11.1.1.2. Agent-Team actions
 			shuffled_list_agent = self.agent_action_list
 			random.shuffle(shuffled_list_agent)
 			for agents in shuffled_list_agent:
@@ -515,7 +475,7 @@ class PolicyEmergence(Model):
 				print(teams_test.members_id)
 			print(' ')
 
-			# 3. Belief actions in a team
+			# 1.2.11.1.1.3. Belief actions in a team
 			conflict_level_option = 1
 			shuffled_team_list_as = self.team_list_as
 			random.shuffle(shuffled_team_list_as)
@@ -526,30 +486,31 @@ class PolicyEmergence(Model):
 			print('... cleared.')
 			print('   ')
 
-		# IIa2. The coalition actions [ACF]
+		# 1.2.11.1.2. The coalition actions [ACF]
 		if AS_theory == 3:
 
 			print('Coalition actions (AS) for ACF ...')
 
+			print('WHAT IS THIS?')
 			target = 1
 
-			# 1. Assigning the total resources
+			# 1.2.11.1.2.1. Assigning the total resources
 			for agents in self.agent_action_list:
 				agents.resources[0] = 0.5 + self.representation[agents.affiliation]/2
 				agents.resources[1] = agents.resources[0]
 
-			# 2. Agent-Team actions
-			# A. Reset of coalition assginment
+			# 1.2.11.1.2.2. Agent-coalition actions
+			# 1.2.11.1.2.2.1. Reset of coalition assginment
 			for agents in self.agent_action_list:
 				agents.coalition_as[0] = None
 				agents.coalition_as[1] = None
 			self.coalitions_list_as = []
 			self.ACF_link_list_as = []
 
-			# B. Creation of the coalitions
+			# 1.2.11.1.2.2.2. Creation of the coalitions
 			self.coalition_creation_as(self.agent_action_list, self.link_list, self.Pr_ACF_interest, self.coalitions_number_as, self.tick_number, self.coalitions_list_as, self.coalitions_list_as_total, self.coalition_threshold, target)
 
-			# 3. Belief actions in a team
+			# 1.2.11.1.2.3. Belief actions in a team
 			shuffled_coalition_list_as = self.coalitions_list_as
 			random.shuffle(shuffled_coalition_list_as)
 			for coalitions in shuffled_coalition_list_as:
@@ -559,18 +520,19 @@ class PolicyEmergence(Model):
 			print('... cleared.')
 			print('   ')
 
-		# IIb. The actions of the actors [Backbone+/3S/ACF]
+		# 1.2.11.2 The actions of the actors [Backbone+/3S/ACF]
 		if AS_theory == 1 or AS_theory == 2 or AS_theory == 3:
 
-			# IIb1. Distribution of the resources
-			# For the [Backbone+]
+			# 1.2.11.2.1. Distribution of the resources
+			# [Backbone+]
 			if AS_theory == 1:
 				for agents in self.agent_action_list:
 					agents.resources[0] = 0.5 + self.representation[agents.affiliation]/2
 					# Setting up the temporary resources for network upkeep and agent actions
 					agents.resources_network = 0.2 * agents.resources[0]
 					agents.resources_actions = 0.8 * agents.resources[0]
-			# For the [3S] - The difference is related to the belonging level
+			
+			# [3S] - The difference is related to the belonging level
 			if AS_theory == 2:
 				for agents in self.agent_action_list:
 					# Set the resources equal to the leftover from the belonging values (only if the agent is in a team)
@@ -580,7 +542,8 @@ class PolicyEmergence(Model):
 						agents.resources[0] = 0.5 + self.representation[agents.affiliation]/2
 					agents.resources_network = 0.2 * agents.resources[0]
 					agents.resources_actions = 0.8 * agents.resources[0]
-			# For the [ACF] - The difference is related to the belonging level
+			
+			# [ACF] - The difference is related to the belonging level
 			if AS_theory == 3:
 				for agents in self.agent_action_list:
 					# Set the resources equal to the leftover from the belonging values (only if the agent is in a team)
@@ -591,47 +554,39 @@ class PolicyEmergence(Model):
 					agents.resources_network = 0.2 * agents.resources[0]
 					agents.resources_actions = 0.8 * agents.resources[0]
 			
-			# IIb2. Upkeep of the network
+			# 1.2.11.2.2. Upkeep of the network
 			print('Running network upkeep actions (AS) ...')
 			# Making a shuffled list of agents to have a random selection order
-			# For now strategy is set here, ultimately, it should come in the agent attributes somewhere
 			# The resource weight and resource adequacy parameters will also have to be moved as input parameters			
-			
 			shuffled_list_agent = self.agent_action_list
 			random.shuffle(shuffled_list_agent)
-			# going through all agents
 			for agents in shuffled_list_agent:
-				# print('  ')
-				# print('Next agent')
-				# print(agents)
 				agents.network_upkeep_as(agents, self.link_list, self.affiliation_weights, AS_theory)
 
 			print('... cleared.')
 			print('   ')
 
-			# IIb3. Actions themselves
+			# 1.2.11.2.3. Belief actions of the agents
 			print('Performing individual agent actions (AS) ...')
 
-			# Everything but three streams
+			# [Backbone/Backbone+/ACF]
 			if AS_theory != 2:
 				random.shuffle(shuffled_list_agent)
 				for agents in shuffled_list_agent:
-					# 1 - Looking at the external parties
+					# The external parties
 					if type(agents) == Externalparties:
 						agents.external_parties_actions_as(agents, self.agent_action_list, self.causalrelation_number, self.affiliation_weights, \
 							self.deep_core, self.policy_core, self.secondary, self.electorate_number, self.action_agent_number, self.master_list, self.link_list, self.resources_weight_action, self.resources_potency)
 
-					# 2 - Looking at the policy makers and policy entrepreneurs
+					# The policy makers and policy entrepreneurs
 					# Shuffle of the list of links for the actions
 					link_list_shuffle = self.link_list
 					random.shuffle(link_list_shuffle)
-					# print('THIS IS A TEMPORARY CHANGE THAT WILL NEED TO BE REVERSED!')
-					if type(agents) == Policymakers or type(agents) == Policyentres:
-					# if type(agents) == Policymakers:
+					if type(agents) != Externalparties:
 						agents.pm_pe_actions_as(agents, link_list_shuffle, self.deep_core, self.policy_core, self.secondary, \
 							self.resources_weight_action, self.resources_potency, self.affiliation_weights)
 
-			# Three streams
+			# [3S]
 			if AS_theory == 2:
 				random.shuffle(shuffled_list_agent)
 				for agents in shuffled_list_agent:
@@ -644,9 +599,7 @@ class PolicyEmergence(Model):
 					# Shuffle of the list of links for the actions
 					link_list_shuffle = self.link_list
 					random.shuffle(link_list_shuffle)
-					# print('THIS IS A TEMPORARY CHANGE THAT WILL NEED TO BE REVERSED!')
-					if type(agents) == Policymakers or type(agents) == Policyentres:
-					# if type(agents) == Policymakers:
+					if type(agents) != Externalparties :
 						agents.pm_pe_actions_as_3S(agents, link_list_shuffle, self.deep_core, self.policy_core, self.secondary, \
 							self.resources_weight_action, self.resources_potency, self.affiliation_weights, self.conflict_level_coef)
 
@@ -655,47 +608,39 @@ class PolicyEmergence(Model):
 
 		else:
 			# In case the backbone only is run - display this message
-			print('[Backbone only] - No network upkeep actions and normal actions ')
+			print('[Backbone only] - No network upkeep actions and belief actions ')
 			print('  ')
 		
 
-		# III. Policy makers rank the issues and create the agenda [Backbone/Backbone+/3S/ACF]
-		# The policy makers rank the issues - This is basically the same as the previous step
+		# 1.2.12. Creation of the agenda
+		# [Backbone/Backbone+/3S/ACF]
 		print('Issue selection for the agenda ...')
 		
-		if AS_theory != 2:
-			# agents_policymakers = self.master_list[Policymakers]
-			for agents in self.agent_action_list:
-				if type(agents) == Policymakers:
-					self.issue_selection(agents)
-		
-		if AS_theory == 2:
-			# agents_policymakers = self.master_list[Policymakers]
-			for agents in self.agent_action_list:
-				if type(agents) == Policymakers:
-					self.issue_selection_as_3S(agents)
+		# 1.2.12.1. Agent issue classification
+		for agents in self.agent_action_list:
+			if AS_theory != 2 and type(agents) == Policymakers:
+				# [Backbone/Backbone+/ACF]
+				self.issue_selection(agents)
+			if AS_theory == 2 and type(agents) == Policymakers:
+				# [3S]
+				self.issue_selection_as_3S(agents)
 
 		print('... cleared.')
 		print('   ')
 
 
-		# Agenda setting (systemwide)
-		# agents_policymakers = self.master_list[Policymakers]
+		# 1.2.12.2. Agenda creation
 		if AS_theory != 2:
+			# [Backbone/Backbone+/ACF]
 			self.agenda_selection()
 			print('AGENDA - The issue is: ' + str(self.agenda_as_issue))
 
 		if AS_theory == 2:
+			# [3S]
 			self.agenda_selection_3S()
 			print('AGENDA - The problem is: ' + str(self.agenda_prob_3S_as) + ' and the policy is: ' + str(self.agenda_poli_3S_as))
 
-
 		print('   ')
-
-		# for agents in self.agent_action_list:
-		# 	if agents.unique_id == 1:
-		# 		print(' ')
-		# 		print(agents.belieftree)
 		
 		# print(' ')
 		# print('Checks:')
@@ -714,7 +659,7 @@ class PolicyEmergence(Model):
 		# 	print(str(teams_check) + ', number of team members: ' + str(len(teams_check.members)) + ' and number of links:' + str(len(list_links_check)))
 
 		####################################################################################################
-		# PHASE 3 - Policy formulation
+		# 1.2.13 - Policy formulation
 		print('   ')
 		print('--- Policy formulation ---')
 		print('   ')
