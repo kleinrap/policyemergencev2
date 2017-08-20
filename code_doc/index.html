@@ -110,7 +110,7 @@
             </li>
             <li>11. The actions
               <ul class="collapsibleList">
-                <li>1. Group actions [3S/ACF]
+                <li>1. The group actions [3S/ACF]
                   <ul class="collapsibleList">
                     <li>1. The team actions [3S]
                       <ul class="collapsibleList">
@@ -148,46 +148,128 @@
                 <li>2. Agenda creation</li>
               </ul>
             </li>
-            <li>13. POLICY FORMULATION"- AM HERE AT THIS POINT !</li>
+            <li>13. POLICY FORMULATION</li>
+            <li>14. Agent instrument classification
+              <ul class="collapsibleList">
+                <li>1. Conflict level update</li>
+                <li>2. Policy instrument selection</li>
+              </ul>
+            </li>
+            <li>15. The actions
+              <ul class="collapsibleList">
+                <li>1. The group actions [3S/ACF]
+                  <ul class="collapsibleList">
+                    <li>1. The team actions [3S]
+                      <ul class="collapsibleList">
+                        <li>1. Assigning the total resources</li>
+                        <li>2. Agent-team actions</li>
+                        <li>3. Belief actions in a team</li>
+                      </ul>
+                    </li>
+                    <li>2. The coalition actions [ACF]
+                      <ul class="collapsibleList">
+                        <li>1. Assigning the total resources</li>
+                        <li>2. Agent-coalition actions
+                          <ul class="collapsibleList">
+                            <li>1. Reset of the coalition assignment</li>
+                            <li>2. Creation of the coalitions</li>
+                          </ul>
+                        </li>
+                        <li>3. Belief actions in a team</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li>2. The agent actions
+                  <ul class="collapsibleList">
+                    <li>1. Distribution of the resources</li>
+                    <li>2. Upkeep of the network</li>
+                    <li>3. Belief actions of the agents</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li>16. Agent instrument classification</li>
+            <li>17. Instrument implementation check</li>
+            <li>18. END OF TICK PROCEDURES</li>
+            <li>19. Conflict level update</li>
+            <li>20. Data collection</li>
+            <li>21. Network upkeep procedures
+              <ul class="collapsibleList">
+                <li>1. Awareness decay implementation</li>
+                <li>2. Link negative check</li>
+                <li>3. Decay implementation</li>
+              </ul>
+            </li>
           </ul>
         </li>
 
+        <li>3. Agenda selection function
+          <ul class="collapsibleList">
+            <li>1. Selecting the policy maker agents</li>
+            <li>2. For each PM, selecting the chosen issue</li>
+            <li>3. Selecting the most chosen issue</li>
+            <li>4. Setting the agenda</li>
+          </ul>
+        </li>
 
+        <li>4. Agenda selection function [3S]
+          <ul class="collapsibleList">
+            <li>1. Selecting the policy maker agents</li>
+            <li>2. For each PM, selecting the chosen policy and problem</li>
+            <li>3. Selecting the most chosen polivy and problem</li>
+            <li>4. Setting the agenda with policy and problem</li>
+          </ul>
+        </li>
 
-        <li>Step function
+        <li>5. Preference update
           <ul class="collapsibleList">
-            <li>3. POLICY FORMULATION</li>
-            <li>4. END OF TICK PROCEDURES</li>
+            <li>1. Preference calculation for the principle issues
+              <ul class="collapsibleList">
+                <li>1. Calculation of the denominator</li>
+                <li>2. Selection of the numerator and calculation of the preference</li>
+              </ul>
+            </li>
+            <li>2. Preference calculation for the policy core issues
+              <ul class="collapsibleList">
+                <li>1. Calculation of the denominator</li>
+                <li>2. Addition of the gaps of the associated policy core issues</li>
+                <li>3. Calculation of the numerator and the preference
+                  <ul class="collapsibleList">
+                    <li>1. Calculation of the right side of the numerator</li>
+                    <li>2. Addition of the gap to the numerator</li>
+                    <li>3. Calculation of the preference</li>
+                  </ul>
+              </li>
+              </ul>
+            </li>
           </ul>
         </li>
-        <li>Agenda selection function
+        <li>6. Electorate preference update
           <ul class="collapsibleList">
-            <li></li>
+            <li>1. Preference calculation of the principle issues</li>
+            <li>2. Preference calculation of the policy core issues</li>
+            <li>3. Preference calculation of the secondary issues</li>
           </ul>
         </li>
-        <li>[3S] Agenda selection function
+        <li>7. Issue selection
           <ul class="collapsibleList">
-            <li></li>
-          </ul>
-        </li>
-        <li> Preference update
-          <ul class="collapsibleList">
-            <li></li>
-          </ul>
-        </li>
-        <li>Electorate preference update
-          <ul class="collapsibleList">
-            <li></li>
-          </ul>
-        </li>
-        <li>Issue selection
-          <ul class="collapsibleList">
-            <li></li>
+            <li>1. Assigning all policy core issue preferences into an array</li>
+            <li>2. Selection of the highest preference policy core issue and setting to agent selected issue</li>
           </ul>
         </li>
         <li>[3S] AS - Issue selection
           <ul class="collapsibleList">
-            <li></li>
+            <li>
+              <ul class="collapsibleList">
+                <li>1. </li>
+                <li>2. </li>
+                <li>3. </li>
+                <li>4. </li>
+                <li>5. </li>
+                <li>6. </li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li>[3S] PF - Issue selection
@@ -227,15 +309,32 @@
         </li>
         <li>[ACF] AS - Coalition creation
           <ul class="collapsibleList">
-            <li></li>
+            <li>
+              <ul class="collapsibleList">
+                <li>1. </li>
+                <li>2. </li>
+                <li>3. </li>
+                <li>4. </li>
+                <li>5. </li>
+                <li>6. </li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li>[ACF] PF - Coalition creation
           <ul class="collapsibleList">
-            <li></li>
+            <li>
+              <ul class="collapsibleList">
+                <li>1. </li>
+                <li>2. </li>
+                <li>3. </li>
+                <li>4. </li>
+                <li>5. </li>
+                <li>6. </li>
+              </ul>
+            </li>
           </ul>
         </li>
-        
       </ul>
   </ul>
 
