@@ -1176,6 +1176,7 @@ class PolicyEmergence(Model):
 	def issue_selection_as_3S(self, agent):
 
 		"""
+		I AM AT THIS POINT IN THE DOCUMENTATION FOR NOW
 		1.8. Issue selection function (three streams theory) - agenda setting
 		===========================
 
