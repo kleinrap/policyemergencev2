@@ -1,5 +1,6 @@
 # This is the file where things will be run from:
 
+#file://cm-epfl-project-test/policyemergencev2/run.py
 
 # For experiments (event1) currently missing 145 onwards for Backbone+ because of some weird error
 
@@ -29,7 +30,7 @@ Pr_ACF_interest = 0
 # Note right now several parts of the model require that the same method be used for both
 # parts of the model - this is mostly related to the input method. This will be changed
 # in the future.
-AS_theory = 3
+AS_theory = 0
 PF_theory = AS_theory
 
 # This is set up to use only in the case of exploration
@@ -80,7 +81,7 @@ agent_inputs = [policymaker_number, externalparties_number]
 for run_number in range(run_number_total):
 
 
-	if run_number >= 16 and run_number < 30:
+	if run_number >= 16 and run_number < 18:
 
 		print('   ')
 		print('-------------------------------------------------------------------------')
