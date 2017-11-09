@@ -30,7 +30,11 @@ Pr_ACF_interest = 0
 # Note right now several parts of the model require that the same method be used for both
 # parts of the model - this is mostly related to the input method. This will be changed
 # in the future.
+<<<<<<< HEAD
 AS_theory = 0
+=======
+AS_theory = 2
+>>>>>>> 9cc65082a79d56a17c53b650e409b0f344a48d6a
 PF_theory = AS_theory
 
 # This is set up to use only in the case of exploration
